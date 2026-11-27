@@ -141,7 +141,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 ## §7. Đánh giá & chuẩn "đạt"
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 9 · kho 15 · tu_choi 6; nguồn đều `tu_viet`, thêm câu `nguoi_dung` trước CP3) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
 - Mỗi câu ghi ở đầu `pass_criterion` các status được chấp nhận (`status=…`) và ràng buộc đúng (`c=…`). Grader chạy `verify` và `cost` trên `c=`, không dùng ràng buộc model tự hiểu.
-- **Chuẩn "đạt" ( Công chốt ở buổi họp 18:45, khoá lúc 19:30 Thứ Sáu 27/11, rồi không sửa):**
+- **Chuẩn "đạt" (Công đã chốt, khoá lúc 19:30 Thứ Sáu 27/11, rồi không sửa):**
   > Đạt khi cả 4 metric trong `eval/metric_spec.yaml` đạt ngưỡng (với N câu áp dụng, cần ít nhất ceil(ngưỡng × N) câu):
   > (a) `khong_vi_pham_cung` ≥ 85% câu cho phép `plan`: status đúng loại, nếu có lịch thì `verify` trả rỗng và `total_vnd = cost()` (hiện 19 câu → ≥ 17/19);
   > (b) `khong_bia_dia_diem` 100% câu: mọi `id` có trong `places.csv`, mọi giá và giờ trong văn bản lần về được dòng dữ liệu (30/30);
