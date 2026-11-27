@@ -60,7 +60,7 @@ def call_bedrock(system, user):
     vd global.anthropic.claude-haiku-4-5-20251001-v1:0 (Haiku 4.5 không gọi bằng model ID trơn)."""
     kwargs = {"modelId": MODEL_NAME,
               "messages": [{"role": "user", "content": [{"text": user}]}],
-              "inferenceConfig": {"maxTokens": 1024}}
+              "inferenceConfig": {"maxTokens": 2048, "temperature": 0.2}}
     if system:
         kwargs["system"] = [{"text": system}]
     data = _bedrock().converse(**kwargs)

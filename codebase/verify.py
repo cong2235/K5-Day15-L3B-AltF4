@@ -214,6 +214,8 @@ def score(p: Place, c: Constraints) -> int:
         s += 1
     if p.cluster in FAR_CLUSTERS and p.id not in c.must:
         s -= 2
+    if p.kind == "an" and "chay" in p.tags and "chay" not in c.diet:
+        s -= 1      # quán chay rẻ nên hay lên đầu khi xếp theo giá; nhóm không ăn chay thì không ưu tiên
     return s
 
 
