@@ -1,0 +1,9 @@
+from_id,to_id,minutes,source,checked_on
+DN-002,DN-014,45,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0683,108.2242/16.0266,108.0328 (23.9 km; xem 2026-11-27 ~18:40 thứ Sáu)",2026-11-27
+DN-002,DN-017,60,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0683,108.2242/15.8764,108.3294 (31.1 km; xem 2026-11-27 ~18:40; Maps báo đang cấm đường Lê Văn Hiến)",2026-11-27
+DN-014,DN-017,64,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0266,108.0328/15.8764,108.3294 (42.3 km; xem 2026-11-27 ~18:40)",2026-11-27
+DN-002,DN-008,24,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0683,108.2242/16.1002,108.2782 (10.9 km; xem 2026-11-27 ~18:40)",2026-11-27
+DN-002,DN-009,44,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0683,108.2242/16.1200,108.2759 (18.5 km; xem 2026-11-27 ~18:40)",2026-11-27
+DN-011,DN-017,51,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0617,108.2469/15.8764,108.3294 (26.7 km; xem 2026-11-27 ~18:40)",2026-11-27
+DN-012,DN-017,40,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0037,108.2632/15.8764,108.3294 (21.0 km; xem 2026-11-27 ~18:40; Maps báo đang cấm đường Lê Văn Hiến)",2026-11-27
+DN-002,DN-012,25,"Google Maps chỉ đường ô tô https://www.google.com/maps/dir/16.0683,108.2242/16.0037,108.2632 (11.2 km; xem 2026-11-27 ~18:40)",2026-11-27

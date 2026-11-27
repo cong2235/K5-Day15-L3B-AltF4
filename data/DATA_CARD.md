@@ -16,8 +16,8 @@
 | Dùng để làm gì | Nguồn duy nhất về địa điểm, giờ mở cửa, giá cho các công cụ `shortlist`, `get_place`, `verify`, `cost`, `travel_min`. Ràng buộc đúng `c=` trong `eval/benchmark.csv` được chấm trên file này. Không dùng làm bằng chứng pain |
 | Từ đâu | Nhóm tự nhập tay từ thông tin công khai: trang chính thức của điểm đến, cổng du lịch Đà Nẵng, trang địa điểm trên bản đồ trực tuyến. Không chép review: mỗi dòng tối đa 2 câu mô tả do nhóm tự viết |
 | Xử lý những bước gì | Chọn 25–40 điểm trải đều 5 cụm (15–20 điểm tham quan, 12–18 quán / cafe) · chuẩn hoá giờ về `HH:MM`, giá về VND · gắn tag theo danh sách dưới · mỗi dòng ghi `source` và `checked_on` · thêm ca khó cố ý (xem "Giới hạn"). Nhập tay, không có script |
-| Số dòng | __ *(mục tiêu 25–40; điền khi commit)* |
-| Phiên bản / ngày lấy | v0 · __/11/2026 *(ngày kiểm ghi riêng từng dòng ở `checked_on`)* |
+| Số dòng | 34 (19 tham quan · 13 ăn · 2 cafe). Ghi chú thu thập: `data/collection-notes.md` |
+| Phiên bản / ngày lấy | v0 · 27/11/2026 *(ngày kiểm ghi riêng từng dòng ở `checked_on`)* · giá quán lấy cận trên khoảng giá công khai |
 | Nhãn | Thật: dòng có `source` là nguồn công khai. `synthetic`: giá trị nhóm tự đặt để tạo ca khó, cột `source` ghi `synthetic: <lý do>` |
 | Giới hạn | Giá và giờ là **tham khảo** tại ngày `checked_on`, không cập nhật thời gian thực, nên output luôn nhắc người dùng xác nhận lại. Không có dữ liệu thời tiết, giờ cao điểm hay mùa lễ hội. Thiên về điểm nổi tiếng, ít quán nhỏ trong hẻm. Giá vé đổi theo mùa (Bà Nà) chỉ lấy một mức |
 
