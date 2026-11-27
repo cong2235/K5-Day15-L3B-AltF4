@@ -2,6 +2,8 @@
 
 > Ôn lại: ngày 12 · lab ngày 12. Nhóm sửa file này cho khớp bài của mình (thêm quy ước riêng, bỏ dòng không dùng).
 
+> **Đọc [`docs/architecture-review.md`](docs/architecture-review.md) trước khi sửa code.** File này gom ngữ cảnh hệ thống, trạng thái hiện tại, điểm yếu cần sửa và thứ tự ưu tiên.
+
 ## Repo này là gì
 
 Repo nộp bài hackathon AI20K của nhóm: một bản chạy thử AI cho **một lát cắt** (xem `spec.md` §4), kèm bằng chứng, bộ câu thử và mô phỏng chi phí. Mọi câu trả lời phải chạy được bằng các lệnh dưới đây.
