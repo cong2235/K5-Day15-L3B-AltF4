@@ -43,14 +43,53 @@ MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
 API_KEY = (os.environ.get("API_KEY") or "").strip()
 
 
+_bedrock_clients = {}
+
+
+def _bedrock():
+    """Client bedrock-runtime dùng chung. Khoá AWS lấy từ .env (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION)."""
+    if "rt" not in _bedrock_clients:
+        import boto3  # cài bằng: python -m pip install -r requirements.txt
+        _bedrock_clients["rt"] = boto3.client(
+            "bedrock-runtime", region_name=os.environ.get("AWS_DEFAULT_REGION") or "ap-southeast-2")
+    return _bedrock_clients["rt"]
+
+
+def call_bedrock(system, user):
+    """Chat qua Amazon Bedrock (Converse API). MODEL_NAME = inference profile ID,
+    vd global.anthropic.claude-haiku-4-5-20251001-v1:0 (Haiku 4.5 không gọi bằng model ID trơn)."""
+    kwargs = {"modelId": MODEL_NAME,
+              "messages": [{"role": "user", "content": [{"text": user}]}],
+              "inferenceConfig": {"maxTokens": 1024}}
+    if system:
+        kwargs["system"] = [{"text": system}]
+    data = _bedrock().converse(**kwargs)
+    text = "".join(b.get("text", "") for b in data["output"]["message"]["content"])
+    u = data["usage"]
+    return {"text": text, "tokens_in": u["inputTokens"], "tokens_out": u["outputTokens"]}
+
+
+def embed(text: str, dimensions: int = 1024) -> list:
+    """Vector nhúng cho một đoạn chữ (Amazon Titan Text Embeddings V2). Không phải lần gọi chat nên không qua @model_call.
+    Đổi model bằng EMBED_MODEL trong .env."""
+    import json
+    resp = _bedrock().invoke_model(
+        modelId=os.environ.get("EMBED_MODEL") or "amazon.titan-embed-text-v2:0",
+        body=json.dumps({"inputText": text, "dimensions": dimensions, "normalize": True}))
+    return json.loads(resp["body"].read())["embedding"]
+
+
 @model_call
 def call_model(system: str, user: str) -> dict:
     if MODEL_PROVIDER == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
 
-    # NHÓM VIẾT: gọi model thật ở đây (theo MODEL_PROVIDER, MODEL_NAME, API_KEY) rồi trả đúng 4 khoá.
-    # Ví dụ chép được cho từng nhà cung cấp: docs/connect-model.md mục 2.
+    if MODEL_PROVIDER == "bedrock":
+        r = call_bedrock(system, user)
+        return {"text": r["text"], "model": MODEL_NAME,
+                "tokens_in": int(r["tokens_in"]), "tokens_out": int(r["tokens_out"])}
+
     raise NotImplementedError(
         "chưa viết phần gọi model thật cho MODEL_PROVIDER=%s trong codebase/ai.py — xem docs/connect-model.md"
         % MODEL_PROVIDER)
