@@ -6,12 +6,12 @@ Sắp theo nguyên tắc pstack `sequence-verifiable-units`: mỗi đơn vị k�
 
 | # | Đơn vị | Kết thúc khi (kiểm được) | Hạn | Ai gợi ý |
 |---|---|---|---|---|
-| U1 | `data/places.csv` + `travel.csv` + `DATA_CARD.md` | 25–40 dòng, mỗi dòng có nguồn + ngày kiểm, có ca khó cố ý | Tối 27/11 | Đạt |
+| U1 | `data/places.csv` + `travel_override.csv` + `DATA_CARD.md` | 25–40 dòng, mỗi dòng có nguồn + ngày kiểm, có ca khó cố ý | Tối 27/11 | Đạt |
 | U2 | `verify()` + `cost()` + test | 10 kế hoạch viết tay: 5 hợp lệ, 5 mỗi cái một lỗi, `verify` báo đúng mã | Trước CP2 19:30 | Đức |
 | U3 | Khung `answer()` chạy bằng model giả | `python run.py eval --fake` chạy hết luồng, không lỗi | CP2 19:30 | Đức |
 | U4 | `eval/benchmark.csv` 10 câu + `metric_spec.yaml` + ngưỡng "đạt" chốt | `python run.py check` hết cảnh báo CP2 | CP2 19:30 | Quân |
-| U5 | `parse_request` + `shortlist` nối model thật | 10 câu cho ra `Constraints` đúng, hỏi lại đúng ca thiếu | Tối 27/11 | Đức |
-| U6 | `propose` + `repair` + `relax_options` | Lượt 1 chạy đủ bộ, ghi Run ID | Sáng 28/11 | Đức + Công |
+| U5 | `parse_request` (nối model thật, prompt) + `shortlist` | 10 câu cho ra `Constraints` đúng, hỏi lại đúng ca thiếu | Tối 27/11 | Công (parse), Đức (shortlist) |
+| U6 | `propose` + `repair` + `relax_options` | Lượt 1 chạy đủ bộ, ghi Run ID | Sáng 28/11 | Công (prompt `propose`, `repair`) + Đức (`relax_options`, luồng) |
 | U7 | `eval/grade.py` | Chạy trên `run-1.csv` ra cột `pass`, khớp với chấm tay 5 câu | Sáng 28/11 | Quân |
 | U8 | Bằng chứng pain: ≥3 phỏng vấn / ≥20 khảo sát + ≥5 trích dẫn | `evidence/summary.md` đạt ngưỡng | CP3 10:00 | Đạt, cả nhóm |
 | U9 | Video 30 giây AI thật | Mở được bằng tab ẩn danh | CP3 10:00 | Công |
@@ -20,7 +20,8 @@ Sắp theo nguyên tắc pstack `sequence-verifiable-units`: mỗi đơn vị k�
 | U12 | `demo-slides.pdf` + video dự phòng | Mở được ẩn danh | CP4 14:30 | Công, Đạt |
 
 ## Cải tiến Lượt 2: chọn theo ca trượt, không chọn trước
-Quyết định sau khi đọc các câu trượt của Lượt 1. Ba ứng viên, xếp theo khả năng ăn điểm:
+Quyết định sau khi đọc các câu trượt của Lượt 1. Bốn ứng viên, xếp theo khả năng ăn điểm (ứng viên 0 lấy từ mục A1 của `architecture-review.md`):
+0. **Chuyển việc xếp giờ từ model sang code** (`schedule()`): model chỉ chọn điểm và mức ưu tiên, code xếp thứ tự và tính giờ. Ít lần gọi model hơn, tái lập được. Lượt 1 chạy thiết kế gốc (model tự xếp giờ) để có mốc so sánh.
 1. **Đưa danh sách vi phạm cụ thể vào `repair`** (ví dụ "điểm 3 đóng cửa lúc 17:00, bạn đến 17:20"), thay vì chỉ nói "sai". Thường giảm số vòng sửa và chi phí.
 2. **Xếp hạng ứng viên theo `like` trước khi gửi model** (code), để model bớt sai cụm xa.
 3. **Cải thiện `relax_options`** để mọi ca bất khả thi nêu được cách nới có kiểm chứng.

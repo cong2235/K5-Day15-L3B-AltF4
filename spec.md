@@ -12,7 +12,7 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
 - Công cụ / AI đang dùng cho việc này: bản đồ, trang đánh giá địa điểm, các ứng dụng lập lịch trình, trợ lý AI chung. **[CHƯA KIỂM]**: mỗi người thử 10 phút một công cụ gần giống rồi ghi vào §3.
 
 ## §1. Người dùng & bằng chứng
-- Người dùng chính: nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), tự đi du lịch lần đầu đến Đà Nẵng, tự lên kế hoạch, tự trả tiền.
+- Người dùng chính: người lên lịch trong một nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), tự đi du lịch lần đầu đến Đà Nẵng, tự lên kế hoạch, tự trả tiền.
 - Việc họ cố làm xong: sắp xếp một ngày tham quan và ăn uống ở nơi lạ sao cho kịp giờ và vừa tiền.
 - Hôm nay họ giải bằng gì, hỏng ở đâu: **[CẦN BẰNG CHỨNG]** từ phỏng vấn / khảo sát.
 - Pain: nhóm bạn tự đi nơi lạ phải lục nhiều nguồn để chọn chỗ vừa ngân sách, không biết điểm nào gần nhau và giờ mở cửa ra sao, nên dễ xếp lịch lệch giờ, đi vòng, tốn hơn dự tính.
@@ -107,7 +107,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Bảng rút gọn:
 - Ai có thể bị hại nếu AI sai: nhóm đi mất tiền hoặc mất thời gian vì giờ mở cửa cũ. Chặn bằng ngày kiểm trong dữ liệu, `verify`, và lời nhắc xác nhận lại.
 
 ## §10. Phân công & changelog
-- Phân công: Công: kiến trúc, spec, nộp form, video · Đức: code `verify`, điều phối, nối model · Đạt: dữ liệu địa điểm, bằng chứng pain, phỏng vấn · Quân: bộ câu thử, metric, `grade.py`, chi phí. (Đổi chặng thì cập nhật ở đây.)
+- Phân công: Công: kiến trúc, spec, nộp form, video, nối model và prompt · Đức: code lõi không gọi model (`verify`, `cost`, `shortlist`, điều phối) · Đạt: dữ liệu địa điểm, bằng chứng pain, phỏng vấn · Quân: bộ câu thử, metric, `grade.py`, chi phí. (Đổi chặng thì cập nhật ở đây.)
 - Dùng AI vào việc gì: **[NHÓM ĐIỀN]**; chi tiết `docs/ai-usage.md`. Bản nháp `spec.md`, `docs/design.md`, `docs/roadmap.md` do AI soạn, nhóm duyệt.
 - Nhật ký thay đổi:
 

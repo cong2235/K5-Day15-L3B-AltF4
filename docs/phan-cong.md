@@ -6,7 +6,7 @@
 Lấy nguyên từ `docs/design.md`, không bàn lại:
 1. **Cột `data/places.csv`** = các trường của `Place` (§5). `open_windows` ghi dạng `07:00-11:00;13:30-21:00`, `closed_days` ghi `0;6`, `tags` ghi `bien;am_thuc`.
 2. **Kiểu dữ liệu** `Constraints`, `Stop`, `Plan`, `Violation` + 10 mã vi phạm (§5). Đức commit `codebase/domain.py` trong 30 phút đầu.
-3. **Khối JSON cuối `output`** (§8): `{"status":"plan|infeasible|ask_back|refuse","stops":[{"id","arrive","leave"}],"total_vnd":...}`.
+3. **Khối JSON cuối `output`** (§8): `{"status":"plan|infeasible|ask_back|refuse","stops":[{"id","arrive","leave"}],"total_vnd":...,"relax":[{"change":"budget_total=450000","stops":[...]}]}` (`relax` chỉ có khi `infeasible`, mảng rỗng ở các trạng thái khác; `eval/metric_spec.yaml` đọc trường này).
 4. **Chữ ký hàm** (§6): `parse_request`, `propose`, `repair`, `why` (AI) · `shortlist`, `verify`, `cost`, `relax_options`, `render`, `travel_min` (code).
 
 Đổi hợp đồng sau mốc này = báo cả nhóm trước, Công duyệt.
@@ -53,7 +53,7 @@ Lấy nguyên từ `docs/design.md`, không bàn lại:
 | Quân | `grade.py` chấm `run-1.csv`, kiểm tay 5 câu xem khớp không, `python run.py score` → x/N + Run ID gửi Công |
 
 ### Giai đoạn D · 10:00 → CP4 14:30 T7
-**10:15 – họp 15 phút:** Quân đọc to các câu trượt, cả nhóm chọn **đúng 1 cải tiến** (3 ứng viên ở `docs/roadmap.md`), Công quyết.
+**10:15 – họp 15 phút:** Quân đọc to các câu trượt, cả nhóm chọn **đúng 1 cải tiến** (các ứng viên ở `docs/roadmap.md`, gồm cả A1 của `docs/architecture-review.md`), Công quyết.
 
 | Người | Việc | Hạn |
 |---|---|---|

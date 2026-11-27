@@ -68,7 +68,7 @@ Các nhánh khác của `parse_request`:
 ### 2.4 Đầu ra cho grader
 Cuối `output` có một khối JSON:
 ```json
-{"status":"plan|infeasible|ask_back|refuse","stops":[{"id":"DN-014","arrive":"09:30","leave":"11:00"}],"total_vnd":0}
+{"status":"plan|infeasible|ask_back|refuse","stops":[{"id":"DN-014","arrive":"09:30","leave":"11:00"}],"total_vnd":0,"relax":[]}
 ```
 
 ### 2.5 Phân công
@@ -84,7 +84,7 @@ Công: kiến trúc, spec, nộp form, video · Đức: `verify`, điều phối
 | `codebase/agent.py` | ❌ Code mẫu của khung | Vẫn gọi `search_example`, `SYSTEM = ""` |
 | `codebase/tools.py` | ❌ Code mẫu | Chưa có `shortlist`, `get_place`, `travel_min`, `verify`, `relax_options` |
 | `codebase/ai.py` | ❌ Chưa nối model | Nhánh thật vẫn báo `NotImplementedError`, chỉ chạy được `fake` |
-| `data/places.csv`, `data/travel.csv` | ❌ Chưa có | `DATA_CARD.md` còn là template |
+| `data/places.csv`, `data/travel_override.csv` | ❌ Chưa có | `DATA_CARD.md` còn là template |
 | `eval/benchmark.csv` | ❌ 3 dòng mẫu | Cần ≥10 câu ở CP2, ≥20 ở CP4 |
 | `eval/metric_spec.yaml` | ⚠️ Có 4 metric đề xuất | **Chưa chốt.** Phải chốt trước 19:30 27/11 |
 | `eval/grade.py` | ❌ Chưa có | |
@@ -152,7 +152,7 @@ Tính từ tọa độ × hệ số đường vòng là chấp nhận được. 
 
 | # | Vấn đề | Sửa | Ảnh hưởng điểm |
 |---|---|---|---|
-| B1 | **Tiền đề chưa kiểm:** pain là lệch lịch/giờ/tiền, thiếu thông tin, hay không tin nguồn? | Phỏng vấn kiểu Mom Test, hỏi chuyện đã xảy ra trong 1 tháng qua. Đếm 3 loại than phiền. Kết quả quyết định giữ hay đổi trọng tâm (xem [07-phan-tich-de-tai-pstack.md](../../07-phan-tich-de-tai-pstack.md) mục 2) | R1 (14đ) + điều kiện cứng |
+| B1 | **Tiền đề chưa kiểm:** pain là lệch lịch/giờ/tiền, thiếu thông tin, hay không tin nguồn? | Phỏng vấn kiểu Mom Test, hỏi chuyện đã xảy ra trong 1 tháng qua. Đếm 3 loại than phiền. Kết quả quyết định giữ hay đổi trọng tâm (xem [07-phan-tich-de-tai-pstack.md](07-phan-tich-de-tai-pstack.md) mục 2) | R1 (14đ) + điều kiện cứng |
 | B2 | Persona "nhóm bạn 2–4 người" quá rộng. Thực tế thường có **một người lên kế hoạch** cho cả nhóm | Đổi người dùng chính thành "người lên lịch trong nhóm bạn". Hỏi họ mất bao lâu, bị cả nhóm phàn nàn chỗ nào | R1, R3 |
 | B3 | Chưa trả lời được "sao không dùng ChatGPT?" | Xem F1: cùng một yêu cầu, đếm vi phạm của AI chung so với AltF4, đo bằng `verify` | R3, R7 |
 | B4 | Bảng impact §2 trống | Số người × số lần/tháng × số phút lên kế hoạch, lấy từ khảo sát hoặc ghi *(tự ước tính)* | R2 (11đ) |

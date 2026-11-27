@@ -68,7 +68,7 @@ flowchart LR
         REP[repair]
         WH[why và diễn đạt]
     end
-    DATA[(data/places.csv<br/>data/travel.csv)] --> SL & VF & TM
+    DATA[(data/places.csv<br/>data/travel_override.csv)] --> SL & VF & TM
     PR --> PA --> SL --> PRO --> VF
     VF --> REP --> VF
     VF --> CS --> OUTB
@@ -171,7 +171,7 @@ class Violation:
 
 ## 7. Dữ liệu cần dựng (tối nay)
 
-`data/places.csv` (25–40 dòng) và `data/travel.csv`.
+`data/places.csv` (25–40 dòng) và `data/travel_override.csv` (chỉ vài cặp điểm cần ghi đè; còn lại `travel_min` tính từ tọa độ).
 - **Thành phần:** khoảng 15–20 điểm tham quan + 12–18 quán / cafe, trải đều 5 cụm.
 - **Mỗi dòng có nguồn và ngày kiểm.** Dùng thông tin công khai, nhập tay, không chép review (tối đa 2 câu theo luật data).
 - **Cố ý có chỗ khó** (nhãn `synthetic` trong DATA_CARD nếu tự đặt): điểm đóng cửa sớm, điểm nghỉ 1 ngày trong tuần, quán nghỉ trưa, 1 điểm rất đắt, 1 điểm rất xa (Bà Nà), 2 quán trùng một tag, 1 quán chỉ mở tối.
@@ -185,7 +185,7 @@ class Violation:
 2. Câu `tu_choi`: chấm bằng quy tắc (có từ chối + không có lịch).
 3. Chất lượng mềm (hợp sở thích): 3 bạn chấm 10 mẫu, thang 1–5, chỉ báo cáo, không chốt ngưỡng cứng.
 
-**Mẫu đầu ra** (để `grade.py` đọc được): cuối `output` có một khối ```json {"status":"plan|infeasible|ask_back|refuse","stops":[{"id":"DN-014","arrive":"09:30","leave":"11:00"}],"total_vnd":...}```.
+**Mẫu đầu ra** (để `grade.py` đọc được): cuối `output` có một khối ```json {"status":"plan|infeasible|ask_back|refuse","stops":[{"id":"DN-014","arrive":"09:30","leave":"11:00"}],"total_vnd":...,"relax":[{"change":"budget_total=450000","stops":[...]}]}``` (`relax` có khi `status=infeasible`, mỗi mục là một cách nới đã qua `verify`; các trạng thái khác để mảng rỗng).
 
 **Bộ câu thử (khung 10 câu cho CP2, mở rộng 20–30 câu ở CP3):**
 | Nhóm | Ví dụ | Loại |

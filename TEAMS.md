@@ -11,8 +11,8 @@
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Võ Trần Công | 2A202604026 | Đội trưởng | Điều phối, nộp Form 2, thiết kế kiến trúc AI và spec.md |
-| 2 | Trịnh Minh Đức | 2A202604078 | Thành viên | Code bản chạy thử, nối model thật và chặn rủi ro |
+| 1 | Võ Trần Công | 2A202604026 | Đội trưởng | Điều phối, nộp Form 2, kiến trúc AI, spec.md, nối model và prompt (ai.py) |
+| 2 | Trịnh Minh Đức | 2A202604078 | Thành viên | Code lõi không gọi model: domain, verify, tools, agent, app, test |
 | 3 | Hà Văn Khánh Đạt | 2A202604074 | Thành viên | Đào data và bằng chứng pain, phỏng vấn, bảng impact |
 | 4 | Phan Đào Minh Quân | 2A202603971 | Thành viên | Bộ câu thử, metric, báo cáo đánh giá, mô phỏng chi phí |
 
