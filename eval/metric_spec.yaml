@@ -1,5 +1,5 @@
 # Metric spec — "thế nào là tốt", đo bằng gì.
-# BẢN ĐỀ XUẤT. Quân trình, Công quyết ở buổi họp 18:45 Thứ Sáu 27/11. CHỐT TRƯỚC 19:30 (CP2), KHÔNG SỬA SAU.
+# ĐÃ CHỐT tại CP2 (Quân trình, Công quyết ở buổi họp 18:45 Thứ Sáu 27/11). KHÔNG SỬA SAU 19:30 Thứ Sáu 27/11.
 # Ngưỡng là (tự ước tính): chưa có lượt chạy nào khi chốt. Chuẩn "đạt" chép nguyên ở spec.md §7.
 # Kiểm: python run.py check
 
