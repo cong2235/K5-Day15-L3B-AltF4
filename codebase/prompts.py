@@ -124,6 +124,9 @@ Lý do luôn nói điểm đó mang lại gì cho nhóm, không bao giờ chê, 
 Không khen chung chung, không nêu thông tin không có trong dữ liệu được đưa."""
 
 
+# Không có câu này, model phân tích ra chữ trước rồi bị cắt ở max_tokens trước khi tới JSON (traces/run-try, 27/11).
+JSON_ONLY = " Trả lời ngay bằng object JSON {\"ids\": [...]}, không phân tích, không giải thích."
+
 # ---------------------------------------------------------------- gọi model
 
 def _json(text: str):
@@ -279,14 +282,14 @@ def propose(c: Constraints, cands: list[Place], previous: Plan | None = None):
     if previous is not None:
         user += ("\n\nLỊCH TRƯỚC KHI NGƯỜI DÙNG SỬA\n%s\nGiữ lại các điểm của lịch trước nếu chúng vẫn có trong danh sách "
                  "ứng viên và vẫn hợp yêu cầu, chỉ đổi phần cần đổi." % _plan_json(previous))
-    return _ask(SYSTEM_PLAN, user + "\n\nHãy xếp lịch.")
+    return _ask(SYSTEM_PLAN, user + "\n\nHãy chọn tập điểm." + JSON_ONLY)
 
 
 def repair(c: Constraints, cands: list[Place], ids: tuple[str, ...], problems: list[Violation]):
     errors = "\n".join("- %s: %s" % (v.code, v.detail) for v in problems)
     user = ("%s\n\nTẬP ĐIỂM BẠN CHỌN LẦN TRƯỚC\n%s\n\nCODE KHÔNG XẾP ĐƯỢC TẬP NÀY VÌ\n%s\n\n"
             "Hãy chọn lại tập điểm cho hết các lỗi trên: bỏ hoặc thay điểm (giữ điểm bắt buộc ghé)."
-            % (_context(c, cands), json.dumps({"ids": list(ids)}), errors))
+            % (_context(c, cands), json.dumps({"ids": list(ids)}), errors)) + JSON_ONLY
     return _ask(SYSTEM_PLAN, user)
 
 
