@@ -7,7 +7,8 @@ Lấy nguyên từ `docs/design.md`, không bàn lại:
 1. **Cột `data/places.csv`** = các trường của `Place` (§5). `open_windows` ghi dạng `07:00-11:00;13:30-21:00`, `closed_days` ghi `0;6`, `tags` ghi `bien;am_thuc`.
 2. **Kiểu dữ liệu** `Constraints`, `Stop`, `Plan`, `Violation` + 10 mã vi phạm (§5). Đức commit `codebase/domain.py` trong 30 phút đầu.
 3. **Khối JSON cuối `output`** (§8): `{"status":"plan|infeasible|ask_back|refuse","stops":[{"id","arrive","leave"}],"total_vnd":...,"relax":[{"change":"budget_total=450000","stops":[...]}]}` (`relax` chỉ có khi `infeasible`, mảng rỗng ở các trạng thái khác; `eval/metric_spec.yaml` đọc trường này).
-4. **Chữ ký hàm** (§6): `parse_request`, `propose`, `repair`, `why` (AI) · `shortlist`, `verify`, `cost`, `relax_options`, `render`, `travel_min` (code).
+4. **Chữ ký hàm** (§6): `parse_request`, `propose`, `repair`, `why` (AI) · `shortlist`, `verify`, `cost`, `relax_options`, `render`, `travel_min`, `transport_cost` (code).
+5. **Ngân sách gồm cả tiền di chuyển:** `cost(plan, c)` = vé + ăn + Σ `transport_cost`. Đạt thêm `data/transport_rates.csv` (đơn giá có nguồn); Đức cài `transport_cost` trong `verify.py`.
 
 Đổi hợp đồng sau mốc này = báo cả nhóm trước, Công duyệt.
 
@@ -17,7 +18,7 @@ Lấy nguyên từ `docs/design.md`, không bàn lại:
 |---|---|---|
 | **Công** (đội trưởng) | PM + phần AI của bản chạy thử | `codebase/ai.py`, `codebase/prompts.py` (mới), `spec.md` (§0, §3, §4, §6, §9, §10), `canvas.md`, `README.md`, `docs/ai-usage.md`, `slides/`, `demo-slides.pdf`, video |
 | **Đức** | Phần code chắc chắn (không gọi model) | `codebase/domain.py`, `codebase/verify.py`, `codebase/tools.py`, `codebase/agent.py`, `codebase/app.py`, `tests/` |
-| **Đạt** | Dữ liệu + bằng chứng pain | `data/places.csv`, `data/travel_override.csv`, `data/DATA_CARD.md`, `evidence/**`, `spec.md` §1–§2 |
+| **Đạt** | Dữ liệu + bằng chứng pain | `data/places.csv`, `data/travel_override.csv`, `data/transport_rates.csv`, `data/DATA_CARD.md`, `evidence/**`, `spec.md` §1–§2 |
 | **Quân** | Đo lường + chi phí | `eval/**` (benchmark, metric_spec, `grade.py`, report, README), `cost/**`, `spec.md` §5, §7, §8, `validation/log.md` |
 
 `spec.md` có nhiều chủ: mỗi người chỉ sửa mục của mình, `git pull` trước khi sửa, commit ngay sau khi sửa.

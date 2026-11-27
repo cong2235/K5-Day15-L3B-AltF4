@@ -47,6 +47,7 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
   | `shortlist` | Ràng buộc | ≤15 địa điểm | Không |
   | `get_place` | `place_id` | Dòng dữ liệu (giờ, giá, tag, nguồn) | Không |
   | `travel_min` | 2 `place_id` | Số phút di chuyển (ước tính) | Không |
+  | `transport_cost` | 2 `place_id`, phương tiện | Tiền đi lại (ước tính, đơn giá từ `data/transport_rates.csv`) | Không |
   | `verify` | Kế hoạch + ràng buộc | Danh sách vi phạm | Không |
   | `relax_options` | Ràng buộc | Cách nới đã kiểm | Không |
 
@@ -58,7 +59,7 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
   | Nguyên tắc | Chỗ cụ thể trên sơ đồ / trong bản chạy thử |
   |---|---|
   | G10 — thu hẹp phạm vi khi không chắc | Thiếu ngân sách / số người / giờ → hỏi 1 câu; không có lịch hợp lệ → "không xếp được" + cách nới, không đưa lịch gần đúng |
-  | Mỗi thứ một chủ | Tiền, giờ, quãng đường chỉ do code tính (`cost`, `verify`, `travel_min`); model chỉ chọn `id` và giờ |
+  | Mỗi thứ một chủ | Tiền (vé, ăn, di chuyển), giờ, quãng đường chỉ do code tính (`cost`, `verify`, `travel_min`, `transport_cost`); model chỉ chọn `id` và giờ |
   | Biên chặt, lõi tin kiểu | `parse_request` và JSON của `propose` được kiểm ở biên; trong lõi dùng `Place`, `Plan`, `Violation` có kiểu |
   | Giải thích được con số | Mỗi số trong đầu ra lần ngược được về dòng dữ liệu + ngày kiểm |
 

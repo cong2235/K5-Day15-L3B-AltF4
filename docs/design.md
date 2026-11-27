@@ -113,13 +113,14 @@ class Place:
 @dataclass(frozen=True)
 class Constraints:
     people: int
-    budget_total: int            # VND cho cả nhóm, riêng tiền ăn + vé (không gồm xe)
+    budget_total: int            # VND cho cả nhóm: vé + ăn + di chuyển giữa các điểm (không gồm chỗ ở)
     day: int                     # thứ trong tuần
     start: int                   # phút
     end: int
     like: tuple[str, ...]
     avoid: tuple[str, ...]       # tag cần tránh, ví dụ "hai_san"
     base_cluster: str            # nơi ở, đầu vào cố định
+    transport: str = "grab"      # "grab" (xe công nghệ, tính theo km) hoặc "xe_may" (thuê xe máy, tính theo ngày)
 
 @dataclass(frozen=True)
 class Stop:
@@ -150,6 +151,7 @@ class Violation:
 | `parse_request(text) -> Constraints \| AskBack \| OutOfScope` | AI + biên | Văn bản → ràng buộc có kiểu | Model trả JSON, code kiểm kiểu và miền giá trị. Thiếu ngân sách, số người hoặc khung giờ → `AskBack(câu hỏi)`. Không điền mặc định cho tiền |
 | `shortlist(c) -> list[Place]` | code | Ràng buộc → ≤15 ứng viên | Lọc: ngày đóng cửa, tag cần tránh, giá 1 điểm không quá ngân sách. Sắp theo khớp `like` |
 | `propose(c, cands) -> Plan` | AI | Ứng viên → danh sách `Stop` | Model chỉ chọn `id` và giờ đến. Mọi thứ khác là code |
+| `transport_cost(a, b, mode, people) -> int` | code, thuần | 2 điểm → tiền đi lại (VND) | Đơn giá lấy từ `data/transport_rates.csv` (ước tính, có nguồn và ngày kiểm). Km tính từ tọa độ × hệ số đường vòng, cùng nguồn với `travel_min`. `cost(plan, c)` = vé + ăn + Σ `transport_cost` |
 | `verify(plan, c) -> list[Violation]` | code, thuần | Kế hoạch → danh sách vi phạm | Xem bảng luật bên dưới |
 | `repair(plan, c, violations) -> Plan` | AI | Kèm danh sách lỗi cụ thể | Tối đa 3 vòng, ghi `note("dừng: …")` |
 | `relax_options(c) -> list[Relax]` | code | Ràng buộc → cách nới đã kiểm | Thử nâng ngân sách, kéo dài khung giờ, bỏ 1 tag; chỉ trả cách nới mà `verify` thật sự qua |
@@ -162,7 +164,7 @@ class Violation:
 | `UNKNOWN_PLACE` | `place_id` không có trong `places.csv` |
 | `CLOSED` | Khoảng `[arrive, leave]` không nằm trọn trong một `open_window`, hoặc ngày đóng cửa |
 | `OVERLAP` / `TRAVEL_GAP` | `arrive[i+1] < leave[i] + travel_min(i, i+1)` |
-| `OVER_BUDGET` | `Σ price × (people hoặc 1)` > `budget_total` |
+| `OVER_BUDGET` | `Σ price × (people hoặc 1) + Σ transport_cost` > `budget_total` |
 | `OUT_OF_WINDOW` | Có điểm ngoài `[start, end]` |
 | `NO_MEAL` | Khung giờ phủ trưa (11:00–14:00) hoặc tối (17:00–20:00) mà không có bữa ăn tương ứng |
 | `AVOID_TAG` | Có điểm mang tag trong `avoid` |
@@ -175,6 +177,7 @@ class Violation:
 - **Thành phần:** khoảng 15–20 điểm tham quan + 12–18 quán / cafe, trải đều 5 cụm.
 - **Mỗi dòng có nguồn và ngày kiểm.** Dùng thông tin công khai, nhập tay, không chép review (tối đa 2 câu theo luật data).
 - **Cố ý có chỗ khó** (nhãn `synthetic` trong DATA_CARD nếu tự đặt): điểm đóng cửa sớm, điểm nghỉ 1 ngày trong tuần, quán nghỉ trưa, 1 điểm rất đắt, 1 điểm rất xa (Bà Nà), 2 quán trùng một tag, 1 quán chỉ mở tối.
+- **`data/transport_rates.csv`** (2–3 dòng): `mode, base_vnd, per_km_vnd, per_day_vnd, source, checked_on`. Đơn giá phải lấy từ nguồn công khai, ghi **(tự ước tính)** trong DATA_CARD; không dùng làm bằng chứng pain.
 - **`travel_min`:** tính từ tọa độ với tốc độ ước tính (ví dụ 25 km/h đô thị, nhân hệ số đường vòng) và ghi rõ đây là **ước tính, không phải số đo thật**. Có bảng ghi đè cho vài cặp quan trọng.
 - **Không** coi dữ liệu này là bằng chứng pain.
 
