@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đà Nẵng — Núi, sông, biển và con người</title>
+  <meta name="description" content="Giới thiệu vẻ đẹp thiên nhiên, văn hóa và con người Đà Nẵng: biển Mỹ Khê, bán đảo Sơn Trà, Ngũ Hành Sơn, phố cổ Hội An, cầu Rồng và mì Quảng.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/hero-song-han.webp">
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip-link" href="#noi-dung">Bỏ qua, tới nội dung chính</a>
+
+<header class="site-header" data-header>
+  <div class="wrap site-header__inner">
+    <a class="brand" href="#dau-trang" aria-label="Đà Nẵng, về đầu trang">
+      <span class="brand__mark" aria-hidden="true"></span>Đà Nẵng
+    </a>
+    <nav class="nav" aria-label="Các phần của trang">
+      <ul>
+        <li><a href="#thien-nhien">Thiên nhiên</a></li>
+        <li><a href="#van-hoa">Văn hóa</a></li>
+        <li><a href="#ban-do">Bản đồ</a></li>
+        <li><a href="#con-nguoi">Con người</a></li>
+        <li><a href="#am-thuc">Ẩm thực</a></li>
+        <li><a href="#mot-ngay">Một ngày</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="dau-trang" data-hero aria-labelledby="hero-title">
+  <div class="hero__media" data-parallax>
+    <img src="assets/img/hero-song-han.webp" width="2400" height="1601" alt="Sông Hàn lúc hoàng hôn, cầu Rồng vàng óng nối hai bờ thành phố" fetchpriority="high">
+  </div>
+  <div class="hero__shade" aria-hidden="true"></div>
+  <div class="wrap hero__content">
+    <p class="hero__eyebrow">Miền Trung · Việt Nam</p>
+    <h1 class="hero__title" id="hero-title">Đà Nẵng</h1>
+    <p class="hero__lede">Nơi núi đi ra tận biển, sông Hàn chảy giữa lòng phố, và mỗi ngày bắt đầu khi thúng chai về bờ.</p>
+  </div>
+  <p class="hero__credit">Sông Hàn lúc hoàng hôn · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Da_Nang,_Vietnam.jpg">Quangpraha</a> / Wikimedia Commons · CC0</p>
+</section>
+
+<main id="noi-dung">
+
+  <!-- GIỚI THIỆU -->
+  <section class="intro" aria-label="Giới thiệu">
+    <div class="wrap intro__grid">
+      <p class="intro__lead" data-reveal>Phía bắc là đèo Hải Vân. Phía đông là biển. Ở giữa, sông Hàn chia thành phố làm hai bờ, và những cây cầu nối chúng lại.</p>
+      <ul class="triad" data-stagger>
+        <li data-reveal><span class="triad__word">Núi</span><p>Sơn Trà, Ngũ Hành Sơn, Bà Nà, Hải Vân. Đứng trên bãi biển, quay lại vẫn thấy núi.</p></li>
+        <li data-reveal><span class="triad__word">Sông</span><p>Sông Hàn chảy qua trung tâm rồi đổ ra vịnh. Đêm xuống, các cây cầu lần lượt lên đèn.</p></li>
+        <li data-reveal><span class="triad__word">Biển</span><p>Bờ cát dài, thoải, chạy từ chân Sơn Trà về phía nam, qua Mỹ Khê tới Non Nước.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- THIÊN NHIÊN -->
+  <section class="section" id="thien-nhien" aria-labelledby="nature-title">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <div>
+          <p class="kicker">01 · Thiên nhiên</p>
+          <h2 id="nature-title">Núi đi ra biển</h2>
+        </div>
+        <p class="section-head__lede">Từ trung tâm, đi không xa là tới rừng, tới đỉnh núi trong mây hay hang đá. Phần lớn thời gian còn lại, bạn sẽ ở gần biển.</p>
+      </header>
+
+      <div class="bento" data-stagger>
+        <article class="tile tile--lg" data-reveal>
+          <img src="assets/img/my-khe.webp" width="1600" height="744" loading="lazy" alt="Bãi biển Mỹ Khê trải dài, phía xa là các tòa nhà ven biển và bán đảo Sơn Trà">
+          <div class="tile__body">
+            <p class="tile__tag">Biển</p>
+            <h3><a class="tile__link" href="dia-diem.html?id=my-khe">Mỹ Khê</a></h3>
+            <p>Bờ cát dài ngay sát thành phố. Sáng sớm là lúc người dân xuống tắm biển và ngư dân kéo thúng chai lên bờ.</p>
+          </div>
+          <p class="tile__credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:My_Khe_Beach_5.jpg">Christophe95</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+        </article>
+
+        <article class="tile" data-reveal>
+          <img src="assets/img/son-tra.webp" width="1200" height="900" loading="lazy" alt="Một vịnh nhỏ nước xanh dưới chân những ngọn đồi phủ rừng ở bán đảo Sơn Trà">
+          <div class="tile__body">
+            <p class="tile__tag">Rừng</p>
+            <h3><a class="tile__link" href="dia-diem.html?id=son-tra">Bán đảo Sơn Trà</a></h3>
+            <p>Khối núi phủ rừng che chắn cho vịnh, nhà của loài voọc chà vá chân nâu.</p>
+          </div>
+          <p class="tile__credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Son_Tra_Peninsula.jpg">Christophe95</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+        </article>
+
+        <article class="tile" data-reveal>
+          <img src="assets/img/ngu-hanh-son.webp" width="1600" height="809" loading="lazy" alt="Nhìn từ trên Ngũ Hành Sơn xuống, các ngọn núi đá nhô lên giữa phố xá">
+          <div class="tile__body">
+            <p class="tile__tag">Đá</p>
+            <h3><a class="tile__link" href="dia-diem.html?id=ngu-hanh-son">Ngũ Hành Sơn</a></h3>
+            <p>Năm ngọn núi đá Kim, Mộc, Thủy, Hỏa, Thổ, trong lòng có hang động và chùa.</p>
+          </div>
+          <p class="tile__credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Da_Nang_Marble_Mountains_2020_IMG_4008.jpg">Kuroczynski</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+        </article>
+
+        <article class="tile" data-reveal>
+          <img src="assets/img/hai-van.webp" width="1200" height="800" loading="lazy" alt="Sườn núi xanh đổ xuống biển, mây mù phủ dãy núi phía xa trên đèo Hải Vân">
+          <div class="tile__body">
+            <p class="tile__tag">Mây</p>
+            <h3><a class="tile__link" href="dia-diem.html?id=hai-van">Đèo Hải Vân</a></h3>
+            <p>Con đèo men sườn núi sát biển, giữa Đà Nẵng và Huế. "Hải Vân" là biển và mây.</p>
+          </div>
+          <p class="tile__credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Hai_Van_Pass,_Vietnam,_View_southwards.jpg">Vyacheslav Argenberg</a> · <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a></p>
+        </article>
+
+        <article class="tile" data-reveal>
+          <img src="assets/img/ba-na.webp" width="1600" height="1067" loading="lazy" alt="Cầu Vàng được đỡ bởi hai bàn tay đá khổng lồ, phía sau là biển mây trắng">
+          <div class="tile__body">
+            <p class="tile__tag">Đỉnh</p>
+            <h3><a class="tile__link" href="dia-diem.html?id=ba-na">Bà Nà</a></h3>
+            <p>Đỉnh núi phía tây thành phố, mát hơn hẳn dưới phố. Lên bằng cáp treo xuyên mây.</p>
+          </div>
+          <p class="tile__credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Golden_Bridge_above_the_clouds_Ba_Na_Hills_Da_Nang_Vietnam.jpg">Vivu Vietnam</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- VĂN HÓA -->
+  <section class="section section--dark" id="van-hoa" aria-labelledby="culture-title">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <div>
+          <p class="kicker">02 · Văn hóa</p>
+          <h2 id="culture-title">Những lớp thời gian</h2>
+        </div>
+        <p class="section-head__lede">Phố buôn cổ, điêu khắc Chămpa, chùa bên biển, cây cầu hiện đại. Đà Nẵng và vùng lân cận giữ nhiều lớp lịch sử chồng lên nhau.</p>
+      </header>
+
+      <div class="culture" data-gallery>
+        <article class="lead-story" data-reveal>
+          <figure>
+            <div class="lead-story__media"><img data-lightbox src="assets/img/hoi-an-den-long.webp" width="1600" height="1200" loading="lazy" alt="Phố cổ Hội An lúc chạng vạng, đèn lồng nhiều màu treo kín trên đầu người đi bộ"></div>
+            <figcaption class="credit">Phố cổ Hội An lúc lên đèn · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Lanterns_in_Hoi_An_3.jpg">Christophe95</a> / Wikimedia Commons · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></figcaption>
+          </figure>
+          <p class="kicker">Di sản</p>
+          <h3><a class="story__link" href="dia-diem.html?id=hoi-an">Phố cổ Hội An</a></h3>
+          <p>Từng là một thương cảng sầm uất, Hội An còn giữ những dãy nhà gỗ, hội quán và Chùa Cầu. Phố cổ được UNESCO ghi danh là Di sản Thế giới năm 1999. Khi trời tối, đèn lồng thắp sáng khắp các con phố.</p>
+        </article>
+
+        <div class="story-list" data-stagger>
+          <article class="story" data-reveal>
+            <div class="story__media"><img data-lightbox src="assets/img/cham.webp" width="1600" height="1067" loading="lazy" alt="Bệ thờ bằng đá sa thạch chạm khắc tinh xảo, phía trên là các pho tượng, trưng bày trong bảo tàng"></div>
+            <div>
+              <p class="kicker">Chămpa</p>
+              <h3><a class="story__link" href="dia-diem.html?id=cham">Bảo tàng Điêu khắc Chăm</a></h3>
+              <p>Bên bờ sông Hàn, bảo tàng lưu giữ tượng thần, phù điêu, bệ thờ bằng đá sa thạch của vương quốc Chămpa xưa. Bệ thờ trong ảnh mang từ khu đền tháp Mỹ Sơn về.</p>
+              <p class="credit">Bệ thờ Mỹ Sơn E1 · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Pedestal,_My_Son_E1,_view_1,_7th_century,_Quang_Nam_-_Museum_of_Cham_Sculpture_-_Danang,_Vietnam_-_DSC01700.JPG">Daderot</a> · CC0</p>
+            </div>
+          </article>
+          <article class="story" data-reveal>
+            <div class="story__media"><img data-lightbox src="assets/img/linh-ung.webp" width="1200" height="895" loading="lazy" alt="Cổng tam quan chùa Linh Ứng mái cong, hoa văn rồng phượng, nổi bật trên nền trời xanh"></div>
+            <div>
+              <p class="kicker">Tâm linh</p>
+              <h3><a class="story__link" href="dia-diem.html?id=linh-ung">Chùa Linh Ứng</a></h3>
+              <p>Ngôi chùa trên sườn bán đảo Sơn Trà, nhìn thẳng ra vịnh. Pho tượng Quan Âm màu trắng của chùa nhìn thấy được từ nhiều nơi dọc bờ biển.</p>
+              <p class="credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Son-Tra-Peninsula_Da-Nang_Vietnam_Linh-Ung-Pagoda-01.jpg">CEphoto, Uwe Aranas</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0">CC BY-SA 3.0</a></p>
+            </div>
+          </article>
+          <article class="story" data-reveal>
+            <div class="story__media"><img data-lightbox src="assets/img/cau-rong.webp" width="1600" height="900" loading="lazy" alt="Cầu Rồng về đêm, thân rồng phát sáng vàng rực in bóng xuống mặt sông"></div>
+            <div>
+              <p class="kicker">Hiện đại</p>
+              <h3><a class="story__link" href="dia-diem.html?id=cau-rong">Cầu Rồng và sông Hàn</a></h3>
+              <p>Cây cầu hình con rồng uốn mình qua sông Hàn. Vào một số tối cuối tuần, đầu rồng phun lửa và phun nước. Nên xem lịch trước khi đi.</p>
+              <p class="credit">Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Da_Nang_Dragon_Bridge_(II).jpg">Supanut Arunoprayote</a> · <a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a></p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BẢN ĐỒ -->
+  <section class="section" id="ban-do" aria-labelledby="map-title">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <div>
+          <p class="kicker">03 · Bản đồ</p>
+          <h2 id="map-title">Mọi điểm đến trên một bản đồ</h2>
+        </div>
+        <p class="section-head__lede">Chín điểm đến trong trang, từ đèo Hải Vân ở phía bắc tới phố cổ Hội An ở phía nam. Chọn một điểm để xem vị trí, rồi mở trang chi tiết.</p>
+      </header>
+      <div class="atlas">
+        <ol class="atlas__list" data-atlas-list aria-label="Danh sách điểm đến"></ol>
+        <div class="atlas__map" data-atlas-map role="region" aria-label="Bản đồ các điểm đến"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CON NGƯỜI -->
+  <section class="section section--sand" id="con-nguoi" aria-labelledby="people-title">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <div>
+          <p class="kicker">04 · Con người</p>
+          <h2 id="people-title">Một ngày bắt đầu từ biển</h2>
+        </div>
+        <p class="section-head__lede">Người Đà Nẵng nói giọng Quảng, thẳng và ấm. Trước khi phố thức dậy, nhiều người đã làm xong một phần ngày của mình.</p>
+      </header>
+
+      <div class="people" data-gallery>
+        <figure class="people__feature" data-reveal>
+          <div class="people__frame"><img data-lightbox src="assets/img/thung-chai.webp" width="1600" height="1069" loading="lazy" alt="Một người đội nón ngồi trong chiếc thúng chai đan tre, len giữa những tàu lá dừa nước"></div>
+          <figcaption class="credit">Thúng chai giữa rặng dừa ven nước · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Basket_Boat_and_the_Bamboo_forest_(Unsplash).jpg">Chester Ho</a> / Unsplash, qua Wikimedia Commons · CC0</figcaption>
+        </figure>
+
+        <div class="people__text" data-reveal>
+          <p class="kicker">Nghề biển</p>
+          <h3>Ngư dân và thúng chai</h3>
+          <p class="dropcap">Thúng chai là chiếc thuyền tròn đan bằng tre, trét kín cho khỏi thấm nước. Ở các bãi biển Đà Nẵng, bạn vẫn thấy ngư dân chèo thúng ra khơi, quăng lưới rồi mang mẻ cá vào bờ khi trời vừa sáng.</p>
+          <blockquote class="people__note">Đến Đà Nẵng, hãy dậy sớm một hôm. Thành phố đẹp nhất vào lúc người ta bắt đầu làm việc.</blockquote>
+        </div>
+
+        <figure class="people__small" data-reveal>
+          <div class="people__thumb"><img data-lightbox src="assets/img/ngu-dan.webp" width="1200" height="900" loading="lazy" alt="Ngư dân phân loại cá và vá lưới dưới mái bạt trên bãi cát, xa xa là các tòa nhà ven biển"></div>
+          <figcaption><strong>Bãi cá buổi sáng</strong><span>Thuyền vừa cập bờ, cá được chia ngay trên cát cho những người buôn đang chờ.</span>
+            <span class="credit">Ngư dân trên bãi Mỹ Khê · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Fishermen_on_My_Khe_Beach.jpg">Christophe95</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></span></figcaption>
+        </figure>
+        <figure class="people__small" data-reveal>
+          <div class="people__thumb"><img data-lightbox src="assets/img/thung-chai-bai.webp" width="1200" height="801" loading="lazy" alt="Ba chiếc thúng chai nằm nghỉ trên bãi cát, sóng trắng phía sau"></div>
+          <figcaption><strong>Nghỉ sau chuyến biển</strong><span>Xong buổi, thúng được kéo lên cát, úp nắng chờ con nước sau.</span>
+            <span class="credit">Thúng chai trên bãi Non Nước · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Non_nuoc_Basket_boats.jpg">Vyacheslav Argenberg</a> · <a href="https://creativecommons.org/licenses/by/2.0">CC BY 2.0</a></span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ẨM THỰC -->
+  <section class="section" id="am-thuc" aria-labelledby="food-title">
+    <div class="wrap food">
+      <figure class="food__media" data-reveal>
+        <div class="food__arch"><img data-lightbox src="assets/img/mi-quang.webp" width="1200" height="900" loading="lazy" alt="Tô mì Quảng với sợi mì vàng, tôm, thịt, rau sống và bánh tráng mè đặt trong tô sứ hoa xanh"></div>
+        <figcaption class="credit">Mì Quảng ở Đà Nẵng · Ảnh: <a href="https://commons.wikimedia.org/wiki/File:Mi_Quang_1A_Danang.jpg">Jpatokal</a> / Wikimedia Commons · <a href="https://creativecommons.org/licenses/by-sa/4.0">CC BY-SA 4.0</a></figcaption>
+      </figure>
+      <div class="food__menu">
+        <header class="section-head section-head--stack" data-reveal>
+          <p class="kicker">05 · Ẩm thực</p>
+          <h2 id="food-title">Ăn như người Quảng</h2>
+          <p class="section-head__lede">Món ăn ở đây đậm vị, ăn kèm thật nhiều rau sống. Năm món dưới đây là điểm khởi đầu tốt.</p>
+        </header>
+        <dl class="menu" data-stagger>
+          <div class="menu__item" data-reveal>
+            <dt><span>Mì Quảng</span><i aria-hidden="true"></i><em>Sáng hoặc trưa</em></dt>
+            <dd>Sợi mì to bản, nước dùng ít và đậm, thêm tôm, thịt, trứng cút, đậu phộng rang và bánh tráng mè bẻ vụn.</dd>
+          </div>
+          <div class="menu__item" data-reveal>
+            <dt><span>Bánh tráng cuốn thịt heo</span><i aria-hidden="true"></i><em>Trưa</em></dt>
+            <dd>Thịt heo luộc thái mỏng, cuốn cùng rau sống trong bánh tráng, chấm mắm nêm.</dd>
+          </div>
+          <div class="menu__item" data-reveal>
+            <dt><span>Bún chả cá</span><i aria-hidden="true"></i><em>Sáng</em></dt>
+            <dd>Chả cá thái miếng trong tô nước dùng thanh, ăn kèm rau sống và ớt.</dd>
+          </div>
+          <div class="menu__item" data-reveal>
+            <dt><span>Cao lầu</span><i aria-hidden="true"></i><em>Ở Hội An</em></dt>
+            <dd>Món mì riêng của Hội An: sợi vàng và dai, ăn với thịt xá xíu, rau sống và tóp mỡ giòn.</dd>
+          </div>
+          <div class="menu__item" data-reveal>
+            <dt><span>Bánh xèo</span><i aria-hidden="true"></i><em>Chiều tối</em></dt>
+            <dd>Bánh nhỏ, vỏ giòn, cuốn với rau sống rồi chấm nước lèo.</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- MỘT NGÀY -->
+  <section class="section section--sea" id="mot-ngay" aria-labelledby="day-title">
+    <div class="wrap">
+      <header class="section-head" data-reveal>
+        <div>
+          <p class="kicker">06 · Gợi ý</p>
+          <h2 id="day-title">Một ngày ở Đà Nẵng</h2>
+        </div>
+        <p class="section-head__lede">Sáu điểm dừng, từ bình minh tới lúc phố lên đèn. Đây là gợi ý tham khảo. Giờ mở cửa, giá vé và lịch sự kiện cần kiểm lại trước khi đi.</p>
+      </header>
+
+      <div class="day">
+        <div class="day__stage" aria-hidden="true">
+          <img class="is-active" data-stop-img="1" src="assets/img/thung-chai-bai.webp" alt="" loading="lazy">
+          <img data-stop-img="2" src="assets/img/mot-ngay-son-tra.webp" alt="" loading="lazy">
+          <img data-stop-img="3" src="assets/img/mot-ngay-mi-quang.webp" alt="" loading="lazy">
+          <img data-stop-img="4" src="assets/img/mot-ngay-ngu-hanh-son.webp" alt="" loading="lazy">
+          <img data-stop-img="5" src="assets/img/mot-ngay-hoi-an.webp" alt="" loading="lazy">
+          <img data-stop-img="6" src="assets/img/mot-ngay-song-han.webp" alt="" loading="lazy">
+          <p class="day__stage-label" data-stage-label>Bình minh trên biển</p>
+        </div>
+
+        <ol class="stops">
+          <li class="stop is-active" data-stop="1" tabindex="0"><time>05:30</time><div><h3>Bình minh trên biển</h3><p>Xem thúng chai về bờ, tắm biển khi nắng còn nhẹ.</p></div></li>
+          <li class="stop" data-stop="2" tabindex="0"><time>08:00</time><div><h3>Bán đảo Sơn Trà</h3><p>Lên chùa Linh Ứng, theo đường ven núi nhìn xuống vịnh.</p></div></li>
+          <li class="stop" data-stop="3" tabindex="0"><time>11:30</time><div><h3>Mì Quảng ở trung tâm</h3><p>Nghỉ trưa với một tô mì Quảng gần sông Hàn.</p></div></li>
+          <li class="stop" data-stop="4" tabindex="0"><time>14:00</time><div><h3>Ngũ Hành Sơn</h3><p>Leo bậc đá, vào hang, ghé làng đá Non Nước dưới chân núi.</p></div></li>
+          <li class="stop" data-stop="5" tabindex="0"><time>16:30</time><div><h3>Phố cổ Hội An</h3><p>Đi bộ qua Chùa Cầu và các dãy nhà cổ, ở lại tới khi đèn lồng sáng.</p></div></li>
+          <li class="stop" data-stop="6" tabindex="0"><time>20:30</time><div><h3>Sông Hàn về đêm</h3><p>Về lại trung tâm, dạo bờ sông khi các cây cầu lên đèn.</p></div></li>
+        </ol>
+      </div>
+      <p class="day__credits credit">Ảnh trong phần này: Vyacheslav Argenberg (CC BY 2.0), Christophe95 (CC BY-SA 4.0), Christopher Crouzet (CC BY-SA 4.0), Andre Hospers (CC BY 4.0), Steffen Schmitz (CC BY-SA 4.0), qua Wikimedia Commons. Xem <a href="content/credits.md">danh sách đầy đủ</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <p class="site-footer__word">Đà Nẵng</p>
+        <p>Núi, sông, biển và con người.</p>
+      </div>
+      <nav class="site-footer__nav" aria-label="Liên kết cuối trang">
+        <a href="#thien-nhien">Thiên nhiên</a><a href="#van-hoa">Văn hóa</a><a href="#ban-do">Bản đồ</a><a href="#con-nguoi">Con người</a><a href="#am-thuc">Ẩm thực</a><a href="#mot-ngay">Một ngày</a>
+      </nav>
+    </div>
+    <div class="site-footer__cols">
+      <div>
+        <h2>Về trang này</h2>
+        <p>Website giới thiệu thiên nhiên, văn hóa và con người Đà Nẵng. Nhóm AltF4, lớp L3B, chương trình AI20K.</p>
+      </div>
+      <div>
+        <h2>Hình ảnh</h2>
+        <p>Toàn bộ ảnh lấy từ Wikimedia Commons theo giấy phép Creative Commons hoặc CC0, có ghi tên tác giả. <a href="content/credits.md">Danh sách ảnh và giấy phép</a>.</p>
+      </div>
+      <div>
+        <h2>Bản đồ và nguồn</h2>
+        <p>Nền bản đồ © OpenStreetMap. Tọa độ và thông tin được ghi nguồn tại <a href="content/sources.md">danh sách nguồn</a>.</p>
+      </div>
+    </div>
+    <p class="site-footer__bottom"><span>© 2026 Nhóm AltF4</span><a href="#dau-trang">Về đầu trang ↑</a></p>
+  </div>
+</footer>
+
+<script src="assets/vendor/leaflet/leaflet.js" defer></script>
+<script src="assets/js/places.js" defer></script>
+<script src="assets/js/map.js" defer></script>
+<script src="assets/js/lightbox.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

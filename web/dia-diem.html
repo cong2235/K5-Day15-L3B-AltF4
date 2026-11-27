@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Điểm đến — Đà Nẵng</title>
+  <meta name="description" content="Điểm đến ở Đà Nẵng.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip-link" href="#noi-dung">Bỏ qua, tới nội dung chính</a>
+
+<header class="site-header" data-header>
+  <div class="wrap site-header__inner">
+    <a class="brand" href="index.html" aria-label="Đà Nẵng, về trang chủ">
+      <span class="brand__mark" aria-hidden="true"></span>Đà Nẵng
+    </a>
+    <nav class="nav" aria-label="Các phần của trang chủ">
+      <ul>
+        <li><a href="index.html#thien-nhien">Thiên nhiên</a></li>
+        <li><a href="index.html#van-hoa">Văn hóa</a></li>
+        <li><a href="index.html#ban-do">Bản đồ</a></li>
+        <li><a href="index.html#con-nguoi">Con người</a></li>
+        <li><a href="index.html#am-thuc">Ẩm thực</a></li>
+        <li><a href="index.html#mot-ngay">Một ngày</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div data-place-root>
+  <section class="hero hero--page" data-hero aria-labelledby="place-title">
+    <div class="hero__media" data-parallax><img data-hero-img src="" alt="" width="1600" height="1000"></div>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="wrap hero__content hero__content--page">
+      <nav class="crumbs" aria-label="Đường dẫn" data-crumbs></nav>
+      <p class="hero__eyebrow" data-eyebrow></p>
+      <h1 class="hero__title hero__title--page" id="place-title" data-name></h1>
+      <p class="hero__lede" data-lead></p>
+    </div>
+    <p class="hero__credit" data-hero-credit></p>
+  </section>
+
+  <main id="noi-dung">
+    <section class="section">
+      <div class="wrap place">
+        <article class="place__main">
+          <div class="place__body" data-body></div>
+          <h2 class="place__h">Nên làm gì</h2>
+          <ol class="todo" data-todo></ol>
+          <aside class="tip">
+            <p class="kicker">Lưu ý</p>
+            <p data-tip></p>
+          </aside>
+        </article>
+        <aside class="place__aside" aria-label="Vị trí">
+          <div class="place__map" data-place-map role="region" aria-label="Bản đồ vị trí"></div>
+          <dl class="facts" data-facts></dl>
+          <a class="btn" data-osm href="#">Mở trên OpenStreetMap ↗</a>
+          <a class="btn btn--ghost" href="index.html#ban-do">Xem tất cả trên bản đồ</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section section--sand" aria-labelledby="gallery-title">
+      <div class="wrap">
+        <header class="section-head">
+          <div>
+            <p class="kicker">Hình ảnh</p>
+            <h2 id="gallery-title">Bộ ảnh</h2>
+          </div>
+          <p class="section-head__lede" data-photo-count></p>
+        </header>
+        <div class="gallery" data-gallery></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-title">
+      <div class="wrap">
+        <header class="section-head">
+          <div>
+            <p class="kicker">Đi tiếp</p>
+            <h2 id="related-title">Có thể bạn cũng thích</h2>
+          </div>
+        </header>
+        <div class="related" data-related></div>
+        <nav class="pager" aria-label="Điểm đến trước và sau" data-pager></nav>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <p class="site-footer__word">Đà Nẵng</p>
+        <p>Núi, sông, biển và con người.</p>
+      </div>
+      <nav class="site-footer__nav" aria-label="Liên kết cuối trang">
+        <a href="index.html#thien-nhien">Thiên nhiên</a><a href="index.html#van-hoa">Văn hóa</a><a href="index.html#ban-do">Bản đồ</a><a href="index.html#con-nguoi">Con người</a><a href="index.html#am-thuc">Ẩm thực</a><a href="index.html#mot-ngay">Một ngày</a>
+      </nav>
+    </div>
+    <div class="site-footer__cols">
+      <div>
+        <h2>Về trang này</h2>
+        <p>Website giới thiệu thiên nhiên, văn hóa và con người Đà Nẵng. Nhóm AltF4, lớp L3B, chương trình AI20K.</p>
+      </div>
+      <div>
+        <h2>Hình ảnh</h2>
+        <p>Toàn bộ ảnh lấy từ Wikimedia Commons theo giấy phép Creative Commons hoặc CC0, có ghi tên tác giả. <a href="content/credits.md">Danh sách ảnh và giấy phép</a>.</p>
+      </div>
+      <div>
+        <h2>Bản đồ và nguồn</h2>
+        <p>Nền bản đồ © OpenStreetMap. Tọa độ và thông tin được ghi nguồn tại <a href="content/sources.md">danh sách nguồn</a>.</p>
+      </div>
+    </div>
+    <p class="site-footer__bottom"><span>© 2026 Nhóm AltF4</span><a href="index.html">← Về trang chủ</a></p>
+  </div>
+</footer>
+
+<script src="assets/vendor/leaflet/leaflet.js" defer></script>
+<script src="assets/js/places.js" defer></script>
+<script src="assets/js/place.js" defer></script>
+<script src="assets/js/map.js" defer></script>
+<script src="assets/js/lightbox.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
