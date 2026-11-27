@@ -2,6 +2,21 @@
 
 Trang tiếng Việt cho màn máy tính, giới thiệu thiên nhiên, văn hóa và con người Đà Nẵng. Đây là phần riêng của repo, không liên quan tới code agent trong `codebase/`.
 
+## Trợ lý xếp lịch (chat AI)
+
+Nút "Trợ lý xếp lịch" ở góc phải dưới mỗi trang mở khung chat. Khung chat gửi câu hỏi tới `POST /api/chat`, máy chủ gọi `codebase/agent.answer()`. Mọi giờ, giá, tổng tiền do code tính và kiểm; trang chỉ hiển thị lại.
+
+```
+python web/server.py          # http://localhost:8000 — phục vụ web/ và /api/chat
+```
+
+- Model lấy theo `.env` như bản chạy thử. Khoá chỉ nằm ở máy chủ, trình duyệt không thấy.
+- Link mở sẵn trợ lý: `/#tro-ly`. Link mở và gửi luôn một câu: `/?hoi=<câu đã mã hoá URL>` (tiện quay video demo).
+- **Nhớ lịch để sửa tiếp:** máy chủ giữ yêu cầu và lịch gần nhất theo mã phiên (trong bộ nhớ, tắt máy chủ là mất). Tin nhắn sau được hiểu là sửa trên đó: "bỏ Chợ Hàn", "thêm chùa Linh Ứng", "tăng ngân sách lên 1 triệu", "về muộn hơn tới 22h". Lịch cũ được đưa cho model làm gợi ý để giữ các điểm vẫn hợp; điểm đã bỏ không được xếp lại (`verify` chặn).
+- Trợ lý hỏi lại (thiếu ngân sách, số người, giờ) thì câu trả lời bổ sung được ghép với câu trước. Bị từ chối (vd nhờ đặt vé) thì lịch cũ vẫn được giữ.
+- Nút "Lịch mới", form điền nhanh và tải lại trang đều bắt đầu một phiên mới.
+- **Đừng mở trang bằng `python -m http.server`** khi cần trợ lý: máy chủ đó chỉ phục vụ file tĩnh, không nhận `/api/chat`.
+
 ## Mở trang
 
 Nên chạy qua một máy chủ nhỏ, vì nền bản đồ OpenStreetMap có thể từ chối khi trang mở thẳng từ file:
