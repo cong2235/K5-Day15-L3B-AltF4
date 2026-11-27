@@ -6,7 +6,7 @@
 
 - Tên nhóm: AltF4
 - Lớp: L3B
-- Track: A
+- Track: C
 - Link repo: https://github.com/cong2235/K5-Day15-L3B-AltF4
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
