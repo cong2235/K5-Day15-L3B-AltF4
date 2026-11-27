@@ -1,0 +1,3 @@
+mode,base_vnd,per_km_vnd,per_day_vnd,source,checked_on
+grab,10000,6000,0,synthetic: số giả cho test,2026-11-27
+xe_may,0,0,120000,synthetic: số giả cho test,2026-11-27

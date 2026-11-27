@@ -148,7 +148,7 @@ Vì phần khó đo đều là xác định, bài **không cần Agent**. Workfl
 - **Sai kiểu nào tệ hơn?**
   - **Đưa lịch sai mà trông như đúng** (dương tính giả về khả thi) tệ hơn nhiều so với **nói "không xếp được" khi thật ra xếp được** (âm tính giả).
   - Vì vậy thiết kế nghiêng về phía chặt: `verify` là cổng bắt buộc, metric `khong_vi_pham_cung` và `khong_bia_dia_diem` là ràng buộc cứng.
-  - Âm tính giả được đo riêng (ca `thuong` mà output là `infeasible`), để sản phẩm không "từ chối cho an toàn".
+  - Âm tính giả cũng bị chặn: mỗi câu thử ghi status được chấp nhận ở đầu `pass_criterion`. Câu xếp được mà output trả `infeasible` hay `ask_back` thì trượt metric `khong_vi_pham_cung`, để sản phẩm không "từ chối cho an toàn".
 
 ---
 
@@ -255,11 +255,13 @@ Xếp theo thứ tự kiểm: quan trọng cao, bằng chứng thấp thì kiể
 |---|---|
 | Điểm ở đủ 5 cụm: Mỹ Khê – Ngũ Hành Sơn, Sơn Trà, trung tâm, Bà Nà (cụm xa), Hội An (cụm xa, thuộc phạm vi) | T01–T09, K01, K10, K11 |
 | Bảo tàng Điêu khắc Chăm có giờ mở và ngày nghỉ **theo nguồn chính thức** | K06 |
-| Quán có tag `chay`, quán có tag `hai_san`; ≥2 lựa chọn ăn không hải sản cho mỗi bữa | K07, T01 |
-| Điểm có tag `trong_nha`, `bien`, `check_in`, `cafe`, `an_vat`, `dac_san`, `van_hoa`, `thien_nhien`, `yen_tinh`, `soi_dong` | Đa số câu |
+| Quán có tag `chay`, quán có tag `hai_san`; ≥2 quán vừa có tag `chay` vừa không có tag `hai_san` cho mỗi bữa trưa và tối, giá đủ để 3 người ăn 2 bữa trong 900k | K07, T01 |
+| ≥3 quán giá ≤ 50.000đ/người và ≥3 điểm miễn phí **gần nhau trong một cụm**, để 2 người đi 8:00–20:00 trong 250k **kể cả tiền xe** (K08 có đáp án duy nhất là xếp được). Khi có `transport_rates.csv`, Quân tính lại K08 bằng `cost`; nếu không cách nào xếp vừa 250k thì đổi K08 **trước khi chạy Lượt 1** | K08 |
+| Điểm có tag `trong_nha`, `bien`, `check_in`, `cafe`, `an_vat`, `cho`, `dac_san`, `van_hoa`, `tam_linh`, `thien_nhien`, `yen_tinh`, `soi_dong` | Đa số câu |
 | Cầu Rồng, chợ đêm có khung giờ hoặc ngày cụ thể (`best_windows` / `event_days`) | T05, K09 |
 | Chợ Hàn có giờ đóng cửa theo nguồn | K14 |
-| Bà Nà: vé đắt, `visit_min` dài, `travel_min` xa | K01, K10 |
+| Bà Nà: giá vé người lớn **theo nguồn chính thức**, `visit_min` dài, `travel_min` xa. K10 coi là không xếp được vì vé cho 2 người vượt 1.200.000đ; nếu giá vé thật ≤ 600.000đ/người thì báo Quân đổi K10 **trước khi chạy Lượt 1** | K01, K10 |
+| Hội An có ≥1 điểm cụm `hoi_an` và ≥1 quán ăn tối, giá đủ cho 2 người trong 1 triệu kể cả xe | K11 |
 | **Không** có quán tên "Bún chả cá Cô Bảy Hòa Khánh" (tên dựng cho ca không có dữ liệu) | K13 |
 
 ### 6.4 Câu dự phòng (chưa đưa vào, đủ 30 câu)

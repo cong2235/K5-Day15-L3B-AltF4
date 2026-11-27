@@ -1,8 +1,10 @@
 # 07 · Phân tích đề tài (Track C, lịch trình 1 ngày vừa ngân sách) theo phương pháp pstack
 
 > **Ghi chú phạm vi (27/11):** tài liệu này soạn trước khi chốt tỉnh. Phạm vi hiện tại là **Đà Nẵng gồm cả Hội An** (cụm xa). Đọc cùng [discovery.md](discovery.md) và [design.md](design.md).
+>
+> **Đã được thay bằng bản sau (27/11):** mục 3–4 là phân tích ban đầu. Kiến trúc đã chốt và cách chia Lượt 1 → Lượt 2 nằm ở [design.md](design.md) mục 3 và [architecture-review.md](architecture-review.md) A1: Lượt 1 đã có `verify`, Lượt 2 chuyển việc xếp giờ sang code. Tên công cụ đã chốt ở [spec.md](../spec.md) §4 (`shortlist`, `get_place`, `travel_min`, `verify`, `relax_options`). Metric đã chốt ở [eval/metric_spec.yaml](../eval/metric_spec.yaml).
 
-Phương pháp lấy từ 3 skill của pstack (`reframe`, `principle-attack-the-premise`, `principle-exhaust-the-design-space`). Skill chưa gọi được bằng lệnh trong phiên này, nên tôi đọc `SKILL.md` và làm theo từng bước. Skill `interrogate` cần chạy mã thật, không dùng được cho đề tài chưa có code.
+Phương pháp lấy từ 3 skill của pstack (`reframe`, `principle-attack-the-premise`, `principle-exhaust-the-design-space`).
 Phần thuật ngữ chưa kiểm link nguồn, nên tôi không kèm trích dẫn.
 
 ## 1. Reframe — đề tài có thể là bài toán nào?
