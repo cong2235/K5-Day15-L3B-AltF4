@@ -99,7 +99,7 @@ class Place:
     name: str
     kind: Kind
     cluster: str                 # "my_khe", "son_tra", "trung_tam", "ba_na", "hoi_an"
-    tags: tuple[str, ...]        # {"bien","am_thuc","chay","tre_em","check_in","ngoai_troi"}
+    tags: tuple[str, ...]        # danh sách tag chốt ở data/DATA_CARD.md
     open_windows: tuple[tuple[int, int], ...]   # phút từ 00:00, ví dụ ((420,1260),)
     closed_days: tuple[int, ...]                # 0=Thứ Hai … 6=Chủ Nhật
     visit_min: int               # thời lượng ở lại tối thiểu
@@ -166,7 +166,7 @@ class Violation:
 | `OVERLAP` / `TRAVEL_GAP` | `arrive[i+1] < leave[i] + travel_min(i, i+1)` |
 | `OVER_BUDGET` | `Σ price × (people hoặc 1) + Σ transport_cost` > `budget_total` |
 | `OUT_OF_WINDOW` | Có điểm ngoài `[start, end]` |
-| `NO_MEAL` | Khung giờ phủ trưa (11:00–14:00) hoặc tối (17:00–20:00) mà không có bữa ăn tương ứng |
+| `NO_MEAL` | Khung giờ người dùng giao khung trưa (11:00–14:00) hoặc khung tối (17:00–20:00) từ 90 phút trở lên mà không có bữa ăn tương ứng |
 | `AVOID_TAG` | Có điểm mang tag trong `avoid` |
 | `TOO_MANY` | Quá 6 điểm một ngày (đề xuất), hoặc `visit_min` bị rút ngắn |
 | `DUPLICATE` | Lặp một địa điểm |

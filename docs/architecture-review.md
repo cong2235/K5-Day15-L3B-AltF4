@@ -84,7 +84,7 @@ Công: kiến trúc, spec, nộp form, video · Đức: `verify`, điều phối
 | `codebase/agent.py` | ❌ Code mẫu của khung | Vẫn gọi `search_example`, `SYSTEM = ""` |
 | `codebase/tools.py` | ❌ Code mẫu | Chưa có `shortlist`, `get_place`, `travel_min`, `verify`, `relax_options` |
 | `codebase/ai.py` | ❌ Chưa nối model | Nhánh thật vẫn báo `NotImplementedError`, chỉ chạy được `fake` |
-| `data/places.csv`, `data/travel_override.csv` | ❌ Chưa có | `DATA_CARD.md` còn là template |
+| `data/places.csv`, `data/travel_override.csv` | ❌ Chưa có | `DATA_CARD.md` đã có bản đầu (cột, nguồn, ca khó); số dòng chờ file thật |
 | `eval/benchmark.csv` | ❌ 3 dòng mẫu | Cần ≥10 câu ở CP2, ≥20 ở CP4 |
 | `eval/metric_spec.yaml` | ⚠️ Có 4 metric đề xuất | **Chưa chốt.** Phải chốt trước 19:30 27/11 |
 | `eval/grade.py` | ❌ Chưa có | |
