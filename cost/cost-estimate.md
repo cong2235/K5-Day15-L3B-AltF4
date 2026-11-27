@@ -6,9 +6,9 @@
 
 ## 1. Đầu vào
 
-- **Persona** (`cost/personas.yaml`): ≥3 kiểu — tỉ lệ, số phiên / người / tháng, số lượt hỏi / phiên. Nguồn: __
-- **Số người dùng thật** 3 kịch bản: thấp __ · cơ sở __ · cao __. Nguồn: __
-- **Giá** ≥2 mức model (từ `further-reading/model-prices.md` của repo đề, có link + ngày xem): __ · __
+- **Persona** (`cost/personas.yaml`): 3 kiểu theo số lần sửa lịch trước chuyến đi — `xep_mot_lan` 45% (1 phiên / tháng × 1 lượt) · `sua_vai_lan` 40% (1 × 3 lượt) · `len_ke_hoach_ky` 15% (2 × 5 lượt, có cả câu ngoài phạm vi). Nguồn: **(tự ước tính)**, thay bằng phân bố câu 12 của khảo sát (`evidence/survey/questions.md`) khi xuất kết quả.
+- **Số người dùng thật** (người lên lịch / tháng) 3 kịch bản: thấp 1.400 · cơ sở 2.800 · cao 8.500. Nguồn: ~17,3 triệu lượt khách lưu trú Đà Nẵng năm 2025 ([VietnamNet](https://vietnamnet.vn/en/da-nang-tourism-surpasses-pre-pandemic-peak-remains-top-regional-leader-2477340.html), xem 27/11/2026) → ~1,44 triệu / tháng × 59% nội địa (tỉ lệ trong [kế hoạch 2025](https://nhadautu.vn/da-nang-dat-muc-tieu-don-gan-12-trieu-luot-khach-nam-2025-d92319.html), số kế hoạch) ÷ 3 người / nhóm ≈ 283.000 người lên lịch / tháng × tỉ lệ dùng 0,5% · 1% · 3% **(tự ước tính)**.
+- **Giá** 3 mức model (bảng giá chung của BTC, `further-reading/model-prices.md` của repo đề, [trang giá Anthropic](https://platform.claude.com/docs/en/about-claude/pricing), BTC xem 25/11/2026), USD / 1 triệu token vào · ra: Claude Haiku 4.5 1,00 · 5,00 (model đang chạy, qua Amazon Bedrock — giá Bedrock chưa kiểm riêng) · Claude Haiku 5.5 0,10 · 0,50 · Claude Sonnet 4.6 3,00 · 15,00
 - **Tỉ lệ đạt** dùng để tính: __/__ (__%) — lượt `run-__` (lượt 2)
 - Đo token trên model __, tính giá model __ và __
 

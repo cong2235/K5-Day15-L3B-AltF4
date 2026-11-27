@@ -139,7 +139,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 - **Đặc thù lĩnh vực (lớp 4):** bất khả thi → nói không xếp được và đưa 1–2 cách nới (tăng ngân sách tới __, bớt điểm __) đã được `verify` xác nhận.
 
 ## §7. Đánh giá & chuẩn "đạt"
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 9 · kho 15 · tu_choi 6; nguồn đều `tu_viet`, thêm câu `nguoi_dung` trước CP3) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 6 · kho 18 · tu_choi 6; nguồn: data_that 8 · tu_viet 22, thêm câu `nguoi_dung` từ khảo sát / phỏng vấn trước lượt 1; số câu theo status giữ nguyên 19 · 3 · 6 nên ngưỡng không đổi — chi tiết thay đổi ở `eval/README.md` mục 2) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
 - Mỗi câu ghi ở đầu `pass_criterion` các status được chấp nhận (`status=…`) và ràng buộc đúng (`c=…`). Grader chạy `verify` và `cost` trên `c=`, không dùng ràng buộc model tự hiểu.
 - **Chuẩn "đạt" (Công đã chốt, khoá lúc 19:30 Thứ Sáu 27/11, rồi không sửa):**
   > Đạt khi cả 4 metric trong `eval/metric_spec.yaml` đạt ngưỡng (với N câu áp dụng, cần ít nhất ceil(ngưỡng × N) câu):
@@ -151,7 +151,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → `eval/report.md`.
 
 ## §8. Chi phí khi dùng thật
-- Persona + giá: `cost/personas.yaml` (**[NHÓM ĐIỀN]** từ khảo sát) · lượt mô phỏng: `cost/simulate-__.csv`.
+- Persona + giá: `cost/personas.yaml` — 3 persona theo số lần sửa lịch (xếp một lần 45% · sửa vài lần 40% · lên kế hoạch kỹ 15%, **tự ước tính**, thay bằng khảo sát câu 12 khi xuất kết quả) · người dùng / tháng thấp 1.400 · cơ sở 2.800 · cao 8.500 (từ ~17,3 triệu lượt khách lưu trú Đà Nẵng 2025, cách tính và nguồn ghi trong file) · giá 3 mức: Claude Haiku 4.5 (đang chạy), Haiku 5.5, Sonnet 4.6 · lượt mô phỏng: `cost/simulate-__.csv` (khung đã chạy thử 10 phiên bằng model giả, chưa tính).
 - Ước tính thô ban đầu: 3–6 lần gọi model mỗi lượt; vài trăm đồng mỗi lượt với model cỡ nhỏ (**tự ước tính**, thay bằng số `simulate` đo, xem `docs/design.md` mục 9).
 - Chi phí / task thành công: __ (model __). Chi phí / tháng: thấp __ · cơ sở __ · cao __.
 - So với impact (§2): **[điền sau khi có số]**.

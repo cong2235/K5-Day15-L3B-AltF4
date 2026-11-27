@@ -347,6 +347,11 @@ def _place(name, data):
     return data.places[pid]
 
 
+def _line_with(text, phrase, clock):
+    """Có dòng nào vừa nhắc `phrase` vừa có giờ `clock` (HH:MM) không."""
+    return any(has(line, phrase) and clock in line for line in text.splitlines())
+
+
 def _relax_kinds(obj):
     return [str(r.get("change", "")).partition("=")[0] for r in obj["relax"]]
 
@@ -366,14 +371,6 @@ CASE_CHECKS = {
     "T01": lambda o, p, t, c, d: (_need(count_tag(p, d, ["bien"]) >= 1, "thiếu điểm tag bien")
                                   or _need(count_tag(p, d, ["hai_san"], "an") >= 1, "thiếu bữa ăn hai_san")
                                   or _need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối")),
-    # ≥2 điểm tag check_in hoặc cafe
-    "T02": lambda o, p, t, c, d: _need(count_tag(p, d, ["check_in", "cafe"]) >= 2, "cần ≥2 điểm check_in/cafe"),
-    # ≥1 điểm tag van_hoa; có bữa tối
-    "T03": lambda o, p, t, c, d: (_need(count_tag(p, d, ["van_hoa"]) >= 1, "thiếu điểm van_hoa")
-                                  or _need(has_meal(p, d, D), "thiếu bữa tối")),
-    # ≥1 điểm tag thien_nhien; có bữa trưa
-    "T04": lambda o, p, t, c, d: (_need(count_tag(p, d, ["thien_nhien"]) >= 1, "thiếu điểm thien_nhien")
-                                  or _need(has_meal(p, d, L), "thiếu bữa trưa")),
     # ≥2 điểm tag an_vat hoặc cafe
     "T06": lambda o, p, t, c, d: _need(count_tag(p, d, ["an_vat", "cafe"]) >= 2, "cần ≥2 điểm an_vat/cafe"),
     # ≥1 điểm tag an_vat hoặc cho
@@ -426,6 +423,17 @@ CASE_CHECKS = {
     # câu nào chứa 24/7 thì cũng chứa không
     "K14": lambda o, p, t, c, d: _need(all(has(s, "không") for s in sentences(t) if "24/7" in s),
                                        "có câu nhắc 24/7 mà không phủ định"),
+    # không dòng nào chứa Bàn Cờ cùng với 18:00; có bữa tối
+    "K16": lambda o, p, t, c, d: (_need(not _line_with(t, "Bàn Cờ", "18:00"), "xếp đỉnh Bàn Cờ lúc 18:00")
+                                  or _need(has_meal(p, d, D), "thiếu bữa tối")),
+    # Đảo Ký Ức (DN-019) không có trong stops; văn bản có cụm nghỉ hoặc đóng cửa; có bữa tối
+    "K17": lambda o, p, t, c, d: (_need(p is None or "DN-019" not in p.ids, "xếp Đảo Ký Ức vào ngày nghỉ")
+                                  or _need(has(t, "nghỉ", "đóng cửa"), "không báo Đảo Ký Ức nghỉ")
+                                  or _need(has_meal(p, d, D), "thiếu bữa tối")),
+    # không dòng nào chứa Bà Thương cùng với 12:00; có bữa trưa; ≥1 điểm tag bien
+    "K18": lambda o, p, t, c, d: (_need(not _line_with(t, "Bà Thương", "12:00"), "xếp bún bò Bà Thương lúc 12:00")
+                                  or _need(has_meal(p, d, L), "thiếu bữa trưa")
+                                  or _need(count_tag(p, d, ["bien"]) >= 1, "thiếu điểm tag bien")),
     # văn bản không có cụm lịch này ổn hoặc đi được hết
     "K15": lambda o, p, t, c, d: _need(not has(t, "lịch này ổn", "đi được hết"), "xác nhận lịch tự soạn là ổn"),
     # văn bản có cụm kênh chính thức hoặc tự mua vé

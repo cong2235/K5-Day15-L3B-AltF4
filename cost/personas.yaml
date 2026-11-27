@@ -1,52 +1,58 @@
-# Mô phỏng chi phí khi dùng thật — điền ở guide bước 4.2.
-# Ôn lại: ngày 13, ngày 1, ngày 14 · lab ngày 13, lab ngày 14.
-# Mọi số phải có nguồn (data / phỏng vấn / khảo sát / quy mô khoá có nguồn) hoặc ghi rõ "(tự ước tính)".
+# Mô phỏng chi phí khi dùng thật — điền ở guide bước 4.2. Quân giữ file này.
+# Mọi số phải có nguồn (data / phỏng vấn / khảo sát / số liệu công khai) hoặc ghi rõ "(tự ước tính)".
 # Chạy: python run.py simulate --try   (10 phiên, kiểm khung — làm trước CP3)
-#       python run.py simulate         (đủ số phiên dưới đây — bản nộp CP4)
-# Thay mọi dòng "(ví dụ)" bằng số và nguồn của nhóm; simulate nhắc nếu còn sót.
+#       python run.py simulate --rate-from eval/run-2.csv   (bản nộp CP4, sau lượt 2)
+#
+# Đơn vị:
+#   người dùng = một người lên lịch cho nhóm (khảo sát câu 1: "Tôi lên lịch chính").
+#   phiên      = một lần lên lịch cho MỘT ngày đi chơi.
+#   lượt hỏi   = một lần gọi answer(): lịch đầu tiên + mỗi lần sửa lại (khảo sát câu 12).
+#
+# TRẠNG THÁI 27/11 22:00: share và số lượt là (tự ước tính) vì kết quả khảo sát chưa xuất (6 phiếu lúc CP2).
+# Khi có evidence/survey/results.csv: thay share bằng tỉ lệ câu 12, uses_per_month bằng câu 5 + số ngày đi, rồi ghi nguồn.
 
 sessions: 50        # số phiên mô phỏng — bản nộp ≥50
 seed: 42            # giữ cố định để chạy lại ra cùng chuỗi phiên
 
-users:              # số người dùng thật nếu đưa vào dùng — 3 kịch bản, ở quy mô thật của sản phẩm
-                    # track A: khoá học · track B–F: người dùng của sản phẩm / nhóm nhắm tới, nguồn công khai có link
-  low: 300
-  base: 700
-  high: 1000
-  source: "(ví dụ) track A — thay bằng số của nhóm. Cơ sở: lớp L3 hơn 700 học viên (README hackathon); thấp, cao: (tự ước tính)"
+users:              # số người lên lịch / tháng nếu sản phẩm ra mắt ở Đà Nẵng
+  low: 1400
+  base: 2800
+  high: 8500
+  source: "Tổng khách lưu trú Đà Nẵng 2025 ~17,3 triệu lượt (VietnamNet, https://vietnamnet.vn/en/da-nang-tourism-surpasses-pre-pandemic-peak-remains-top-regional-leader-2477340.html, xem 27/11/2026) → ~1,44 triệu lượt / tháng × 59% khách nội địa (tỉ lệ trong kế hoạch 2025: 7,1 / 12 triệu, https://nhadautu.vn/da-nang-dat-muc-tieu-don-gan-12-trieu-luot-khach-nam-2025-d92319.html — số kế hoạch, không phải thống kê) ÷ 3 người / nhóm (tự ước tính, kiểm bằng khảo sát câu 4) ≈ 283.000 người lên lịch / tháng. Tỉ lệ dùng sản phẩm: thấp 0,5% · cơ sở 1% · cao 3% (tự ước tính)"
 
 personas:           # ≥3 kiểu người dùng; share cộng lại = 1
-  - name: dung_it
-    share: 0.5              # tỉ lệ người dùng kiểu này
-    uses_per_month: 4       # số phiên / người / tháng
-    turns_per_session: 1    # số lượt hỏi trong một phiên
-    source: "(ví dụ) phỏng vấn P1, P3 — thay bằng nguồn của nhóm"
-  - name: dung_vua
-    share: 0.3
-    uses_per_month: 10
-    turns_per_session: 3
-    source: "(ví dụ) khảo sát n = 24, câu 3"
-  - name: dung_nhieu
-    share: 0.2
-    uses_per_month: 20
-    turns_per_session: 5
-    source: "(ví dụ) data/preclass: đếm số lượt / người — cách đếm ở evidence/data-mining.md"
-# Mỗi lượt hỏi lấy ngẫu nhiên một đầu vào trong eval/benchmark.csv (type thuong và kho).
-# Persona hỏi kiểu riêng: thêm vào persona đó
-#     types: [thuong, kho, tu_choi]
-# hoặc
-#     inputs: ["câu hỏi kiểu 1", "câu hỏi kiểu 2"]
+  - name: xep_mot_lan
+    share: 0.45             # tỉ lệ người dùng kiểu này
+    uses_per_month: 1       # đi 1 ngày, lên lịch 1 lần
+    turns_per_session: 1    # nhận lịch đầu tiên, không sửa
+    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"Không sửa\" ở khảo sát câu 12"
+  - name: sua_vai_lan
+    share: 0.40
+    uses_per_month: 1
+    turns_per_session: 3    # lịch đầu + 1–2 lần sửa
+    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"1–2 lần\" ở khảo sát câu 12"
+  - name: len_ke_hoach_ky
+    share: 0.15
+    uses_per_month: 2       # chuyến 2 ngày, lên lịch từng ngày
+    turns_per_session: 5    # lịch đầu + 3–5 lần sửa
+    types: [thuong, kho, tu_choi]   # nhóm hỏi nhiều thì cũng hay hỏi ngoài phạm vi (đặt vé, khách sạn)
+    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"3–5 lần\" + \"Trên 5 lần\" ở khảo sát câu 12"
+# Mỗi lượt hỏi lấy ngẫu nhiên một đầu vào trong eval/benchmark.csv (mặc định type thuong và kho).
 
-prices:             # USD / 1 triệu token — chép từ further-reading/model-prices.md của repo đề. ≥2 mức model
-  - model: gemini-3.1-flash-lite
-    input: 0.25
-    output: 1.50
-    source: "(ví dụ) https://ai.google.dev/gemini-api/docs/pricing · xem 25/11/2026"
-  - model: gemini-4-hydrogen
-    input: 1.50
-    output: 7.50
-    source: "(ví dụ) https://ai.google.dev/gemini-api/docs/pricing · xem 25/11/2026"
+prices:             # USD / 1 triệu token, bảng giá chung của BTC (further-reading/model-prices.md của repo đề), giá Anthropic API trực tiếp
+  - model: claude-haiku-4.5
+    input: 1.00
+    output: 5.00
+    source: "https://platform.claude.com/docs/en/about-claude/pricing · BTC xem 25/11/2026 · model nhóm đang chạy (qua Amazon Bedrock; giá Bedrock chưa kiểm riêng)"
+  - model: claude-haiku-5.5
+    input: 0.10
+    output: 0.50
+    source: "https://platform.claude.com/docs/en/about-claude/pricing · BTC xem 25/11/2026 · giá cho prompt ≤ 100.000 token"
+  - model: claude-sonnet-4.6
+    input: 3.00
+    output: 15.00
+    source: "https://platform.claude.com/docs/en/about-claude/pricing · BTC xem 25/11/2026 · mức model lớn để so"
 
 usd_to_vnd:         # tuỳ chọn: điền thì bản tóm tắt in thêm tiền Việt
-  rate:
-  source:
+  rate: 26000
+  source: "(tự ước tính) tỉ giá làm tròn, chưa kiểm ngày cụ thể"
