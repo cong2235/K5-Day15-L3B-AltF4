@@ -8,10 +8,10 @@
 | | |
 |---|---|
 | Link form | https://docs.google.com/forms/d/e/1FAIpQLSdEqzYxl_n1jD7Gb0dkohq3n8DoQI-_O9NjI4BgTinvsmd3Dw/viewform |
-| Kênh đã gửi | __ (ví dụ: nhóm lớp L3A, L3B · nhóm bạn đại học · người thân) |
+| Kênh đã gửi | Zalo |
 | Giờ mở | 18h ngày 27/11/2006 |
-| Giờ chốt | __ (trước CP3 10:00 Thứ Bảy 28/11) |
-| Số phiếu nhận / số phiếu đúng người dùng | __ / __ |
+| Giờ chốt | 08:00 Thứ Bảy 28/11/2026 (dự kiến, trước CP3 10:00) |
+| Số phiếu nhận / số phiếu đúng người dùng | 6 / chưa lọc (lúc nộp CP2) |
 
 ## Người trả lời đúng là ai
 
