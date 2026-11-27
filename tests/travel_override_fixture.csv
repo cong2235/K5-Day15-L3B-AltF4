@@ -1,0 +1,2 @@
+from_id,to_id,minutes,source,checked_on
+FX-08,FX-02,60,synthetic: dữ liệu test,2026-11-27

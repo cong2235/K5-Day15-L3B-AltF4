@@ -35,6 +35,7 @@
 | `visit_min` | số phút ở lại tối thiểu | `60` |
 | `price_pp` | VND, 0 nếu miễn phí | `60000` |
 | `price_basis` | `moi_nguoi` · `ca_nhom` | `moi_nguoi` |
+| `aliases` | (tuỳ chọn) tên khác người dùng hay gõ, không dấu, nối bằng `;`. Code dùng để nhận ra điểm người dùng nêu tên | `ba na;ba na hills` |
 | `best_windows` | (tuỳ chọn) khung giờ nên ghé, như `open_windows` | `21:00-21:30` |
 | `event_days` | (tuỳ chọn) ngày có sự kiện, như `closed_days` | `5;6` |
 | `lat`, `lon` | độ thập phân | `16.0610`, `108.2234` |

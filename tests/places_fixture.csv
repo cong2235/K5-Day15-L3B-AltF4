@@ -1,0 +1,11 @@
+id,name,kind,cluster,tags,open_windows,closed_days,visit_min,price_pp,price_basis,lat,lon,source,checked_on,aliases,best_windows,event_days
+FX-01,Bãi biển Thử,tham_quan,my_khe,bien;check_in,05:00-22:00,,90,0,moi_nguoi,16.0600,108.2470,synthetic: dữ liệu test,2026-11-27,bai bien thu,,
+FX-02,Bảo tàng Thử,tham_quan,trung_tam,van_hoa;trong_nha,08:00-17:00,0,60,60000,moi_nguoi,16.0610,108.2230,synthetic: nghỉ thứ Hai để test CLOSED,2026-11-27,bao tang thu,,
+FX-03,Chùa Thử,tham_quan,son_tra,tam_linh;thien_nhien;yen_tinh,06:00-18:00,,60,0,moi_nguoi,16.1000,108.2770,synthetic: dữ liệu test,2026-11-27,,,
+FX-04,Quán Hải Sản Thử,an,my_khe,hai_san;dac_san,10:00-14:00;17:00-22:00,,60,150000,moi_nguoi,16.0620,108.2450,synthetic: quán nghỉ chiều để test,2026-11-27,,,
+FX-05,Quán Chay Thử,an,trung_tam,chay;an_vat,07:00-21:00,,45,40000,moi_nguoi,16.0650,108.2210,synthetic: dữ liệu test,2026-11-27,,,
+FX-06,Cafe Thử,cafe,trung_tam,cafe;check_in;yen_tinh,07:00-22:00,,45,35000,moi_nguoi,16.0680,108.2240,synthetic: dữ liệu test,2026-11-27,,,
+FX-07,Chợ Đêm Thử,tham_quan,trung_tam,cho;an_vat;soi_dong,18:00-23:00,,60,0,moi_nguoi,16.0590,108.2260,synthetic: chỉ mở tối để test,2026-11-27,,,
+FX-08,Khu Núi Xa Thử,tham_quan,ba_na,thien_nhien;check_in,08:00-17:00,,240,900000,moi_nguoi,15.9980,107.9880,synthetic: rất đắt và rất xa để test,2026-11-27,nui xa thu,,
+FX-09,Phố Cổ Thử,tham_quan,hoi_an,van_hoa;check_in,08:00-22:00,,120,120000,moi_nguoi,15.8800,108.3350,synthetic: cụm xa để test,2026-11-27,pho co thu,,
+FX-10,Quán Mì Thử,an,hoi_an,dac_san;an_vat;chay,10:00-21:00,,45,50000,moi_nguoi,15.8790,108.3330,synthetic: dữ liệu test,2026-11-27,,,

@@ -121,6 +121,9 @@ class Constraints:
     avoid: tuple[str, ...]       # tag cần tránh, ví dụ "hai_san"
     base_cluster: str            # nơi ở, đầu vào cố định
     transport: str = "grab"      # "grab" (xe công nghệ, tính theo km) hoặc "xe_may" (thuê xe máy, tính theo ngày)
+    must: tuple[str, ...] = ()   # id điểm người dùng nêu tên, bắt buộc có trong lịch (thêm 27/11, codebase/domain.py)
+    diet: tuple[str, ...] = ()   # tag mọi bữa ăn phải có, ví dụ ("chay",); thiếu thì verify báo AVOID_TAG
+    unknown: tuple[str, ...] = ()  # tên người dùng nêu mà data không có, để output báo "chưa có dữ liệu"
 
 @dataclass(frozen=True)
 class Stop:

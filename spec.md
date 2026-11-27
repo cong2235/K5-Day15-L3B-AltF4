@@ -173,6 +173,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 | 27/11 | Đổi lát cắt từ khung chung sang Đà Nẵng, chốt workflow cố định + `verify` bằng code | Chọn tỉnh; hình dạng quyết định theo `docs/design.md` mục 3 |
 | 27/11 | Đưa Hội An vào phạm vi như một cụm xa | Quảng Nam đã nhập vào Đà Nẵng (`docs/architecture-review.md` A5) |
 | 27/11 | `metric_spec.yaml` rút từ 10 còn 4 metric chấm bằng code; mỗi câu thử ghi `status=` và `c=` ở đầu `pass_criterion`; K07, K08, K10, K11 chỉ còn một đáp án; NO_MEAL tính khi khung giờ giao khung bữa ≥ 90 phút | Bản cũ áp metric theo loại câu nên chấm sai câu đúng (K05), có vế không chấm được bằng code, và có câu chấp nhận cả lịch lẫn "không xếp được" |
+| 27/11 | Code lõi: `domain.py`, `verify.py`, `tools.py`, `agent.py`, `rules.py`, `tests/`. `Constraints` thêm `must`, `diet`, `unknown` (đều có mặc định); `places.csv` nhận cột tuỳ chọn `aliases`. Chưa có `prompts.py` thì luồng dùng luật và code xếp lịch, ghi `note()` vào trace | Câu nêu tên điểm (K01, K02, K10), món kiêng (K07) và quán ngoài dữ liệu (K13) cần biểu diễn được. Phương án luật giúp luồng chạy hết trước khi nối model. **Chờ Công duyệt** vì đổi hợp đồng `phan-cong.md` mục 0 |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)**
 
