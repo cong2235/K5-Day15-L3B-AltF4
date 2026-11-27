@@ -29,7 +29,9 @@ Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
 
 ## 4. Lệnh
 
-`python run.py eval` → `eval/run-N.csv` + `traces/run-N.jsonl` · điền cột `pass` · `python run.py score eval/run-N.csv`
+`python run.py eval` → `eval/run-N.csv` + `traces/run-N.jsonl` · `python eval/grade.py eval/run-N.csv` (điền cột `pass` + `ghi_chu`, in bảng 4 metric) · chấm tay các câu grader để trống · `python run.py score eval/run-N.csv`
+
+Kiểm grader: `python eval/test_grade.py` (11 output viết tay: một bản đúng phải đạt, mỗi bản sai một lỗi phải bị bắt đúng metric).
 
 ## 5. Đã chạy gì
 
