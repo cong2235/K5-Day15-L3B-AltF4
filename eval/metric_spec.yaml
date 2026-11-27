@@ -31,7 +31,7 @@ metrics:
 
   - name: "khong_bia_dia_diem"
     applies_when: "mọi câu"
-    definition: "Mọi id trong stops và trong relax[].stops có trong data/places.csv. Mọi số tiền trong văn bản (số kèm đ, k, nghìn, triệu) bằng total_vnd, bằng một mức tiền trong relax, bằng price hay price × people của một điểm có trong stops, hoặc bằng transport_cost của một chặng giữa hai stop liền nhau (hay tổng các chặng). Mọi giờ HH:MM trong văn bản bằng arrive hoặc leave của một stop, bằng mốc open_window của điểm đó, hoặc bằng mốc window của c"
+    definition: "Mọi id trong stops và trong relax[].stops có trong data/places.csv. Mọi số tiền trong văn bản (số kèm đ, k, nghìn, triệu) bằng total_vnd, bằng budget của c hoặc budget ÷ people, bằng một mức tiền trong relax, bằng price hay price × people của một điểm có trong stops, hoặc bằng transport_cost của một chặng giữa hai stop liền nhau (hay tổng các chặng). Mọi giờ HH:MM trong văn bản bằng arrive hoặc leave của một stop, bằng mốc open_window của điểm đó, bằng mốc window của c, hoặc bằng arrive, leave, mốc window của một mục relax"
     grader: "code"
     threshold: "100% câu"
     hien_tai: "30 câu → cần 30/30"
