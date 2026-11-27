@@ -197,3 +197,40 @@ def parse_rule(text: str, places: list[Place]) -> dict:
         "transport": "xe_may" if re.search(r"xe may|motorbike|scooter", t) else "grab",
         "must_names": must + unknown, "base_cluster": base if base in CLUSTERS else None,
     }
+
+
+# ---------------------------------------------------------------- sửa lịch đang có (khi chưa có model)
+
+DROP_VERBS = r"(?:bo|khong di|khong ghe|khong can|bot|thay|tru|khoi|dung di|dung xep)"
+
+
+def _dropped(t: str, places: list[Place]) -> list[str]:
+    """Tên điểm đứng sau một động từ bỏ: "bỏ Chợ Hàn", "không đi chợ Hàn nữa", "thay Cầu Rồng bằng…"."""
+    out = []
+    for p in places:
+        for key in filter(None, (norm(k) for k in (p.name, *p.aliases))):
+            if re.search(r"\b%s\s+(?:\w+\s+){0,2}?%s\b" % (DROP_VERBS, re.escape(key)), t):
+                out.append(p.name)
+                break
+    return out
+
+
+def revise_rule(prev_text: str, text: str, places: list[Place]) -> dict:
+    """Áp tin nhắn sửa lên yêu cầu trước. Trường nào tin nhắn mới nêu thì thay, sở thích thì cộng thêm,
+    điểm bị "bỏ" thì vào exclude_names. Cùng hình dạng JSON với parse_rule."""
+    new = parse_rule(text, places)
+    if new["status"] == "refuse":
+        return new
+    out = parse_rule(prev_text, places)
+    for key in ("people", "budget_total", "day", "start", "end", "base_cluster"):
+        if new.get(key):
+            out[key] = new[key]
+    if re.search(r"xe may|grab|taxi", norm(text)):
+        out["transport"] = new["transport"]
+    dropped = _dropped(norm(text), places)
+    out["exclude_names"] = dropped
+    out["must_names"] = [n for n in dict.fromkeys(out["must_names"] + new["must_names"]) if n not in dropped]
+    out["avoid"] = list(dict.fromkeys(out["avoid"] + new["avoid"]))
+    out["like"] = [x for x in dict.fromkeys(out["like"] + new["like"]) if x not in out["avoid"]]
+    out["diet"] = list(dict.fromkeys(out["diet"] + new["diet"]))
+    return out

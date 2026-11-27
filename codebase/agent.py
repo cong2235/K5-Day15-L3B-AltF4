@@ -5,13 +5,17 @@
 
 Hợp đồng với khung: answer(text) -> {"output": str}. Cuối output luôn có khối ```json để grader đọc
 (docs/design.md mục 8): {"status","stops","total_vnd","relax"}.
+Chat nhiều lượt (web/server.py): answer(text, prev) với prev = khoá "turn" của lượt trước. Có lịch hay ràng buộc
+từ trước thì tin nhắn mới được hiểu là sửa trên đó (revise_request); lượt trước là hỏi lại thì ghép câu trả lời vào câu cũ.
 
 Hợp đồng với codebase/prompts.py (Công giữ). Mọi hàm đều tuỳ chọn; thiếu hàm, thiếu file, hoặc hàm trả None
 (model trả JSON hỏng sau khi đã hỏi lại) thì luồng dùng phương án code và ghi note() vào trace.
 Lỗi gọi model (mạng, key) cứ để bay ra cho khung ghi vào cột error.
     parse_request(text: str) -> dict | None          hình dạng: xem domain.request_from_dict
-    propose(c: Constraints, cands: list[Place]) -> dict | None   {"stops":[{"id","arrive","leave"}]}
-    repair(c, cands, plan: Plan, violations: list[Violation]) -> dict | None   cùng hình dạng propose
+    revise_request(c, plan: Plan | None, text) -> dict | None   cùng hình dạng, đã áp tin nhắn sửa lên c
+    propose(c: Constraints, cands: list[Place], previous: Plan | None) -> dict | None   {"ids":[...]}: model chọn điểm,
+        code xếp thứ tự và giờ (verify.schedule). {"stops":[{"id",…}]} cũng nhận, giờ trong đó bị bỏ qua.
+    repair(c, cands, ids: tuple[str, ...], problems: list[Violation]) -> dict | None   cùng hình dạng propose
     why(c: Constraints, plan: Plan, places: dict[str, Place]) -> dict | None   {place_id: lý do}
 Lý do không được chứa chữ số (tiền, giờ do code viết), có chữ số thì bị thay bằng lý do do code dựng.
 """
@@ -19,7 +23,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import replace
+from dataclasses import dataclass, replace
 
 import rules
 import tools
@@ -34,6 +38,7 @@ except ImportError:
     prompts = None
 
 MAX_REPAIR = 3
+IDLE_NOTE_MIN = 30   # khoảng trống từ chừng này phút trở lên thì ghi rõ là thời gian rảnh
 
 TAG_LABEL = {"bien": "biển", "hai_san": "hải sản", "chay": "món chay", "an_vat": "ăn vặt", "cho": "chợ",
              "dac_san": "đặc sản", "cafe": "cafe", "check_in": "check-in", "van_hoa": "văn hoá",
@@ -67,10 +72,25 @@ def _ai(name: str, *args):
     return out
 
 
+@dataclass(frozen=True)
+class Turn:
+    """Trạng thái giữ giữa các lượt chat. constraints None = lượt trước là hỏi lại (text là câu đã ghép)."""
+    text: str
+    constraints: Constraints | None = None
+    plan: Plan | None = None
+
+
 def _parse(text: str, places: dict[str, Place]):
     raw = _ai("parse_request", text)
     if raw is None:
         raw = rules.parse_rule(text, list(places.values()))
+    return request_from_dict(raw, places)
+
+
+def _revise(prev: Turn, text: str, places: dict[str, Place]):
+    raw = _ai("revise_request", prev.constraints, prev.plan, text)
+    if raw is None:
+        raw = rules.revise_rule(prev.text, text, list(places.values()))
     return request_from_dict(raw, places)
 
 
@@ -88,23 +108,42 @@ def _unavailable(c: Constraints, places: dict[str, Place]) -> list[tuple[str, st
     return out
 
 
-def _plan(c: Constraints, cands: list[Place], data: core.Data) -> Plan | None:
-    """propose → verify → repair tối đa MAX_REPAIR vòng. Trả lịch đã qua verify, hoặc None."""
-    plan = plan_from_dict(_ai("propose", c, cands))
-    if plan is None:
-        return core.plan_greedy(c, cands, data)
+def _ids(raw) -> tuple[str, ...] | None:
+    """Model chỉ chọn điểm: {"ids": [...]} (hoặc {"stops": [{"id"}]}, giờ trong đó bị bỏ qua)."""
+    if not isinstance(raw, dict):
+        return None
+    items = raw.get("ids") if isinstance(raw.get("ids"), list) else [
+        s.get("id") for s in raw.get("stops") or [] if isinstance(s, dict)]
+    ids = tuple(dict.fromkeys(str(i) for i in items if i))
+    return ids or None
+
+
+def _plan(c: Constraints, cands: list[Place], data: core.Data, previous: Plan | None = None) -> Plan | None:
+    """Model chọn tập điểm → code xếp thứ tự và giờ (schedule) → sai thì model chọn lại, tối đa MAX_REPAIR vòng.
+    Có lịch thì code lấp thêm điểm (fill) và kéo dài thời gian ở lại (stretch) để bớt giờ trống.
+    Model không đưa được tập xếp được thì dùng phương án code; vẫn không có thì None (không xếp được)."""
+    ids = _ids(_ai("propose", c, cands, previous) if previous else _ai("propose", c, cands))
+    plan = None
     for k in range(MAX_REPAIR + 1):
-        violations = tools.verify(plan, c)
-        if not violations:
-            return plan
+        if ids is None:
+            break
+        ids = tuple(dict.fromkeys(c.must + ids))
+        plan = core.schedule(ids, c, data)
+        if plan is not None:
+            break
+        problems = core.diagnose(ids, c, data)
         if k == MAX_REPAIR:
-            note("dừng: còn %d vi phạm sau %d vòng sửa" % (len(violations), MAX_REPAIR))
+            note("model chưa chọn được tập điểm xếp được sau %d vòng: %s" % (MAX_REPAIR, problems[0].code))
+            break
+        ids = _ids(_ai("repair", c, cands, ids, problems))
+    if plan is None:
+        note("dùng phương án code để chọn điểm")
+        plan = core.plan_greedy(c, cands, data)
+        if plan is None:
             return None
-        fixed = plan_from_dict(_ai("repair", c, cands, plan, violations))
-        if fixed is None:
-            return core.plan_greedy(c, cands, data)
-        plan = fixed
-    return None
+    else:
+        plan = core.fill(plan, c, cands, data) or plan
+    return core.stretch(plan, c, data)
 
 
 # ---------------------------------------------------------------- render (mọi số do code viết)
@@ -124,6 +163,8 @@ def _understood(c: Constraints) -> str:
         parts.append("thích: " + ", ".join(TAG_LABEL[t] for t in c.like))
     if c.avoid:
         parts.append("tránh: " + ", ".join(TAG_LABEL[t] for t in c.avoid))
+    if c.exclude:
+        parts.append("bỏ: " + ", ".join(tools.data().places[i].name for i in c.exclude))
     if c.diet:
         parts.append("bữa ăn cần: " + ", ".join(TAG_LABEL[t] for t in c.diet))
     return "Mình hiểu: " + " · ".join(parts) + "."
@@ -154,6 +195,11 @@ def _reasons(c: Constraints, plan: Plan, data: core.Data) -> dict[str, str]:
     return out
 
 
+def _duration(minutes: int) -> str:
+    h, m = divmod(minutes, 60)
+    return " ".join(filter(None, ("%d tiếng" % h if h else "", "%d phút" % m if m else "")))
+
+
 def _price(p: Place, c: Constraints) -> str:
     if p.price_pp == 0:
         return "miễn phí"
@@ -172,6 +218,10 @@ def _render_plan(c: Constraints, plan: Plan, notes: list[str], data: core.Data) 
             leg = "   ↳ đi lại ~%d phút (ước tính)" % core.travel_min(plan.stops[i - 1].place_id, p.id, data)
             if c.transport == "grab":
                 leg += ", %s" % vnd(cost.legs[i - 1])
+            idle = core.idle_min(plan, i, data)
+            if idle >= IDLE_NOTE_MIN:
+                leg += " · rảnh khoảng %s, nghỉ ngơi hoặc dạo quanh khu %s" % (
+                    _duration(idle), CLUSTER_LABEL[data.places[plan.stops[i - 1].place_id].cluster])
             lines.append(leg)
         lines.append("%s–%s · %s — %s — %s" % (fmt(s.arrive), fmt(s.leave), p.name, _price(p, c), why[p.id]))
     lines.append("")
@@ -223,18 +273,25 @@ def _render_infeasible(c: Constraints, relax: list[Relax], notes: list[str], dat
 
 # ---------------------------------------------------------------- luồng chính
 
-def answer(text: str) -> dict:
+def answer(text: str, prev: Turn | None = None) -> dict:
+    """{"output": str, "turn": Turn}. Khung eval gọi answer(text) và chỉ đọc "output"."""
     data = tools.data()
     banner = ["[Đang dùng dữ liệu thử synthetic: %s, chưa có data/places.csv.]" % tools.source()] \
         if tools.using_fixture() else []
-    req = _parse(text, data.places)
+    if prev is not None and prev.constraints is not None:
+        note("sửa trên yêu cầu trước")
+        full = prev.text + "\n" + text
+        req = _revise(prev, text, data.places)
+    else:
+        full = prev.text + "\n" + text if prev is not None else text   # trả lời cho câu hỏi lại
+        req = _parse(full, data.places)
     if isinstance(req, OutOfScope):
         note("từ chối: %s" % req.reason)
         out = "\n".join(banner + [REFUSE_TEXT[req.reason], CAN_DO, _block("refuse")])
-        return {"output": out}
+        return {"output": out, "turn": prev}       # giữ lịch cũ để người dùng sửa tiếp
     if isinstance(req, AskBack):
         note("hỏi lại: %s" % req.field)
-        return {"output": "\n".join(banner + [req.question, _block("ask_back")])}
+        return {"output": "\n".join(banner + [req.question, _block("ask_back")]), "turn": Turn(full)}
     c = req
     notes = list(banner)
     notes += ["Mình chưa có dữ liệu về \"%s\", nên không xếp chỗ này và không đoán giờ hay giá." % n
@@ -243,8 +300,8 @@ def answer(text: str) -> dict:
         notes.append(msg)
         c = replace(c, must=tuple(x for x in c.must if x != pid))
     cands = tools.shortlist(c)
-    plan = _plan(c, cands, data)
+    plan = _plan(c, cands, data, prev.plan if prev is not None else None)
     if plan is not None and not core.verify(plan, c, data):
-        return {"output": _render_plan(c, plan, notes, data)}
+        return {"output": _render_plan(c, plan, notes, data), "turn": Turn(full, c, plan)}
     note("không xếp được, tìm cách nới")
-    return {"output": _render_infeasible(c, tools.relax_options(c), notes, data)}
+    return {"output": _render_infeasible(c, tools.relax_options(c), notes, data), "turn": Turn(full, c)}

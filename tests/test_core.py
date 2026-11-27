@@ -8,8 +8,10 @@ import os
 import re
 import sys
 import unittest
+from dataclasses import replace
 
 os.environ["ALTF4_DATA"] = "fixture"
+os.environ["MODEL_PROVIDER"] = "fake"  # test lõi không gọi model thật, kể cả khi .env đã nối Bedrock
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "codebase"))
 
 import agent  # noqa: E402
@@ -188,8 +190,74 @@ class AnswerEndToEnd(unittest.TestCase):
         self.assertIn("lên lịch", agent.answer("Đặt giúp mình 3 vé cáp treo")["output"])
 
 
+class FillGaps(unittest.TestCase):
+    """Lịch không bỏ trống giờ khi còn cách lấp: kéo dài thời gian ở lại, khoảng còn lại ghi là thời gian rảnh."""
+
+    def test_stretch_keeps_plan_valid_and_never_shrinks(self):
+        cons = c(like=("bien", "hai_san"))
+        p = core.plan_greedy(cons, core.shortlist(cons, DATA), DATA)
+        s = core.stretch(p, cons, DATA)
+        self.assertEqual(codes(s, cons), [])
+        self.assertEqual([x.arrive for x in s.stops], [x.arrive for x in p.stops])
+        for a, b in zip(p.stops, s.stops):
+            self.assertGreaterEqual(b.leave, a.leave)
+            self.assertLessEqual(b.leave - b.arrive, core.stay_cap(DATA.places[b.place_id]))
+        self.assertLessEqual(sum(core.idle_min(s, i, DATA) for i in range(1, len(s.stops))),
+                             sum(core.idle_min(p, i, DATA) for i in range(1, len(p.stops))))
+
+    def test_remaining_gap_is_labelled_as_free_time(self):
+        out = agent.answer("2 người, 1 triệu cả nhóm, thứ Bảy 8h đến 21h, thích biển và hải sản")["output"]
+        j = block(out)
+        p = plan(*[(s["id"], s["arrive"], s["leave"]) for s in j["stops"]])
+        gaps = [core.idle_min(p, i, DATA) for i in range(1, len(p.stops))]
+        self.assertEqual(out.count("rảnh khoảng"), sum(g >= agent.IDLE_NOTE_MIN for g in gaps))
+
+
+class ChatTurns(unittest.TestCase):
+    """Chat nhiều lượt (web): tin nhắn sau sửa trên yêu cầu và lịch trước. Ở đây đi nhánh luật (không có model)."""
+    FIRST = "2 người, 1 triệu cả nhóm, thứ Bảy 8h đến 21h, thích biển và hải sản"
+
+    def test_drop_a_stop_keeps_other_constraints(self):
+        r1 = agent.answer(self.FIRST)
+        first_id = block(r1["output"])["stops"][0]["id"]
+        name = DATA.places[first_id].name
+        r2 = agent.answer("bỏ %s đi" % name, r1["turn"])
+        j = block(r2["output"])
+        self.assertEqual(j["status"], "plan")
+        self.assertNotIn(first_id, [s["id"] for s in j["stops"]])
+        self.assertIn("bỏ: " + name, r2["output"])
+        c2 = r2["turn"].constraints
+        self.assertEqual((c2.people, c2.budget_total, c2.day), (2, 1_000_000, SAT))
+        self.assertEqual(codes(r2["turn"].plan, c2), [])
+
+    def test_change_budget_and_end_time(self):
+        r1 = agent.answer(self.FIRST)
+        r2 = agent.answer("tăng ngân sách lên 2 triệu, đi từ 9h đến 22h", r1["turn"])
+        c2 = r2["turn"].constraints
+        self.assertEqual((c2.budget_total, c2.start, c2.end, c2.like), (2_000_000, hhmm("09:00"), hhmm("22:00"),
+                                                                       ("bien", "hai_san")))
+
+    def test_answer_to_ask_back_is_merged(self):
+        r1 = agent.answer("1 triệu, thứ Bảy 8h-21h, thích biển")
+        self.assertEqual(block(r1["output"])["status"], "ask_back")
+        r2 = agent.answer("2 người", r1["turn"])
+        self.assertEqual(block(r2["output"])["status"], "plan")
+
+    def test_refusal_keeps_the_plan_to_edit(self):
+        r1 = agent.answer(self.FIRST)
+        r2 = agent.answer("đặt giúp mình vé luôn nhé", r1["turn"])
+        self.assertEqual(block(r2["output"])["status"], "refuse")
+        self.assertIs(r2["turn"], r1["turn"])
+
+    def test_excluded_place_is_a_violation(self):
+        r1 = agent.answer(self.FIRST)
+        p1 = r1["turn"].plan
+        cons = replace(r1["turn"].constraints, exclude=(p1.stops[0].place_id,))
+        self.assertIn("AVOID_TAG", codes(p1, cons))
+
+
 class FakePrompts:
-    """Đóng vai codebase/prompts.py của Công: propose trả lịch lệch giờ, repair sửa đúng, why có chữ số."""
+    """Đóng vai codebase/prompts.py của Công: propose chọn thiếu quán ăn, repair chọn lại đủ, why có chữ số."""
 
     def __init__(self):
         self.repairs = 0
@@ -199,14 +267,12 @@ class FakePrompts:
                 "end": "13:00", "like": ["bien"], "avoid": [], "diet": [], "must_names": []}
 
     def propose(self, c, cands):
-        return {"stops": [{"id": "FX-01", "arrive": "08:00", "leave": "09:30"},
-                          {"id": "FX-05", "arrive": "09:31", "leave": "10:16"}]}   # TRAVEL_GAP + NO_MEAL
+        return {"ids": ["FX-01"]}   # khung 08:00–13:00 cần bữa trưa → NO_MEAL
 
-    def repair(self, c, cands, plan, violations):
+    def repair(self, c, cands, ids, problems):
         self.repairs += 1
-        self.seen = sorted(v.code for v in violations)
-        return {"stops": [{"id": "FX-01", "arrive": "08:00", "leave": "09:30"},
-                          {"id": "FX-05", "arrive": "11:30", "leave": "12:15"}]}
+        self.seen = sorted(v.code for v in problems)
+        return {"ids": ["FX-01", "FX-05"]}
 
     def why(self, c, plan, places):
         return {"FX-01": "biển đẹp, vé 50k", "FX-05": "quán chay ngon"}
@@ -224,9 +290,19 @@ class AnswerWithPrompts(unittest.TestCase):
         j = block(out)
         self.assertEqual(j["status"], "plan")
         self.assertEqual(agent.prompts.repairs, 1)
-        self.assertEqual(agent.prompts.seen, ["NO_MEAL", "TRAVEL_GAP"])
+        self.assertEqual(agent.prompts.seen, ["NO_MEAL"])
         self.assertNotIn("50k", out)
         self.assertIn("quán chay ngon", out)
+
+    def test_model_times_are_ignored_code_schedules(self):
+        # Giờ model ghi sai (chồng nhau, lệch bữa) không còn quan trọng: code tự xếp giờ cho tập điểm.
+        agent.prompts.propose = lambda c, cands: {"stops": [{"id": "FX-01", "arrive": "08:00", "leave": "09:30"},
+                                                            {"id": "FX-05", "arrive": "09:31", "leave": "10:16"}]}
+        j = block(agent.answer("bất kỳ")["output"])
+        self.assertEqual(j["status"], "plan")
+        self.assertEqual(agent.prompts.repairs, 0)
+        cons = c(end=hhmm("13:00"), like=("bien",))
+        self.assertEqual(codes(plan(*[(s["id"], s["arrive"], s["leave"]) for s in j["stops"]]), cons), [])
 
     def test_invalid_json_from_model_falls_back_to_code(self):
         agent.prompts.propose = lambda c, cands: None

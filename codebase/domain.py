@@ -65,6 +65,7 @@ class Constraints:
     must: tuple[str, ...] = ()   # id điểm người dùng nêu tên, phải có trong lịch
     diet: tuple[str, ...] = ()   # tag mọi bữa ăn phải có, ví dụ ("chay",)
     unknown: tuple[str, ...] = ()  # tên người dùng nêu mà data không có
+    exclude: tuple[str, ...] = ()  # id điểm người dùng đã bỏ khi sửa lịch, không được xếp lại
 
 
 @dataclass(frozen=True)
@@ -250,7 +251,8 @@ def load_rates(path: str) -> dict[str, Rate]:
 #    "people": int | null, "budget_total": int | null (VND cả nhóm, đã nhân số người nếu cần),
 #    "day": "T2".."T7" | "CN" | null, "start": "HH:MM" | null, "end": "HH:MM" | null,
 #    "like": [tag], "avoid": [tag], "diet": [tag], "transport": "grab" | "xe_may",
-#    "must_names": [tên điểm người dùng nêu], "base_cluster": cluster | null}
+#    "must_names": [tên điểm người dùng nêu], "base_cluster": cluster | null,
+#    "exclude_names": [tên điểm người dùng bỏ khi sửa lịch]  (tuỳ chọn)}
 
 QUESTIONS = {
     "budget": "Nhóm mình định chi tổng cộng bao nhiêu tiền cho cả ngày, tính cả vé, ăn và đi lại?",
@@ -319,13 +321,19 @@ def request_from_dict(d, places: dict[str, Place]) -> Constraints | AskBack | Ou
             must.append(pid)
         elif not pid:
             unknown.append(name.strip())
+    exclude = []
+    for name in d.get("exclude_names") or []:
+        pid = match_place(name, places) if isinstance(name, str) else None
+        if pid and pid not in exclude:
+            exclude.append(pid)
+    must = [m for m in must if m not in exclude]
     transport = d.get("transport") if d.get("transport") in TRANSPORTS else "grab"
     base = d.get("base_cluster") if d.get("base_cluster") in CLUSTERS else None
     avoid = _tags(d.get("avoid"))
     like = tuple(t for t in _tags(d.get("like")) if t not in avoid)
     return Constraints(people=people, budget_total=budget, day=day, start=start, end=end, like=like,
                        avoid=avoid, base_cluster=base, transport=transport, must=tuple(must),
-                       diet=_tags(d.get("diet")), unknown=tuple(unknown))
+                       diet=_tags(d.get("diet")), unknown=tuple(unknown), exclude=tuple(exclude))
 
 
 def plan_from_dict(d) -> Plan | None:

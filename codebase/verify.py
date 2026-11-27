@@ -137,6 +137,8 @@ def verify(plan: Plan, c: Constraints, data: Data) -> list[Violation]:
             v.append(Violation("CLOSED", i, "%s nghỉ ngày này" % p.id))
         elif not any(ws <= s.arrive and s.leave <= we for ws, we in p.open_windows):
             v.append(Violation("CLOSED", i, "%s không mở %s–%s" % (p.id, fmt(s.arrive), fmt(s.leave))))
+        if p.id in c.exclude:
+            v.append(Violation("AVOID_TAG", i, "%s người dùng đã bỏ khỏi lịch" % p.id))
         bad = set(p.tags) & set(c.avoid)
         if bad:
             v.append(Violation("AVOID_TAG", i, "%s có %s" % (p.id, ",".join(sorted(bad)))))
@@ -183,19 +185,25 @@ def _timed(order: tuple[Place, ...], c: Constraints, data: Data) -> Plan | None:
 
 def schedule(ids: tuple[str, ...], c: Constraints, data: Data) -> Plan | None:
     """Tìm thứ tự và giờ cho đúng tập điểm ids sao cho verify() rỗng. Không có thì None.
-    Thử mọi hoán vị (≤ 6 điểm → ≤ 720), chọn lịch kết thúc sớm nhất; bằng nhau thì lịch bắt đầu sớm nhất."""
+    Thử mọi hoán vị (≤ 6 điểm → ≤ 720), kéo dài thời gian ở lại (stretch) rồi chọn lịch ít giờ trống nhất:
+    tổng thời gian ở các điểm lớn nhất, rồi ít phút đi lại nhất, rồi kết thúc sớm nhất."""
     if not ids or len(ids) > MAX_STOPS or len(set(ids)) != len(ids) or any(i not in data.places for i in ids):
         return None
     places = tuple(data.places[i] for i in ids)
     if sum(p.kind == "an" for p in places) < len(required_meals(c)):
         return None
 
-    def key(p: Plan) -> tuple[int, int]:
-        return p.stops[-1].leave, p.stops[0].arrive
+    def key(p: Plan) -> tuple[int, int, int]:
+        stay = sum(s.leave - s.arrive for s in p.stops)
+        travel = sum(travel_min(a.place_id, b.place_id, data) for a, b in zip(p.stops, p.stops[1:]))
+        return -stay, travel, p.stops[-1].leave
     best: Plan | None = None
     for order in permutations(places):
         plan = _timed(order, c, data)
-        if plan is not None and (best is None or key(plan) < key(best)) and not verify(plan, c, data):
+        if plan is None or verify(plan, c, data):
+            continue
+        plan = stretch(plan, c, data)
+        if best is None or key(plan) < key(best):
             best = plan
     return best
 
@@ -215,10 +223,10 @@ def _rank(c: Constraints):
 
 def shortlist(c: Constraints, data: Data, limit: int = 15) -> list[Place]:
     """≤ limit ứng viên: điểm bắt buộc + tối đa 6 quán ăn + điểm khác, đã lọc ngày nghỉ, tag tránh, món kiêng, giá 1 điểm."""
-    must = [data.places[i] for i in c.must if i in data.places]
+    must = [data.places[i] for i in c.must if i in data.places and i not in c.exclude]
 
     def usable(p: Place) -> bool:
-        return (p.id not in c.must
+        return (p.id not in c.must and p.id not in c.exclude
                 and (c.day is None or c.day not in p.closed_days)
                 and not set(p.tags) & set(c.avoid)
                 and not (p.kind == "an" and not set(c.diet) <= set(p.tags))
@@ -247,13 +255,84 @@ def plan_greedy(c: Constraints, cands: list[Place], data: Data) -> Plan | None:
             break
     if base is None and not (need == 0 and not must):
         return None
-    for p in [o for o in others if score(o, c) > 0] + [o for o in others if score(o, c) <= 0]:
-        if len(chosen) >= MAX_STOPS or (score(p, c) <= 0 and len(chosen) >= 4):
+    return fill(base, c, others, data) if base is not None else fill(Plan(()), c, others, data)
+
+
+def fill(plan: Plan, c: Constraints, cands: list[Place], data: Data) -> Plan | None:
+    """Thêm dần ứng viên chưa có trong lịch (hợp sở thích trước) khi vẫn xếp được, tới MAX_STOPS.
+    Điểm không khớp sở thích chỉ thêm khi lịch còn dưới 4 điểm hoặc khi nó lấp bớt ít nhất 30 phút trống,
+    để không nhồi cho đủ số."""
+    chosen, base = plan.ids, (plan if plan.stops else None)
+    rank = _rank(c)
+    rest = sorted((p for p in cands if p.id not in chosen and p.kind != "an"), key=rank)   # bữa ăn đã đủ
+    for p in [o for o in rest if score(o, c) > 0] + [o for o in rest if score(o, c) <= 0]:
+        if len(chosen) >= MAX_STOPS:
+            break
+        trial = schedule(chosen + (p.id,), c, data)
+        if trial is None:
             continue
-        plan = schedule(chosen + (p.id,), c, data)
-        if plan is not None:
-            chosen, base = chosen + (p.id,), plan
+        if score(p, c) > 0 or len(chosen) < 4 or free_min(trial, c) <= free_min(base, c) - 30:
+            chosen, base = chosen + (p.id,), trial
     return base
+
+
+def free_min(plan: Plan | None, c: Constraints) -> int:
+    """Số phút trong khung giờ không ở điểm nào (gồm cả thời gian đi lại)."""
+    return (c.end - c.start) - (sum(s.leave - s.arrive for s in plan.stops) if plan else 0)
+
+
+def stay_cap(p: Place) -> int:
+    """Ở lâu nhất bao nhiêu phút khi kéo dài để lấp giờ trống: quán ăn thêm 30 phút,
+    điểm khác gấp đôi thời gian tối thiểu hoặc thêm 60 phút, lấy mức lớn hơn."""
+    return p.visit_min + 30 if p.kind == "an" else max(p.visit_min * 2, p.visit_min + 60)
+
+
+def stretch(plan: Plan, c: Constraints, data: Data) -> Plan:
+    """Lấp giờ chờ: kéo dài thời gian ở lại mỗi điểm tới khi phải đi điểm sau (hoặc hết khung giờ),
+    trong giờ mở cửa và không quá stay_cap. Giờ đến không đổi nên verify vẫn rỗng."""
+    stops = list(plan.stops)
+    for i, s in enumerate(stops):
+        p = data.places[s.place_id]
+        until = (stops[i + 1].arrive - travel_min(s.place_id, stops[i + 1].place_id, data)
+                 if i + 1 < len(stops) else c.end)
+        closes = next((we for ws, we in p.open_windows if ws <= s.arrive and s.leave <= we), s.leave)
+        stops[i] = Stop(s.place_id, s.arrive, max(s.leave, min(until, closes, s.arrive + stay_cap(p))))
+    out = Plan(tuple(stops))
+    return out if not verify(out, c, data) else plan
+
+
+def idle_min(plan: Plan, i: int, data: Data) -> int:
+    """Số phút rảnh trước điểm thứ i (sau khi trừ thời gian đi lại)."""
+    a, b = plan.stops[i - 1], plan.stops[i]
+    return b.arrive - a.leave - travel_min(a.place_id, b.place_id, data)
+
+
+def diagnose(ids: tuple[str, ...], c: Constraints, data: Data) -> list[Violation]:
+    """Vì sao một tập điểm không xếp được (để model chọn lại). Rỗng = không tìm ra lý do riêng nào."""
+    v: list[Violation] = []
+    unknown = [i for i in ids if i not in data.places]
+    if unknown:
+        return [Violation("UNKNOWN_PLACE", None, ", ".join(unknown))]
+    if len(ids) > MAX_STOPS:
+        v.append(Violation("TOO_MANY", None, "%d điểm, tối đa %d" % (len(ids), MAX_STOPS)))
+    if len(set(ids)) != len(ids):
+        v.append(Violation("DUPLICATE", None, "có id lặp"))
+    places = [data.places[i] for i in ids]
+    for p in places:
+        if c.day is not None and c.day in p.closed_days:
+            v.append(Violation("CLOSED", None, "%s nghỉ ngày này" % p.id))
+        if p.id in c.exclude or set(p.tags) & set(c.avoid) or (p.kind == "an" and not set(c.diet) <= set(p.tags)):
+            v.append(Violation("AVOID_TAG", None, "%s không hợp yêu cầu tránh hoặc ăn kiêng" % p.id))
+    meals = sum(p.kind == "an" for p in places)
+    if meals < len(required_meals(c)):
+        v.append(Violation("NO_MEAL", None, "cần %d bữa, mới có %d quán ăn" % (len(required_meals(c)), meals)))
+    tickets = sum(ticket(p, c) for p in places)
+    if tickets > c.budget_total:
+        v.append(Violation("OVER_BUDGET", None, "riêng vé và ăn đã %d > %d" % (tickets, c.budget_total)))
+    if not v:
+        v.append(Violation("TRAVEL_GAP", None, "không có thứ tự nào kịp giờ mở cửa, đường đi và ngân sách; "
+                                               "bỏ bớt điểm xa, điểm mở cửa hẹp hoặc điểm đắt"))
+    return v
 
 
 # ---------------------------------------------------------------- nới ràng buộc
