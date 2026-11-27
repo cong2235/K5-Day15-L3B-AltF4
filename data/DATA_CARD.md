@@ -4,6 +4,9 @@
 > Một trang. Mỗi dataset một mục. Dữ liệu chạy thử (bài mẫu, thông báo mẫu, đoạn transcript…) để trong thư mục `data/` này.
 > Không commit nguyên tài liệu khoá, dữ liệu cá nhân thật hay nguyên file data BTC cấp — chỉ đoạn trích ngắn, bản viết lại, hoặc số đã tổng hợp.
 
+## Phạm vi địa lý
+Đà Nẵng **gồm cả Hội An**. 5 cụm: Mỹ Khê – Ngũ Hành Sơn, Sơn Trà, trung tâm, Bà Nà (cụm xa), Hội An (cụm xa). Mỗi dòng dữ liệu có cột `cluster` thuộc 5 giá trị này.
+
 ## Dataset 1 · [tên]
 
 | | |

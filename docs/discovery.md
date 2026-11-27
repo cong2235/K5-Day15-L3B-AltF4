@@ -22,9 +22,11 @@ Gom từ đề track C1 và mô tả của nhóm. Chưa lọc.
 | J6 | Khi trời mưa hoặc một điểm đột ngột đóng cửa, tôi muốn xếp lại phần còn lại của ngày, để không bỏ phí nửa ngày | Xếp lại giữa ngày |
 | J7 | Khi mỗi người trong nhóm thích một kiểu, tôi muốn gộp sở thích công bằng, để không ai thấy bị bỏ rơi | Ra quyết định nhóm |
 
+> **Phạm vi địa lý (nhóm đã chốt 27/11):** Đà Nẵng **gồm cả Hội An**. Hội An là cụm xa (mất nửa ngày để đi và chơi, giống Bà Nà), không phải "tỉnh khác". Câu từ chối "ngoài phạm vi" dùng nơi rõ ràng nằm ngoài, ví dụ Hà Giang. Nhóm cần kiểm lại địa giới hành chính từ nguồn chính thức trước khi ghi trong slide.
+
 ### 1.2 Reframe — 3 cách hiểu chính
 
-Phân tích chi tiết ở `../../07-phan-tich-de-tai-pstack.md`, nếu có.
+Phân tích chi tiết theo phương pháp pstack (reframe, attack the premise, 3 kiến trúc): [07-phan-tich-de-tai-pstack.md](07-phan-tich-de-tai-pstack.md).
 
 | Bài toán | Job Story | Đã có giải pháp tốt chưa? | Đo được bằng code? |
 |---|---|---|---|
@@ -89,7 +91,7 @@ Phương án quay về: lịch sai / AI lỗi → người dùng tự tra theo q
 
 | Trường | Nội dung |
 |---|---|
-| **Actor** | Người lên lịch trong một nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), lần đầu tự đi Đà Nẵng 1 ngày, tự trả tiền |
+| **Actor** | Người lên lịch trong một nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), lần đầu tự đi Đà Nẵng (gồm cả Hội An) 1 ngày, tự trả tiền |
 | **Quy trình** | Tìm gợi ý → chọn điểm → tra giờ, giá → sắp thứ tự theo khoảng cách → cộng tiền → gửi nhóm, sửa → đi thật (mục 2.2) |
 | **Bottleneck** | **[CẦN BẰNG CHỨNG]** Ứng viên: bước 3–4 (tra giờ và sắp thứ tự khả thi), hoặc bước 6 (sửa đi sửa lại) |
 | **Impact** | **[CẦN SỐ]** __ phút lên lịch/chuyến · __/__ người từng gặp đóng cửa / đi vòng / vượt tiền trong chuyến gần nhất · __ lần đi tỉnh lạ/năm |
@@ -251,7 +253,7 @@ Xếp theo thứ tự kiểm: quan trọng cao, bằng chứng thấp thì kiể
 
 | Cần trong data | Câu thử dùng |
 |---|---|
-| Điểm ở đủ 5 cụm: Mỹ Khê, Sơn Trà, trung tâm, Ngũ Hành Sơn, Bà Nà + Hội An (cụm xa) | T01–T09, K01, K10, K11 |
+| Điểm ở đủ 5 cụm: Mỹ Khê – Ngũ Hành Sơn, Sơn Trà, trung tâm, Bà Nà (cụm xa), Hội An (cụm xa, thuộc phạm vi) | T01–T09, K01, K10, K11 |
 | Bảo tàng Điêu khắc Chăm có giờ mở và ngày nghỉ **theo nguồn chính thức** | K06 |
 | Quán có tag `chay`, quán có tag `hai_san`; ≥2 lựa chọn ăn không hải sản cho mỗi bữa | K07, T01 |
 | Điểm có tag `trong_nha`, `bien`, `check_in`, `cafe`, `an_vat`, `dac_san`, `van_hoa`, `thien_nhien`, `yen_tinh`, `soi_dong` | Đa số câu |

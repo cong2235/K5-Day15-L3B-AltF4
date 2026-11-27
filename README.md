@@ -110,6 +110,7 @@ ____
 | `slides/outline.md` → `demo-slides.pdf` | 5.1 | CP4 |
 | `reflection/TEMPLATE.md` → `reflection/<ten>.md` | 5.3 | 23:59 Thứ Bảy 28/11 |
 | `AGENTS.md` · `docs/ai-usage.md` | khi dùng coding agent / AI | suốt |
+| `docs/discovery.md` · `docs/07-phan-tich-de-tai-pstack.md` · `docs/design.md` · `docs/roadmap.md` · `docs/architecture-review.md` | phân tích đề tài, thiết kế, lộ trình, review (phạm vi: Đà Nẵng gồm Hội An) | CP1–CP2 |
 
 ## Bảy hạng mục bắt buộc — nằm ở file nào
 

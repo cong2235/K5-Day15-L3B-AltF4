@@ -4,6 +4,7 @@
 > **Trạng thái:** bản nháp do AI soạn từ phân tích đề tài. Mục đánh dấu **[CẦN BẰNG CHỨNG]** hoặc **[NHÓM CHỐT]** chưa có số thật, không được nộp khi còn dấu này. Chi tiết thiết kế: [docs/design.md](docs/design.md) · lộ trình: [docs/roadmap.md](docs/roadmap.md).
 
 Track: C (Du lịch) — bài toán nhóm tự mở rộng từ gợi ý C1 (lịch trình một ngày).
+Phạm vi địa lý: **Đà Nẵng gồm cả Hội An** (Hội An là cụm xa, cùng loại với Bà Nà). Chi tiết [docs/design.md](docs/design.md) mục 1.
 Data BTC cấp đã dùng: không (track C không có data BTC).
 
 ## §0. Hiện tại việc này diễn ra thế nào
@@ -36,7 +37,7 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
 
 ## §4. Thiết kế
 - **Lát cắt MỘT CÂU:** Một nhóm bạn trẻ đi lần đầu đến Đà Nẵng · nhập ngân sách, số người, khung giờ, sở thích · AI quyết định chọn và sắp thứ tự điểm tham quan và bữa ăn của 1 ngày, thoả giờ mở cửa, thời gian di chuyển và ngân sách, hoặc nói không xếp được · nhóm nhận lịch từng giờ kèm tổng tiền và lý do chọn.
-- **Không làm:** đặt vé / đặt bàn / thanh toán · chỗ ở · nhiều ngày · bản đồ tương tác · giá và giờ mở thời gian thực · tỉnh khác.
+- **Không làm:** đặt vé / đặt bàn / thanh toán · chỗ ở · nhiều ngày · bản đồ tương tác · giá và giờ mở thời gian thực · nơi ngoài Đà Nẵng và Hội An (ví dụ Hà Giang → từ chối).
 - **Sơ đồ:** xem `docs/design.md` mục 2 (flow) và mục 4 (kiến trúc). Tóm tắt: `parse_request (AI) → shortlist (code) → propose (AI) → verify (code) → repair (AI, ≤3 vòng) → render (code)`; thất bại thì `relax_options (code)` và nói không xếp được.
 - **Hình dạng:** ☑ workflow cố định (có vòng sửa giới hạn). Lý do: thứ tự việc biết trước, cần kiểm cố định và chi phí có trần. Không chọn một agent vì tốn token, khó tái lập, và không có đường đi nào không đoán trước. Không chọn nhiều agent vì không có việc nào độc lập.
 - **AI dựa vào đâu** (khớp `codebase/tools.py`, đều chỉ đọc):

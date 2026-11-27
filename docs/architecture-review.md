@@ -120,6 +120,7 @@ Mức ưu tiên: **P0** chặn mốc hoặc điểm · **P1** nên làm trong ha
 - **Sửa:** thêm `best_windows` (ràng buộc mềm, dùng để xếp hạng) và `event_days`. Đây là nguồn ca khó tốt cho bộ thử, ví dụ "muốn xem cầu Rồng phun lửa vào thứ Ba". **Nhóm phải kiểm lịch thật** từ nguồn công khai trước khi đưa vào data.
 
 ### A5 · [P0, chặn bộ câu thử] Phạm vi địa lý có thể sai thực tế
+- **Trạng thái (27/11): nhóm đã chốt đưa Hội An vào phạm vi**, như một cụm xa. Còn lại: kiểm địa giới hành chính từ nguồn chính thức để ghi đúng trong slide.
 - **Vấn đề:** theo hiểu biết của người review, từ 07/2025 Quảng Nam đã sáp nhập vào Đà Nẵng, nên Hội An thuộc Đà Nẵng. Nếu bộ thử coi Hội An là "ngoài phạm vi → từ chối" thì sai. **Cần nhóm kiểm lại từ nguồn chính thức.**
 - **Sửa đề xuất:** giữ Hội An trong data như một cụm xa (mất nửa ngày, giống Bà Nà). Câu từ chối "tỉnh khác" dùng nơi rõ ràng nằm ngoài, ví dụ Hà Giang.
 

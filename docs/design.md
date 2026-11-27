@@ -8,7 +8,7 @@
 
 **Không làm** (ghi cả ở `spec.md` §4): đặt vé / đặt bàn / thanh toán · chỗ ở · nhiều ngày · bản đồ tương tác · giá hay giờ mở thời gian thực · tỉnh ngoài Đà Nẵng.
 
-**Phạm vi địa lý đề xuất (nhóm chốt trước khi dựng data):** 5 cụm: (1) Biển Mỹ Khê – Ngũ Hành Sơn, (2) Sơn Trà, (3) Trung tâm (cầu Rồng, bảo tàng, chợ), (4) Bà Nà (xa, tốn nửa ngày), (5) Hội An (nếu thuộc phạm vi Đà Nẵng sau sáp nhập, **nhóm cần kiểm lại**). Hải Vân để làm ca "ngoài dữ liệu hoặc quá xa".
+**Phạm vi địa lý (đã chốt, gồm Hội An):** 5 cụm: (1) Biển Mỹ Khê – Ngũ Hành Sơn, (2) Sơn Trà, (3) Trung tâm (cầu Rồng, bảo tàng, chợ), (4) Bà Nà (xa, tốn nửa ngày), (5) Hội An (cụm xa, **đã chốt thuộc phạm vi**; nhóm kiểm lại địa giới hành chính từ nguồn chính thức trước khi ghi trong slide). Hải Vân để làm ca "ngoài dữ liệu hoặc quá xa". Câu từ chối "tỉnh khác" dùng nơi rõ ràng nằm ngoài, ví dụ Hà Giang.
 
 ## 2. Flow
 
