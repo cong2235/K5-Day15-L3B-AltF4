@@ -4,7 +4,7 @@
 > Một trang. Mỗi dataset một mục. Dữ liệu chạy thử (bài mẫu, thông báo mẫu, đoạn transcript…) để trong thư mục `data/` này.
 > Không commit nguyên tài liệu khoá, dữ liệu cá nhân thật hay nguyên file data BTC cấp — chỉ đoạn trích ngắn, bản viết lại, hoặc số đã tổng hợp.
 
-**Trạng thái (27/11, bản đầu CP2):** đã chốt cột, định dạng và cách lấy dữ liệu. `places.csv` đang được dựng; số dòng và ngày kiểm điền khi commit file. Chủ file: Đạt.
+**Trạng thái (28/11, CP4):** đủ 3 file data: `places.csv` 34 dòng, `travel_override.csv` 8 dòng, `transport_rates.csv` 2 dòng; ngày kiểm ghi từng dòng ở `checked_on`. Chủ file: Đạt.
 
 ## Phạm vi địa lý
 Đà Nẵng **gồm cả Hội An**. 5 cụm, ghi ở cột `cluster`: `my_khe` (Mỹ Khê – Ngũ Hành Sơn), `son_tra`, `trung_tam`, `ba_na` (cụm xa), `hoi_an` (cụm xa).
@@ -53,8 +53,8 @@
 | Dùng để làm gì | Ghi đè `travel_min` cho các cặp điểm mà ước tính từ tọa độ sai nhiều (đường đèo, qua sông, cụm xa) |
 | Từ đâu | Nhóm tra thời gian lái xe trên bản đồ trực tuyến, ghi `source` và `checked_on` từng dòng |
 | Xử lý những bước gì | Cột `from_id`, `to_id`, `minutes`, `source`, `checked_on`. Áp cho cả hai chiều. Ưu tiên các cặp có Bà Nà, Hội An, đỉnh Sơn Trà |
-| Số dòng | __ *(dự kiến 5–10)* |
-| Phiên bản / ngày lấy | v0 · __/11/2026 |
+| Số dòng | 8 |
+| Phiên bản / ngày lấy | v0 · 27/11/2026 |
 | Nhãn | Thật (tra thủ công), một lần tra cho mỗi cặp |
 | Giới hạn | Cặp không có trong file thì `travel_min` **ước tính** từ tọa độ: khoảng cách đường chim bay × hệ số đường vòng ÷ tốc độ đô thị ước tính (tham số ghi trong code). Đây là **ước tính, không phải số đo thật**, và phải ghi như vậy trong output và slide. Không tính tắc đường giờ cao điểm |
 
@@ -65,8 +65,8 @@
 | Dùng để làm gì | Đơn giá cho `transport_cost`. Ngân sách của người dùng gồm vé + ăn + di chuyển, nên `cost` và `OVER_BUDGET` cộng cả tiền đi lại giữa các điểm |
 | Từ đâu | Bảng giá công khai của xe công nghệ (`grab`, theo km) và tiệm thuê xe máy (`xe_may`, theo ngày). Mỗi dòng ghi `source` và `checked_on` |
 | Xử lý những bước gì | Cột `mode`, `base_vnd`, `per_km_vnd`, `per_day_vnd`, `source`, `checked_on` (`docs/design.md` mục 7). Km lấy từ tọa độ × hệ số đường vòng, cùng cách với `travel_min` |
-| Số dòng | 2–3 |
-| Phiên bản / ngày lấy | v0 · __/11/2026 |
+| Số dòng | 2 (`grab`, `xe_may`) |
+| Phiên bản / ngày lấy | v0 · 27/11/2026 |
 | Nhãn | **(tự ước tính)**: giá thật đổi theo giờ, thời tiết và khuyến mãi; bảng chỉ lấy một mức |
 | Giới hạn | Không tính giá giờ cao điểm hay phụ phí đêm. Tiền đi lại trong output là ước tính, phải ghi như vậy |
 
@@ -77,7 +77,7 @@
 | Dùng để làm gì | Chạy `python run.py eval`, chấm theo `eval/metric_spec.yaml` |
 | Từ đâu | 30 câu `tu_viet` theo lưới 5 chiều ở `docs/discovery.md` mục 6.1. Trước CP3 thêm câu `nguoi_dung`: chép nguyên văn từ câu Q9 phỏng vấn và S7 khảo sát, không sửa lời |
 | Xử lý những bước gì | Mỗi câu ghi status được chấp nhận và ràng buộc đúng (`status=…; c=…`) ở đầu `pass_criterion` |
-| Số dòng | 30 (thuong 9 · kho 15 · tu_choi 6) |
+| Số dòng | 30 (thuong 6 · kho 18 · tu_choi 6, theo `python run.py check` ngày 28/11) |
 | Phiên bản / ngày lấy | CP2 · 27/11/2026 |
 | Nhãn | `tu_viet` cả 30 câu. Câu do nhóm tự viết **không phải bằng chứng pain** |
 | Giới hạn | Chưa có câu từ người dùng thật (0/30, khung đòi ≥ 1/3). Câu tự viết có thể sạch và chuẩn hơn cách người thật gõ |
