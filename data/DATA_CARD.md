@@ -82,6 +82,6 @@
 | Nhãn | `tu_viet` cả 30 câu. Câu do nhóm tự viết **không phải bằng chứng pain** |
 | Giới hạn | Chưa có câu từ người dùng thật (0/30, khung đòi ≥ 1/3). Câu tự viết có thể sạch và chuẩn hơn cách người thật gõ |
 
-**Data `synthetic` (nhóm tự sinh):** chỉ là các giá trị ca khó trong `places.csv`, có nhãn ở cột `source`. Không sinh bằng model, không có seed. Người kiểm tay: __ · số dòng đã kiểm: __/__. Data tự dựng **không phải bằng chứng pain**.
+**Data `synthetic` (nhóm tự sinh):** chỉ là các giá trị ca khó trong `places.csv`, có nhãn ở cột `source`. Không sinh bằng model, không có seed. Người kiểm tay: Đạt (mở lại link nguồn; quy trình thu thập và chỗ còn cần kiểm ghi ở `data/collection-notes.md`). Data tự dựng **không phải bằng chứng pain**.
 
 **Dữ liệu test của code** (`tests/places_fixture.csv`, Đức giữ): 6–8 dòng tự đặt, toàn bộ `synthetic`, chỉ để test `verify` và `cost`, không dùng khi chạy eval.
