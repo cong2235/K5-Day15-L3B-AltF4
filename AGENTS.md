@@ -42,6 +42,6 @@ Khung chỉ dùng thư viện chuẩn của Python. Thêm thư viện thì ghi v
 
 ## Quy ước của nhóm
 
-- Ngôn ngữ trả lời người dùng: __
-- Phong cách code / đặt tên: __
-- Ai duyệt thay đổi do agent tạo trước khi commit: __
+- Ngôn ngữ trả lời người dùng: tiếng Việt (output của agent, tài liệu, commit message).
+- Phong cách code / đặt tên: Python thư viện chuẩn, PEP 8, tên hàm và biến tiếng Anh dạng `snake_case`, docstring và thông điệp cho người dùng bằng tiếng Việt. Mọi số tiền, giờ, quãng đường do `verify.py` tính; model chỉ chọn tập điểm và viết lý do.
+- Ai duyệt thay đổi do agent tạo trước khi commit: người giữ file duyệt (`docs/ai-usage.md`): Công duyệt `ai.py`, `prompts.py`; Đức duyệt `agent.py`, `verify.py`, `domain.py`, `web/`; Đạt duyệt `data/`, `evidence/`; Quân duyệt `eval/`, `cost/`. Chạy `python -m pytest` và `python run.py check` trước khi commit.
