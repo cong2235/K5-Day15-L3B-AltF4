@@ -46,7 +46,8 @@ Kiểm grader: `python eval/test_grade.py` (11 output viết tay: một bản đ
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
 | 1 | `run-1@20261128-000747` | Claude Haiku 4.5 (Bedrock, `global.anthropic.claude-haiku-4-5-20251001-v1:0`) | prompts `parse_request` / `propose` / `repair` / `why` của Công, code xếp giờ + `verify` · chạy trên bộ câu thử bản 27/11 (có T08, K08, K11 — xem mục 2) | 27/30 | 90% | Đạt (4/4 metric: 18/19 · 30/30 · 3/3 · 6/6) |
-| 2 | | | | __/__ | | |
+| 2a | `run-2@20261128-121330` | Claude Haiku 4.5 | Cải tiến nhóm lỗi "điểm nêu không đi được → bỏ cả lịch" (Đức, `dc2ef4e`) · bộ câu thử cuối | 26/30 | 87% | Chưa (khong_bia_dia_diem 28/30) |
+| **2** | `run-3@20261128-124115` | Claude Haiku 4.5 | Như 2a + bỏ giá vé khỏi câu lý do · bộ câu thử cuối | **28/30** | **93%** | **Đạt** (19/19 · 30/30 · 3/3 · 6/6) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
@@ -54,4 +55,6 @@ Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, k
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+- **Nhóm lỗi lớn nhất ở lượt 1:** điểm người dùng nêu không đi được thì bỏ cả lịch hoặc nêu lý do sai (K18 trượt, K10 đạt theo grader nhưng sai khi kiểm tay).
+- **Đã sửa:** xếp quán ngoài giờ bữa thành ghé thêm, cách nới bỏ ít điểm nhất, lý do lấy từ phép thử → lượt 2 `run-3` 28/30 (93%), nhóm lỗi đó 2/2. Lượt 2a `run-2` (26/30) tụt vì câu lý do ghi giá vé lạ, đã sửa ở `run-3`.
+- **Còn lại:** T05 lỡ giờ phun lửa cầu Rồng, K09 bỏ vế "yên tĩnh". Chi tiết `eval/report.md`.
