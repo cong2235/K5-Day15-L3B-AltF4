@@ -9,27 +9,37 @@
 - **Persona** (`cost/personas.yaml`): 3 kiểu theo số lần sửa lịch trước chuyến đi — `xep_mot_lan` 18% (1 phiên / tháng × 1 lượt) · `sua_vai_lan` 55% (1 × 3 lượt) · `len_ke_hoach_ky` 27% (2 × 5 lượt, có cả câu ngoài phạm vi). Nguồn: tỉ lệ từ khảo sát câu 12 (n = 22, `evidence/survey/results.csv`: không sửa 4 · 1–2 lần 12 · ≥3 lần 6); số phiên và số lượt mỗi phiên **(tự ước tính)**.
 - **Số người dùng thật** (người lên lịch / tháng) 3 kịch bản: thấp 1.400 · cơ sở 2.800 · cao 8.500. Nguồn: ~17,3 triệu lượt khách lưu trú Đà Nẵng năm 2025 ([VietnamNet](https://vietnamnet.vn/en/da-nang-tourism-surpasses-pre-pandemic-peak-remains-top-regional-leader-2477340.html), xem 27/11/2026) → ~1,44 triệu / tháng × 59% nội địa (tỉ lệ trong [kế hoạch 2025](https://nhadautu.vn/da-nang-dat-muc-tieu-don-gan-12-trieu-luot-khach-nam-2025-d92319.html), số kế hoạch) ÷ 3 người / nhóm (khảo sát câu 4) ≈ 283.000 người lên lịch / tháng × tỉ lệ dùng 0,5% · 1% · 3% **(tự ước tính)**.
 - **Giá** 3 mức model (bảng giá chung của BTC, `further-reading/model-prices.md` của repo đề, [trang giá Anthropic](https://platform.claude.com/docs/en/about-claude/pricing), BTC xem 25/11/2026), USD / 1 triệu token vào · ra: Claude Haiku 4.5 1,00 · 5,00 (model đang chạy, qua Amazon Bedrock — giá Bedrock chưa kiểm riêng) · Claude Haiku 5.5 0,10 · 0,50 · Claude Sonnet 4.6 3,00 · 15,00
-- **Tỉ lệ đạt** dùng để tính: __/__ (__%) — lượt `run-__` (lượt 2)
-- Đo token trên model __, tính giá model __ và __
+- **Tỉ lệ đạt** dùng để tính: 27/30 (90%) — lượt `run-1@20261128-000747` (lượt 1). **Chạy lại bằng tỉ lệ của lượt 2 trước CP4:** `python run.py simulate --rate-from eval/run-2.csv`
+- Đo token trên model Claude Haiku 4.5 (`global.anthropic.claude-haiku-4-5-20251001-v1:0`, Bedrock), tính giá Claude Haiku 4.5, Claude Haiku 5.5 và Claude Sonnet 4.6. Haiku 5.5 và Sonnet 4.6 có thể tách token khác, nên hai dòng đó là ước tính theo token của Haiku 4.5
 
 ## 2. Kết quả mô phỏng
 
-Lượt mô phỏng: `cost/simulate-__.csv` · run ID __ · __ phiên · seed __
+Lượt mô phỏng: `cost/simulate-1.csv` · run ID `simulate-1@20261128-101403` · 50 phiên, 0 phiên lỗi · seed 42 · tóm tắt máy sinh: `cost/simulate-1-summary.md` (chép nguyên, không sửa số)
 
-*(dán bảng từ `cost/simulate-N-summary.md`)*
+**Token đo được theo persona** (trung bình mỗi phiên):
 
-| Model | Chi phí / phiên | Chi phí / task thành công | / tháng — thấp | / tháng — cơ sở | / tháng — cao | / người / tháng (cơ sở) |
+| Persona | Số phiên | Lượt hỏi / phiên | Token vào | Token ra | Gọi model | Gọi công cụ |
+|---|---:|---:|---:|---:|---:|---:|
+| xep_mot_lan | 3 | 1 | 5318 | 207 | 1.7 | 0.3 |
+| sua_vai_lan | 33 | 3 | 37035 | 1069 | 10.3 | 3.2 |
+| len_ke_hoach_ky | 14 | 5 | 53732 | 1433 | 14.4 | 4.2 |
+
+| Model | Chi phí / phiên | Chi phí / task thành công | / tháng — thấp (1.400) | / tháng — cơ sở (2.800) | / tháng — cao (8.500) | / người / tháng (cơ sở) |
 |---|---|---|---|---|---|---|
-| | | | | | | |
-| | | | | | | |
+| **Claude Haiku 4.5** (đang chạy) | $0.0454 (≈ 1.180 ₫) | **$0.0504 (≈ 1.312 ₫)** | $80.27 (≈ 2,09 triệu ₫) | $160.54 (≈ 4,17 triệu ₫) | $487.37 (≈ 12,67 triệu ₫) | $0.0573 (≈ 1.491 ₫) |
+| Claude Haiku 5.5 (rẻ hơn) | $0.0045 (≈ 118 ₫) | $0.0050 (≈ 131 ₫) | $8.03 (≈ 0,21 triệu ₫) | $16.05 (≈ 0,42 triệu ₫) | $48.74 (≈ 1,27 triệu ₫) | $0.0057 (≈ 149 ₫) |
+| Claude Sonnet 4.6 (lớn hơn) | $0.1362 (≈ 3.541 ₫) | $0.1513 (≈ 3.935 ₫) | $240.82 (≈ 6,26 triệu ₫) | $481.63 (≈ 12,52 triệu ₫) | $1,462.10 (≈ 38,01 triệu ₫) | $0.1720 (≈ 4.472 ₫) |
 
-Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đạt — **không coi như đạt 100%**.
+Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đạt — **không coi như đạt 100%**. Tỉ giá 26.000 ₫/USD *(tự ước tính)*.
+
+**Đọc bảng:** chi phí do **số lần sửa lịch** quyết định. Một lượt hỏi tốn khoảng 1,7–3,4 lần gọi model và 5–18 nghìn token vào (mỗi lần gửi danh sách ứng viên cho `propose`/`repair`). Persona sửa ≥3 lần chỉ chiếm 27% người dùng nhưng một phiên tốn gấp ~10 lần persona xếp một lần.
 
 ## 3. So với impact
 
-- Impact / người / tháng (`spec.md` §2): __
-- Chi phí / người / tháng (cơ sở, model __): __
-- **Kết luận một dòng — đáng làm không:** __
+- **Impact / người / tháng** (`spec.md` §2): một người lên lịch mất trung vị **90 phút** cho một ngày đi chơi (khảo sát câu 6, n = 21), và 13/22 chuyến (59%) gặp sự cố đóng cửa / đi vòng / bỏ điểm. Nếu quy thời gian ra tiền ở mức 25.000 ₫ / giờ *(tự ước tính)*: 90 phút ≈ **37.500 ₫ / người / lần lên lịch**. Chưa cộng 200.000 ₫ / người / ngày tiêu thêm (khảo sát câu 9) vì câu hỏi không tách nguyên nhân.
+- **Chi phí / người / tháng** (cơ sở, Claude Haiku 4.5): **≈ 1.491 ₫**, tức khoảng **4%** giá trị 90 phút đó; đổi sang Haiku 5.5 còn ≈ 149 ₫.
+- **Kết luận một dòng — đáng làm không:** **Đáng làm về chi phí model** (≈ 1.500 ₫ / người / tháng so với ≈ 37.500 ₫ thời gian lên lịch, kể cả ở kịch bản cao chỉ ≈ 12,7 triệu ₫ / tháng), với điều kiện bản chạy thử thật sự rút ngắn thời gian lên lịch — điều này **chưa đo** (cần người dùng thử bấm giờ, `validation/log.md`).
+- **Đối chiếu quy mô với `spec.md` §2:** §2 ước ≈ 86.000 chuyến tự đi theo nhóm trẻ / tháng; kịch bản thấp · cơ sở · cao ở đây (1.400 · 2.800 · 8.500 người) tương ứng khoảng 1,6% · 3,3% · 10% số chuyến đó.
 
 ## 4. *(Muốn sâu hơn, không bắt buộc)*
 
