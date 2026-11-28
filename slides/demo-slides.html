@@ -1,230 +1,270 @@
-<!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8">
-<title>AltF4 · Lịch trình 1 ngày ở Đà Nẵng vừa ngân sách</title>
-<style>
-  @page { size: 1280px 720px; margin: 0; }
-  :root {
-    --ink: #14213d; --muted: #5b6478; --line: #d9dee8; --bg: #ffffff;
-    --accent: #0b6e8a; --accent-soft: #e3f2f6; --warn: #b54708; --warn-soft: #fff4e5;
-    --good: #1a7f4b; --bad: #b42318;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { background: #888; }
-  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
-  .slide {
-    width: 1280px; height: 720px; background: var(--bg); position: relative;
-    padding: 56px 72px 48px; overflow: hidden; page-break-after: always; break-after: page;
-    margin: 0 auto 24px;
-  }
-  @media print { html, body { background: #fff; } .slide { margin: 0; } }
-  .kicker { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
-  h1 { font-size: 44px; line-height: 1.15; margin-top: 10px; font-weight: 700; }
-  h2 { font-size: 34px; line-height: 1.2; margin-top: 8px; font-weight: 700; }
-  p, li { font-size: 21px; line-height: 1.45; }
-  .muted { color: var(--muted); }
-  .foot { position: absolute; left: 72px; right: 72px; bottom: 22px; display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
-  .speaker { position: absolute; top: 22px; right: 72px; font-size: 13px; color: var(--muted); background: #f2f4f8; padding: 4px 10px; border-radius: 999px; }
-  .grid { display: grid; gap: 20px; }
-  .g3 { grid-template-columns: repeat(3, 1fr); }
-  .g2 { grid-template-columns: 1fr 1fr; }
-  .g4 { grid-template-columns: repeat(4, 1fr); }
-  .stat { border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
-  .stat .num { font-size: 46px; font-weight: 700; color: var(--accent); line-height: 1.05; }
-  .stat .lbl { font-size: 17px; color: var(--ink); margin-top: 6px; line-height: 1.35; }
-  .stat .src { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
-  .quote { border-left: 5px solid var(--accent); background: var(--accent-soft); padding: 14px 20px; border-radius: 0 12px 12px 0; font-size: 21px; font-style: italic; }
-  .quote small { display: block; font-style: normal; font-size: 13px; color: var(--muted); margin-top: 4px; }
-  table { border-collapse: collapse; width: 100%; font-size: 17px; }
-  th, td { border-bottom: 1px solid var(--line); padding: 9px 10px; text-align: left; vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .04em; }
-  td.r, th.r { text-align: right; }
-  .todo { background: var(--warn-soft); color: var(--warn); border: 1px dashed var(--warn); border-radius: 6px; padding: 1px 8px; font-style: normal; font-weight: 600; }
-  .flow { display: flex; align-items: stretch; gap: 10px; margin-top: 26px; }
-  .box { flex: 1; border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 16px; line-height: 1.35; background: #fff; }
-  .box b { display: block; font-size: 17px; margin-bottom: 4px; }
-  .box.ai { border-color: var(--accent); background: var(--accent-soft); }
-  .box.code { border-color: #94a3b8; background: #f6f8fb; }
-  .arrow { align-self: center; font-size: 26px; color: var(--muted); }
-  .tag { display: inline-block; font-size: 13px; padding: 2px 9px; border-radius: 999px; font-weight: 600; }
-  .tag.ai { background: var(--accent-soft); color: var(--accent); }
-  .tag.code { background: #eef1f6; color: #475569; }
-  .tag.good { background: #e7f6ee; color: var(--good); }
-  ul { padding-left: 26px; }
-  li + li { margin-top: 6px; }
-  .big { font-size: 26px; line-height: 1.4; }
-  .verdict { font-size: 64px; font-weight: 800; color: var(--good); letter-spacing: .02em; }
-</style>
-</head>
-<body>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>AltF4 – Lịch trình 1 ngày Đà Nẵng (demo CP4)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
+<style>@page{size:1920px 1080px;margin:0}*{box-sizing:border-box;margin:0;padding:0}html,body{margin:0}
+:root {
+  --navy: #0F2A3D;
+  --sand: #F7F4EE;
+  --mist: #E6F0EF;
+  --teal: #0B6B74;
+  --sun: #E8894A;
+  --ink: #0F2A3D;
+  --body: #3D5060;
+  --muted: #5E6E7A;
+  --line: #CFD8DC;
+  --warn: #9A3412;
+  --warnbg: #FDEBD8;
+}
+body { font-family: 'Be Vietnam Pro', Arial, sans-serif; color: var(--ink); }
+section { padding: 128px 128px 160px; background: var(--sand); counter-increment: page; display: flex; flex-direction: column; }
+section.alt { background: var(--mist); }
+section.dark { background: var(--navy); color: #F2EFE8; }
 
-<!-- 1 · Người dùng & pain -->
-<section class="slide">
-  <div class="speaker">Đạt nói · ~45 giây</div>
-  <div class="kicker">AltF4 · Track C Du lịch · L3B</div>
-  <h1>Tự đi Đà Nẵng: mất 90 phút lên lịch, vẫn đến nơi thì đóng cửa</h1>
-  <p class="muted" style="margin-top:10px">Nhóm bạn trẻ 2–4 người tự đi nơi lạ, tự lục bản đồ, TikTok, nhóm Facebook để xếp lịch một ngày.</p>
-  <div class="grid g4" style="margin-top:30px">
-    <div class="stat"><div class="num">59%</div><div class="lbl">chuyến gặp sự cố: đóng cửa, đi vòng, bỏ điểm (13/22)</div><div class="src">Khảo sát câu 8</div></div>
-    <div class="stat"><div class="num">90'</div><div class="lbl">trung vị thời gian lên lịch cho <b>một</b> ngày</div><div class="src">Câu 6, n = 21</div></div>
-    <div class="stat"><div class="num">200k</div><div class="lbl">tiêu thêm / người / ngày so với dự tính (trung vị)</div><div class="src">Câu 9, n = 20</div></div>
-    <div class="stat"><div class="num">7/15</div><div class="lbl">người đã dùng ChatGPT / AI chung gặp thông tin sai</div><div class="src">Câu 11</div></div>
-  </div>
-  <div class="grid g2" style="margin-top:26px">
-    <div class="quote">"Chỗ đi chơi quá xa, phải sắp xếp lại lịch"<small>Phiếu khảo sát 22</small></div>
-    <div class="quote">"tiền đi chơi quá đắt , phải xin thêm"<small>Phiếu khảo sát 21</small></div>
-  </div>
-  <div class="foot"><span>Khảo sát 26 phiếu qua Zalo 27–28/11/2026, lọc còn n = 22 (đã tự đi nơi lạ trong 12 tháng) · evidence/summary.md</span><span>1 / 8</span></div>
+.eyebrow { font-size: 26px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); }
+.dark .eyebrow { color: var(--sun); }
+h1 { font-size: 96px; font-weight: 800; line-height: 1.08; color: var(--ink); }
+.dark h1 { color: #F7F4EE; }
+h2 { font-size: 64px; font-weight: 700; line-height: 1.12; color: var(--ink); margin-top: 16px; }
+.dark h2 { color: #F7F4EE; }
+h3 { font-size: 36px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+.lede { font-size: 32px; line-height: 1.45; color: var(--body); margin-top: 24px; }
+.dark .lede { color: #C9D6DA; }
+.small { font-size: 24px; line-height: 1.4; color: var(--muted); }
+
+.foot { position: absolute; left: 128px; bottom: 64px; width: 1664px; display: flex; justify-content: space-between; }
+.foot p { font-size: 24px; color: var(--muted); }
+.dark .foot p { color: #9FB3BA; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 56px; }
+.stat { background: #FFFFFF; border-radius: 20px; padding: 36px 32px; border: 2px solid var(--line); }
+.stat .num { font-size: 96px; font-weight: 800; line-height: 1; color: var(--teal); }
+.stat .lbl { font-size: 28px; line-height: 1.35; color: var(--ink); margin-top: 16px; }
+.stat .src { font-size: 24px; color: var(--muted); margin-top: 14px; }
+
+.quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px; }
+.quote { background: var(--mist); border-left: 8px solid var(--teal); border-radius: 0 16px 16px 0; padding: 24px 32px; }
+.quote .q { font-size: 32px; font-style: italic; line-height: 1.35; color: var(--ink); }
+.quote .who { font-size: 24px; color: var(--muted); margin-top: 8px; }
+
+.two { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; margin-top: 48px; }
+.panel { background: #FFFFFF; border-radius: 20px; padding: 40px; border: 2px solid var(--line); }
+.panel .num { font-size: 88px; font-weight: 800; line-height: 1.05; color: var(--teal); }
+.panel .lbl { font-size: 30px; line-height: 1.35; color: var(--ink); margin-top: 12px; }
+.panel .calc { font-size: 26px; line-height: 1.5; color: var(--body); margin-top: 24px; }
+
+.bars { display: flex; flex-direction: column; gap: 22px; margin-top: 8px; }
+.bar { display: flex; align-items: center; gap: 24px; }
+.bar .name { font-size: 28px; width: 560px; color: var(--ink); }
+.bar .track { flex: 1; height: 40px; background: #E3E8EA; border-radius: 8px; overflow: hidden; }
+.bar .fill { height: 40px; background: #9FB3BA; border-radius: 8px; }
+.bar .fill.hi { background: var(--teal); }
+.bar .val { font-size: 30px; font-weight: 700; width: 70px; text-align: right; color: var(--ink); }
+
+.flow { display: flex; align-items: stretch; gap: 0; margin-top: 56px; }
+.step { flex: 1; border-radius: 18px; padding: 28px 24px; background: #FFFFFF; border: 3px solid var(--line); }
+.step.ai { background: #DDEFEE; border-color: var(--teal); }
+.step h3 { font-size: 30px; }
+.step p { font-size: 24px; line-height: 1.35; color: var(--body); margin-top: 10px; }
+.flow x-shape { width: 44px; height: 26px; align-self: center; margin: 0 8px; background: var(--muted); }
+.legend { display: flex; gap: 24px; margin-top: 28px; }
+.pill { font-size: 24px; font-weight: 600; padding: 8px 20px; border-radius: 999px; }
+.pill.ai { background: #DDEFEE; color: var(--teal); }
+.pill.code { background: #FFFFFF; color: var(--body); border: 2px solid var(--line); }
+.points { margin-top: 40px; display: flex; flex-direction: column; gap: 16px; }
+.points p { font-size: 32px; line-height: 1.4; color: var(--ink); }
+
+.cases { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 48px; }
+.case { background: #FFFFFF; border-radius: 20px; padding: 40px; border: 2px solid var(--line); }
+.case .tag { font-size: 24px; font-weight: 700; padding: 6px 18px; border-radius: 999px; background: #DDEFEE; color: var(--teal); align-self: flex-start; }
+.case .ask { font-size: 32px; line-height: 1.4; font-style: italic; color: var(--ink); margin-top: 24px; }
+.case .out { font-size: 28px; line-height: 1.4; color: var(--body); margin-top: 24px; }
+.case { display: flex; flex-direction: column; }
+
+.evalgrid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; margin-top: 40px; }
+.runs { display: flex; flex-direction: column; gap: 24px; }
+.run { background: #FFFFFF; border-radius: 20px; padding: 28px 36px; border: 2px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+.run .k { font-size: 28px; color: var(--muted); }
+.run .v { font-size: 72px; font-weight: 800; color: var(--teal); }
+.run .id { font-size: 24px; color: var(--muted); }
+.todo { font-size: 28px; font-weight: 700; color: var(--warn); background: var(--warnbg); padding: 6px 16px; border-radius: 10px; }
+table.m { font-size: 28px; color: var(--ink); width: 100%; }
+.errs { margin-top: 32px; font-size: 28px; line-height: 1.45; color: var(--ink); }
+
+table.c { font-size: 28px; color: var(--ink); width: 100%; margin-top: 40px; }
+.costs { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; }
+
+.verdict-row { display: flex; align-items: center; gap: 48px; margin-top: 48px; }
+.verdict { font-size: 120px; font-weight: 800; color: var(--sun); line-height: 1; }
+.checks { display: flex; flex-direction: column; gap: 28px; margin-top: 56px; }
+.check { display: flex; gap: 28px; align-items: flex-start; }
+.check x-icon { width: 48px; height: 48px; color: var(--sun); }
+.check p { font-size: 34px; line-height: 1.4; color: #F2EFE8; }
+
+.nextlist { display: flex; flex-direction: column; gap: 28px; margin-top: 48px; }
+.nx { display: flex; gap: 32px; align-items: flex-start; }
+.nx .n { font-size: 64px; font-weight: 800; color: var(--teal); width: 72px; line-height: 1; }
+.nx p { font-size: 32px; line-height: 1.45; color: var(--ink); }
+
+.cover-title { font-size: 104px; font-weight: 800; line-height: 1.05; color: #F7F4EE; margin-top: 32px; width: 1500px; }
+.cover-sub { font-size: 36px; line-height: 1.4; color: #C9D6DA; margin-top: 36px; width: 1400px; }
+.team { font-size: 28px; color: #C9D6DA; margin-top: auto; }
+.sunbar { width: 160px; height: 10px; background: var(--sun); border-radius: 5px; margin-top: 40px; }
+
+section{width:1920px;height:1080px;position:relative;overflow:hidden;page-break-after:always;break-after:page}
+</style></head><body><section id="cover" class="dark" data-transition="fade">
+<p class="eyebrow">AltF4 · Track C Du lịch · L3B</p>
+<h1 class="cover-title">Lịch trình một ngày ở Đà Nẵng, vừa giờ, vừa tiền</h1>
+<div class="sunbar"></div>
+<p class="cover-sub">AI chọn điểm và thứ tự, code kiểm giờ mở cửa, ngân sách, quãng đường. Không xếp được thì nói thẳng.</p>
+<p class="team">Võ Trần Công · Trịnh Minh Đức · Hà Văn Khánh Đạt · Phan Đào Minh Quân</p>
+
 </section>
+<section id="pain">
+<p class="eyebrow">Người dùng &amp; chỗ đau</p>
+<h2>Tự đi Đà Nẵng: 90 phút lên lịch, đến nơi vẫn đóng cửa</h2>
+<div class="stats">
+<div class="stat"><p class="num">59%</p><p class="lbl">chuyến gặp sự cố: đóng cửa, đi vòng, bỏ điểm (13/22)</p><p class="src">Khảo sát câu 8</p></div>
+<div class="stat"><p class="num">90’</p><p class="lbl">trung vị thời gian lên lịch cho một ngày</p><p class="src">Câu 6, n = 21</p></div>
+<div class="stat"><p class="num">200k</p><p class="lbl">tiêu thêm mỗi người mỗi ngày so với dự tính</p><p class="src">Câu 9, trung vị, n = 20</p></div>
+<div class="stat"><p class="num">7/15</p><p class="lbl">người đã dùng ChatGPT / AI chung gặp thông tin sai</p><p class="src">Câu 11</p></div>
+</div>
+<div class="quotes">
+<div class="quote"><p class="q">“Chỗ đi chơi quá xa, phải sắp xếp lại lịch”</p><p class="who">Phiếu khảo sát 22</p></div>
+<div class="quote"><p class="q">“tiền đi chơi quá đắt , phải xin thêm”</p><p class="who">Phiếu khảo sát 21</p></div>
+</div>
+<div class="foot"><p>Khảo sát 26 phiếu qua Zalo, 27–28/11/2026, lọc còn n = 22 · evidence/summary.md</p><p>Đạt</p></div>
 
-<!-- 2 · Vì sao chọn bài này -->
-<section class="slide">
-  <div class="speaker">Đạt nói · ~15 giây</div>
-  <div class="kicker">Impact</div>
-  <h2>Chỗ mất công nhất là xếp lịch, không phải tìm chỗ</h2>
-  <div class="grid g2" style="margin-top:26px; grid-template-columns: 1.1fr 1fr">
-    <div>
-      <p class="muted" style="font-size:17px">Câu 10 khảo sát: phần nào mất công nhất khi lên lịch (n = 22)</p>
-      <table style="margin-top:8px">
-        <tr><td>Tính thứ tự + ước tiền + kiểm giờ mở</td><td class="r"><b>10</b></td></tr>
-        <tr><td>Tìm chỗ đáng đi, quán đáng ăn</td><td class="r">6</td></tr>
-        <tr><td>Thống nhất ý kiến cả nhóm</td><td class="r">4</td></tr>
-        <tr><td>Không biết nguồn nào đáng tin</td><td class="r">2</td></tr>
-      </table>
-      <p style="margin-top:14px; font-size:17px" class="muted">Hướng đã loại: gợi ý quán đặc sản (ít quyết định AI, khó đo) · xếp lại khi mưa (thiếu dữ liệu thời tiết).</p>
-    </div>
-    <div class="stat" style="background:#fafbfd">
-      <div class="lbl" style="font-size:16px" >Impact / tháng ở Đà Nẵng</div>
-      <div class="num" style="font-size:40px; margin-top:6px">≈ 129.000 giờ</div>
-      <div class="lbl">lên lịch mỗi tháng · ≈ 51.000 chuyến gặp sự cố</div>
-      <p style="font-size:15px; margin-top:12px; line-height:1.5">≈ 860.000 lượt khách nội địa / tháng <span class="muted">(Cục Thống kê Đà Nẵng, 11 tháng 2025)</span><br>× 10% tự đi theo nhóm trẻ <span class="muted">(tự ước tính)</span><br>× 90 phút lên lịch <span class="muted">(khảo sát)</span></p>
-    </div>
-  </div>
-  <div class="foot"><span>spec.md §2 · nguồn: baovanhoa.vn, Du lịch Đà Nẵng đón 16,5 triệu lượt khách sau 11 tháng</span><span>2 / 8</span></div>
 </section>
+<section id="impact" class="alt">
+<p class="eyebrow">Vì sao chọn bài này</p>
+<h2>Phần mất công nhất là xếp lịch, không phải tìm chỗ</h2>
+<div class="two">
+<div>
+<p class="small">Câu 10: phần nào mất công nhất khi lên lịch (n = 22)</p>
+<div class="bars" style="margin-top:24px">
+<div class="bar"><p class="name">Tính thứ tự + ước tiền + kiểm giờ mở</p><div class="track"><div class="fill hi" style="width:100%"></div></div><p class="val">10</p></div>
+<div class="bar"><p class="name">Tìm chỗ đáng đi, quán đáng ăn</p><div class="track"><div class="fill" style="width:60%"></div></div><p class="val">6</p></div>
+<div class="bar"><p class="name">Thống nhất ý kiến cả nhóm</p><div class="track"><div class="fill" style="width:40%"></div></div><p class="val">4</p></div>
+<div class="bar"><p class="name">Không biết nguồn nào đáng tin</p><div class="track"><div class="fill" style="width:20%"></div></div><p class="val">2</p></div>
+</div>
+<p class="small" style="margin-top:32px">Hướng đã loại: gợi ý quán đặc sản (ít quyết định AI, khó đo) · xếp lại khi mưa (thiếu dữ liệu thời tiết).</p>
+</div>
+<div class="panel">
+<p class="small">Impact mỗi tháng ở Đà Nẵng</p>
+<p class="num">≈ 129.000 giờ</p>
+<p class="lbl">lên lịch mỗi tháng · ≈ 51.000 chuyến gặp sự cố</p>
+<p class="calc">≈ 860.000 lượt khách nội địa / tháng (Cục Thống kê Đà Nẵng, 11 tháng 2025) × 10% tự đi theo nhóm trẻ (tự ước tính) × 90 phút lên lịch (khảo sát)</p>
+</div>
+</div>
+<div class="foot"><p>spec.md §2 · nguồn lượt khách: baovanhoa.vn</p><p>Đạt</p></div>
 
-<!-- 3 · Giải pháp -->
-<section class="slide">
-  <div class="speaker">Công nói · ~45 giây</div>
-  <div class="kicker">Giải pháp</div>
-  <h2>AI chọn điểm, code kiểm giờ, tiền, quãng đường</h2>
-  <p style="margin-top:12px; font-size:19px">Lát cắt: <b>một nhóm bạn trẻ</b> lần đầu đến Đà Nẵng · nhập ngân sách, số người, khung giờ, sở thích · <b>AI chọn và sắp thứ tự</b> điểm tham quan + bữa ăn của 1 ngày, hoặc nói không xếp được · nhận lịch từng giờ kèm tổng tiền và lý do.</p>
-  <div class="flow">
-    <div class="box ai"><b>Hiểu yêu cầu</b>Câu tiếng Việt tự do → ràng buộc. Thiếu tiền / người / giờ thì hỏi lại 1 câu</div>
-    <div class="arrow">→</div>
-    <div class="box code"><b>Lọc ứng viên</b>34 điểm có nguồn: giờ mở, giá, toạ độ, ngày nghỉ</div>
-    <div class="arrow">→</div>
-    <div class="box ai"><b>Đề xuất lịch</b>Model chỉ chọn id điểm và thứ tự</div>
-    <div class="arrow">→</div>
-    <div class="box code"><b>verify()</b>Đóng cửa · trùng giờ · không kịp đi · vượt ngân sách · thiếu bữa</div>
-    <div class="arrow">→</div>
-    <div class="box ai"><b>Sửa (≤3 vòng)</b>Theo danh sách lỗi cụ thể</div>
-    <div class="arrow">→</div>
-    <div class="box code"><b>Lịch / không xếp được</b>Kèm cách nới đã kiểm</div>
-  </div>
-  <div style="margin-top:14px"><span class="tag ai">AI · Claude Haiku 4.5 qua Bedrock</span> &nbsp; <span class="tag code">Code · không gọi model</span></div>
-  <ul style="margin-top:18px">
-    <li><b>Mọi số tiền, giờ do code tính</b>, model không tự nhẩm → không bịa địa điểm, không bịa giá.</li>
-    <li><b>AI chỉ đề xuất</b>: không đặt vé, không thanh toán. Người dùng tự quyết đi hay đổi.</li>
-  </ul>
-  <div class="foot"><span>spec.md §4 · docs/design.md</span><span>3 / 8</span></div>
 </section>
+<section id="solution">
+<p class="eyebrow">Giải pháp</p>
+<h2>AI chọn điểm, code kiểm giờ, tiền, quãng đường</h2>
+<p class="lede">Một nhóm bạn trẻ lần đầu đến Đà Nẵng nhập ngân sách, số người, khung giờ, sở thích. AI chọn và sắp thứ tự điểm tham quan và bữa ăn của một ngày, hoặc nói không xếp được.</p>
+<div class="flow">
+<div class="step ai"><h3>Hiểu yêu cầu</h3><p>Câu tự do → ràng buộc; thiếu thì hỏi lại</p></div>
+<x-shape kind="arrow-right"></x-shape>
+<div class="step"><h3>Lọc ứng viên</h3><p>34 điểm có nguồn, giờ mở, giá</p></div>
+<x-shape kind="arrow-right"></x-shape>
+<div class="step ai"><h3>Đề xuất</h3><p>Model chỉ chọn id và thứ tự</p></div>
+<x-shape kind="arrow-right"></x-shape>
+<div class="step"><h3>verify()</h3><p>Đóng cửa, trễ giờ, vượt tiền, thiếu bữa</p></div>
+<x-shape kind="arrow-right"></x-shape>
+<div class="step ai"><h3>Sửa ≤ 3 vòng</h3><p>Theo danh sách lỗi cụ thể</p></div>
+<x-shape kind="arrow-right"></x-shape>
+<div class="step"><h3>Kết quả</h3><p>Lịch, hoặc không xếp được + cách nới</p></div>
+</div>
+<div class="legend"><p class="pill ai">AI · Claude Haiku 4.5 qua Bedrock</p><p class="pill code">Code · không gọi model</p></div>
+<div class="points">
+<p><b>Mọi số tiền, giờ do code tính:</b> không bịa địa điểm, không bịa giá.</p>
+<p><b>AI chỉ đề xuất:</b> không đặt vé, không thanh toán.</p>
+</div>
+<div class="foot"><p>spec.md §4 · docs/design.md</p><p>Công</p></div>
 
-<!-- 4 · Demo -->
-<section class="slide">
-  <div class="speaker">Đức thao tác · ~1 phút 30</div>
-  <div class="kicker">Demo live</div>
-  <h2>Một ca thường, một ca không xếp được</h2>
-  <div class="grid g2" style="margin-top:24px">
-    <div class="stat">
-      <span class="tag good">Ca thường · T01</span>
-      <p style="margin-top:10px; font-size:19px">"Nhóm mình 2 người, ngân sách 800k cả nhóm, đi thứ Bảy từ 8h sáng tới 9h tối. Thích biển với hải sản…"</p>
-      <p class="muted" style="margin-top:10px; font-size:16px">→ Lịch từng giờ bắt đầu ở bãi biển Mỹ Khê, có bữa trưa và tối, tổng tiền gồm cả đi lại, lý do chọn từng điểm.</p>
-    </div>
-    <div class="stat">
-      <span class="tag ai">Ca khó · K01</span>
-      <p style="margin-top:10px; font-size:19px">"3 người, tổng 300k, thứ Bảy từ 7h đến 21h, muốn đi cả Bà Nà Hills và Hội An trong một ngày."</p>
-      <p class="muted" style="margin-top:10px; font-size:16px">→ Nói thẳng <b>không xếp được</b> (vé Bà Nà đã vượt ngân sách) và đưa cách nới đã được code kiểm.</p>
-    </div>
-  </div>
-  <p style="margin-top:22px; font-size:19px">Mời ban giám khảo gõ một yêu cầu bất kỳ. Mất mạng hoặc API quá 30 giây → bật <b>video dự phòng</b>.</p>
-  <div class="foot"><span>eval/benchmark.csv · video dự phòng: link trong README</span><span>4 / 8</span></div>
 </section>
+<section id="demo" class="alt">
+<p class="eyebrow">Demo live</p>
+<h2>Một ca thường, một ca không xếp được</h2>
+<div class="cases">
+<div class="case">
+<p class="tag">Ca thường · T01</p>
+<p class="ask">“Nhóm mình 2 người, ngân sách 800k cả nhóm, đi thứ Bảy từ 8h sáng tới 9h tối. Thích biển với hải sản…”</p>
+<p class="out">→ Lịch từng giờ bắt đầu ở bãi biển Mỹ Khê, có bữa trưa và tối, tổng tiền gồm cả đi lại, lý do chọn từng điểm.</p>
+</div>
+<div class="case">
+<p class="tag">Ca khó · K01</p>
+<p class="ask">“3 người, tổng 300k, thứ Bảy từ 7h đến 21h, muốn đi cả Bà Nà Hills và Hội An trong một ngày.”</p>
+<p class="out">→ Nói thẳng không xếp được (vé Bà Nà đã vượt ngân sách) và đưa cách nới đã được code kiểm.</p>
+</div>
+</div>
+<p class="lede">Mời ban giám khảo gõ một yêu cầu bất kỳ. Mất mạng hoặc API quá 30 giây thì bật video dự phòng.</p>
+<div class="foot"><p>eval/benchmark.csv · video dự phòng: link trong README</p><p>Đức</p></div>
 
-<!-- 5 · Đánh giá -->
-<section class="slide">
-  <div class="speaker">Quân nói · ~45 giây</div>
-  <div class="kicker">Đánh giá thế nào</div>
-  <h2>30 câu thử, 4 metric chấm bằng code, chuẩn "đạt" chốt từ CP2</h2>
-  <div class="grid g2" style="margin-top:22px; grid-template-columns: 1.25fr 1fr">
-    <table>
-      <tr><th>Lượt</th><th>Run ID</th><th class="r">Đạt</th><th>So với chuẩn</th></tr>
-      <tr><td>1</td><td style="font-size:14px">run-1@20261128-000747</td><td class="r"><b>27/30 (90%)</b></td><td>đạt</td></tr>
-      <tr><td>2</td><td><span class="todo">điền</span></td><td class="r"><span class="todo">__/30</span></td><td><span class="todo">điền</span></td></tr>
-    </table>
-    <table>
-      <tr><th>Metric (chuẩn)</th><th class="r">Lượt 1</th></tr>
-      <tr><td>Không vi phạm ràng buộc (≥17/19)</td><td class="r">18/19</td></tr>
-      <tr><td>Không bịa địa điểm (30/30)</td><td class="r">30/30</td></tr>
-      <tr><td>Xử lý bất khả thi (3/3)</td><td class="r">3/3</td></tr>
-      <tr><td>Từ chối đúng (6/6)</td><td class="r">6/6</td></tr>
-    </table>
-  </div>
-  <p style="margin-top:16px; font-size:17px" class="muted">Bộ câu thử: 6 thường · 18 khó · 6 từ chối / tấn công. Dữ liệu: 34 điểm Đà Nẵng – Hội An, mỗi dòng có link nguồn và ngày kiểm.</p>
-  <p style="margin-top:10px; font-size:19px"><b>Lỗi chính lượt 1:</b> điểm người dùng nêu không đi được thì bỏ cả lịch (K18) · bỏ qua giờ cầu Rồng phun lửa (T05) · sở thích mâu thuẫn bị bỏ một vế mà không nói (K09).</p>
-  <p style="margin-top:8px; font-size:19px"><b>Cải tiến lượt 2:</b> <span class="todo">điền</span></p>
-  <div class="foot"><span>eval/report.md · eval/run-1.csv · eval/metric_spec.yaml</span><span>5 / 8</span></div>
 </section>
+<section id="eval">
+<p class="eyebrow">Đánh giá thế nào</p>
+<h2>30 câu thử, 4 metric chấm bằng code</h2>
+<div class="evalgrid">
+<div class="runs">
+<div class="run"><div><p class="k">Lượt 1</p><p class="id">run-1@20261128-000747</p></div><p class="v">27/30</p></div>
+<div class="run"><div><p class="k">Lượt 2</p><p class="id">run-3@20261128-124115</p></div><p class="v">28/30</p></div>
+<p class="small">Chuẩn “đạt” chốt từ CP2. 6 câu thường · 18 khó · 6 từ chối / tấn công.</p>
+</div>
+<table class="m">
+<tr><th style="width:60%">Metric (chuẩn đạt)</th><th style="width:20%; text-align:right">Lượt 1</th><th style="width:20%; text-align:right">Lượt 2</th></tr>
+<tr><td>Không vi phạm ràng buộc (≥ 17/19)</td><td style="text-align:right">18/19</td><td style="text-align:right">19/19</td></tr>
+<tr><td>Không bịa địa điểm (30/30)</td><td style="text-align:right">30/30</td><td style="text-align:right">30/30</td></tr>
+<tr><td>Xử lý bất khả thi (3/3)</td><td style="text-align:right">3/3</td><td style="text-align:right">3/3</td></tr>
+<tr><td>Từ chối đúng (6/6)</td><td style="text-align:right">6/6</td><td style="text-align:right">6/6</td></tr>
+</table>
+</div>
+<p class="errs"><b>Lỗi chính lượt 1:</b> điểm người dùng nêu không đi được thì bỏ cả lịch (K18) · bỏ qua giờ cầu Rồng phun lửa (T05) · sở thích mâu thuẫn bị bỏ một vế mà không nói (K09).</p>
+<p class="errs" style="margin-top:16px"><b>Cải tiến lượt 2:</b> quán không mở giờ bữa chính thì đổi quán, không bỏ cả lịch; lý do “không xếp được” lấy từ dữ liệu. K18 trượt → đạt. Lượt trung gian run-2 26/30 (câu lý do ghi giá vé điểm ngoài lịch) vẫn ghi lại. Trên 27 câu chung: 24 → 25.</p>
+<div class="foot"><p>eval/report.md · eval/run-1.csv · eval/run-3.csv · eval/metric_spec.yaml</p><p>Quân</p></div>
 
-<!-- 6 · Chi phí -->
-<section class="slide">
-  <div class="speaker">Quân nói · ~30 giây</div>
-  <div class="kicker">Chi phí khi dùng thật</div>
-  <h2>≈ 1.312 ₫ cho mỗi lịch dùng được</h2>
-  <p class="muted" style="margin-top:8px; font-size:18px">Claude Haiku 4.5 · đo trên 50 phiên mô phỏng chạy qua bản chạy thử · 3 persona theo số lần sửa lịch (khảo sát câu 12)</p>
-  <table style="margin-top:22px">
-    <tr><th>Model</th><th class="r">/ task thành công</th><th class="r">Thấp · 1.400 người</th><th class="r">Cơ sở · 2.800 người</th><th class="r">Cao · 8.500 người</th></tr>
-    <tr><td><b>Claude Haiku 4.5</b> (đang dùng)</td><td class="r"><b>≈ 1.312 ₫</b></td><td class="r">≈ 2,09 triệu ₫ / tháng</td><td class="r">≈ 4,17 triệu ₫ / tháng</td><td class="r">≈ 12,7 triệu ₫ / tháng</td></tr>
-    <tr><td>Claude Haiku 5.5</td><td class="r">≈ 131 ₫</td><td class="r">≈ 0,21 triệu ₫</td><td class="r">≈ 0,42 triệu ₫</td><td class="r">≈ 1,27 triệu ₫</td></tr>
-    <tr><td>Claude Sonnet 4.6</td><td class="r">≈ 3.935 ₫</td><td class="r">≈ 6,26 triệu ₫</td><td class="r">≈ 12,5 triệu ₫</td><td class="r">≈ 38,0 triệu ₫</td></tr>
-  </table>
-  <div class="grid g2" style="margin-top:24px">
-    <div class="stat"><div class="num" style="font-size:36px">≈ 1.491 ₫</div><div class="lbl">chi phí / người / tháng (cơ sở, Haiku 4.5)</div></div>
-    <div class="stat"><div class="num" style="font-size:36px">≈ 4%</div><div class="lbl">so với giá trị 90 phút tự lên lịch mỗi chuyến</div></div>
-  </div>
-  <div class="foot"><span>cost/simulate-1-summary.md · cost/cost-estimate.md · tỷ giá 26.000 ₫/USD (tự ước tính) · cập nhật theo lượt 2 nếu chạy lại</span><span>6 / 8</span></div>
 </section>
+<section id="cost" class="alt">
+<p class="eyebrow">Chi phí khi dùng thật</p>
+<h2>≈ 1.312 ₫ cho mỗi lịch dùng được</h2>
+<p class="small" style="margin-top:16px">Theo tỉ lệ đạt lượt 2 (93%): ≈ 1.265 ₫. Bảng dưới tính theo lượt 1 (90%). Claude Haiku 4.5 · đo trên 50 phiên mô phỏng chạy qua bản chạy thử · 3 persona theo số lần sửa lịch (khảo sát câu 12)</p>
+<table class="c">
+<tr><th style="width:28%">Model</th><th style="width:18%; text-align:right">Mỗi task đạt</th><th style="width:18%; text-align:right">Thấp · 1.400</th><th style="width:18%; text-align:right">Cơ sở · 2.800</th><th style="width:18%; text-align:right">Cao · 8.500</th></tr>
+<tr><td>Haiku 4.5 (đang dùng)</td><td style="text-align:right">1.312 ₫</td><td style="text-align:right">2,09 tr ₫</td><td style="text-align:right">4,17 tr ₫</td><td style="text-align:right">12,7 tr ₫</td></tr>
+<tr><td>Haiku 5.5</td><td style="text-align:right">131 ₫</td><td style="text-align:right">0,21 tr ₫</td><td style="text-align:right">0,42 tr ₫</td><td style="text-align:right">1,27 tr ₫</td></tr>
+<tr><td>Sonnet 4.6</td><td style="text-align:right">3.935 ₫</td><td style="text-align:right">6,26 tr ₫</td><td style="text-align:right">12,5 tr ₫</td><td style="text-align:right">38,0 tr ₫</td></tr>
+</table>
+<div class="costs">
+<div class="panel"><p class="num">≈ 1.491 ₫</p><p class="lbl">chi phí mỗi người mỗi tháng (cơ sở, Haiku 4.5)</p></div>
+<div class="panel"><p class="num">≈ 4%</p><p class="lbl">so với giá trị 90 phút tự lên lịch mỗi chuyến</p></div>
+</div>
+<div class="foot"><p>cost/simulate-1-summary.md · cost-estimate.md · chi phí / tháng theo số người dùng · tỷ giá 26.000 ₫/USD (tự ước tính)</p><p>Quân</p></div>
 
-<!-- 7 · Kết luận -->
-<section class="slide">
-  <div class="speaker">Công nói · ~20 giây</div>
-  <div class="kicker">Kết luận</div>
-  <div style="display:flex; align-items:center; gap:36px; margin-top:24px">
-    <div class="verdict"><span class="todo" style="font-size:40px">GO / ITERATE</span></div>
-    <p class="big muted">Nhóm chốt sau khi có lượt 2</p>
-  </div>
-  <ul style="margin-top:30px" class="big">
-    <li><b>Pain có thật:</b> 59% chuyến gặp sự cố, 90 phút lên lịch một ngày.</li>
-    <li><b>Giải pháp đo được:</b> lượt 1 đạt 27/30, 30/30 không bịa địa điểm → lượt 2 <span class="todo">__/30</span>.</li>
-    <li><b>Đáng tiền:</b> ≈ 1.312 ₫ / lịch dùng được, ≈ 4% giá trị thời gian tiết kiệm.</li>
-  </ul>
-  <div class="foot"><span>Số dẫn từ trang 1, 5, 6</span><span>7 / 8</span></div>
 </section>
+<section id="verdict" class="dark">
+<p class="eyebrow">Kết luận</p>
+<div class="verdict-row">
+<p class="verdict">GO</p>
+<p class="lede" style="margin-top:0">Lượt 2 đạt chuẩn cả 4 metric</p>
+</div>
+<div class="checks">
+<div class="check"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#E8894A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><polyline points="20 6 9 17 4 12"/></svg><p><b>Pain có thật:</b> 59% chuyến gặp sự cố, 90 phút lên lịch một ngày.</p></div>
+<div class="check"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#E8894A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><polyline points="20 6 9 17 4 12"/></svg><p><b>Đo được:</b> lượt 1 đạt 27/30, 30/30 không bịa địa điểm; lượt 2 lên 28/30.</p></div>
+<div class="check"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#E8894A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><polyline points="20 6 9 17 4 12"/></svg><p><b>Đáng tiền:</b> ≈ 1.265 ₫ mỗi lịch dùng được (theo tỉ lệ lượt 2), ≈ 4% giá trị thời gian lên lịch.</p></div>
+</div>
+<div class="foot"><p>Số dẫn từ trang Pain, Đánh giá, Chi phí</p><p>Công</p></div>
 
-<!-- 8 · Nếu có thêm 1 tuần -->
-<section class="slide">
-  <div class="speaker">Công nói · ~10 giây</div>
-  <div class="kicker">Nếu có thêm 1 tuần</div>
-  <h2>Ba việc tiếp theo</h2>
-  <ul style="margin-top:26px" class="big">
-    <li>Sửa nhóm lỗi còn lại sau lượt 2: <span class="todo">điền từ eval/report.md mục 4</span></li>
-    <li>Thêm dữ liệu: giờ thật ban ngày cho các tuyến xa (Bà Nà, Hội An), thêm quán hải sản và quán ăn tối ở Hội An.</li>
-    <li>Cho 5–10 nhóm bạn dùng thử trước chuyến đi thật, đo thời gian lên lịch còn bao nhiêu phút so với 90 phút.</li>
-  </ul>
-  <p style="margin-top:34px; font-size:18px" class="muted">Repo: github.com/cong2235/K5-Day15-L3B-AltF4 · Nhóm AltF4: Võ Trần Công · Trịnh Minh Đức · Hà Văn Khánh Đạt · Phan Đào Minh Quân</p>
-  <div class="foot"><span>eval/report.md · validation/log.md</span><span>8 / 8</span></div>
 </section>
+<section id="next">
+<p class="eyebrow">Nếu có thêm 1 tuần</p>
+<h2>Ba việc tiếp theo</h2>
+<div class="nextlist">
+<div class="nx"><p class="n">1</p><p>Sửa nhóm lỗi còn lại sau lượt 2: T05 (lỡ giờ cầu Rồng phun lửa: đưa khung giờ sự kiện vào bước xếp giờ bằng code) và K09 (sở thích mâu thuẫn: nói rõ đánh đổi hoặc hỏi lại).</p></div>
+<div class="nx"><p class="n">2</p><p>Thêm dữ liệu: thời gian lái xe ban ngày cho tuyến xa (Bà Nà, Hội An), thêm quán hải sản và quán ăn tối ở Hội An.</p></div>
+<div class="nx"><p class="n">3</p><p>Cho 5–10 nhóm bạn dùng thử trước chuyến đi thật, đo thời gian lên lịch còn bao nhiêu phút so với 90 phút.</p></div>
+</div>
+<p class="small" style="margin-top:auto">github.com/cong2235/K5-Day15-L3B-AltF4</p>
+<div class="foot"><p>eval/report.md · validation/log.md</p><p>Công</p></div>
 
-</body>
-</html>
+</section>
+</body></html>
