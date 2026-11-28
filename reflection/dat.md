@@ -1,7 +1,5 @@
 # Reflection — Hà Văn Khánh Đạt
 
-> Bản nháp, Đạt đọc lại và sửa theo ý mình trước 23:59 Thứ Bảy 28/11.
-
 1. **Vai trò + phần mình làm:**
    Mình phụ trách data, bằng chứng pain, bảng impact và slide.
    - **Data:** `data/places.csv` có 34 điểm ở Đà Nẵng và Hội An, mỗi dòng có link nguồn và ngày kiểm. Thêm `travel_override.csv`, `transport_rates.csv` và ghi chú `collection-notes.md` (commit `3427d44`).
