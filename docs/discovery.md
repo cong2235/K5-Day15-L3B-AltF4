@@ -59,7 +59,7 @@ Lát cắt hackathon phủ **O1 + O2 + O3**. O4 nên đưa vào nếu kịp (xem
 ### 2.2 Quy trình hiện tại (giả thuyết, phải kiểm bằng phỏng vấn)
 
 ```text
-HIỆN TẠI — ước 60–180 phút/lần lên lịch (tự ước tính, CẦN BẤM GIỜ / HỎI)
+HIỆN TẠI — ước 60–180 phút/lần lên lịch (tự ước tính, khảo sát cho ≈ 90 phút, xem spec.md §2)
 
 [1. Tìm "Đà Nẵng 1 ngày" trên Google/TikTok: 20–40']
  → [2. Chọn điểm, ghi ra note/nhóm chat: 10–20']
@@ -93,9 +93,9 @@ Phương án quay về: lịch sai / AI lỗi → người dùng tự tra theo q
 |---|---|
 | **Actor** | Người lên lịch trong một nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), lần đầu tự đi Đà Nẵng (gồm cả Hội An) 1 ngày, tự trả tiền |
 | **Quy trình** | Tìm gợi ý → chọn điểm → tra giờ, giá → sắp thứ tự theo khoảng cách → cộng tiền → gửi nhóm, sửa → đi thật (mục 2.2) |
-| **Bottleneck** | **[CẦN BẰNG CHỨNG]** Ứng viên: bước 3–4 (tra giờ và sắp thứ tự khả thi), hoặc bước 6 (sửa đi sửa lại) |
-| **Impact** | **[CẦN SỐ]** __ phút lên lịch/chuyến · __/__ người từng gặp đóng cửa / đi vòng / vượt tiền trong chuyến gần nhất · __ lần đi tỉnh lạ/năm |
-| **Success Metric** | (1) Vi phạm cứng trong lịch đưa ra: baseline = số vi phạm khi dán cùng yêu cầu vào AI chung (đo bằng `verify`) → target 0 ở ≥85% câu · (2) Thời gian lên lịch: baseline __ phút (phỏng vấn) → target ≤10 phút gồm cả duyệt · (3) Ca bất khả thi có cách nới đã kiểm: ≥80% |
+| **Bottleneck** | Bước 3–4 (tra giờ và sắp thứ tự khả thi) và bước 6 (sửa đi sửa lại); khảo sát n = 22: 13/22 gặp sự cố giờ hoặc quãng đường (`evidence/summary.md`) |
+| **Impact** | ≈ 90 phút lên lịch/chuyến · 13/22 (59%) từng gặp sự cố giờ hoặc quãng đường · ≈ 2,5 chuyến tự đi/năm (khảo sát n = 22, xem `spec.md` §2) |
+| **Success Metric** | (1) Vi phạm cứng trong lịch đưa ra: baseline = số vi phạm khi dán cùng yêu cầu vào AI chung (đo bằng `verify`) → target 0 ở ≥85% câu · (2) Thời gian lên lịch: baseline ≈ 90 phút (khảo sát) → target ≤10 phút gồm cả duyệt · (3) Ca bất khả thi có cách nới đã kiểm: ≥80% |
 | **Boundary** | Chỉ đề xuất. Người dùng duyệt và tự xác nhận giờ, giá với nơi đến. Không có hành động ra ngoài |
 
 ### 2.5 Problem Statement v1 (thêm 3 trường)

@@ -1,7 +1,7 @@
 # Review kiến trúc & sản phẩm — AltF4 (handoff cho agent)
 
 > **Đọc file này trước khi sửa code.** File gom toàn bộ ngữ cảnh: hệ thống là gì, đang ở trạng thái nào, điểm yếu, cách sửa và thứ tự ưu tiên.
-> Viết ngày 27/11/2026 (trước CP2 19:30). Người review: AI, vai BA + system architect. **Đây là đề xuất. Nhóm duyệt rồi mới làm.**
+> Viết ngày 27/11/2026 (trước CP2 19:30). Người review: AI, vai BA + system architect. Tài liệu lịch sử ngày 27/11: trạng thái ở bảng cuối mục này đã cũ, xem `README.md` và `spec.md` cho hiện trạng.
 > Luật bắt buộc của repo nằm ở [AGENTS.md](../AGENTS.md). Khi file này mâu thuẫn với AGENTS.md hoặc rubric, **AGENTS.md và rubric thắng**.
 
 ---
@@ -80,7 +80,7 @@ Công: kiến trúc, spec, nộp form, video · Đức: `verify`, điều phối
 
 | Thành phần | Trạng thái | Ghi chú |
 |---|---|---|
-| `spec.md`, `docs/design.md`, `docs/roadmap.md` | ✅ Có bản nháp do AI soạn | Còn nhiều chỗ `[CẦN BẰNG CHỨNG]`, `[NHÓM CHỐT]` |
+| `spec.md`, `docs/design.md`, `docs/roadmap.md` | ✅ Đã hoàn thiện sau CP2–CP4 | Xem `spec.md` |
 | `codebase/agent.py` | ❌ Code mẫu của khung | Vẫn gọi `search_example`, `SYSTEM = ""` |
 | `codebase/tools.py` | ❌ Code mẫu | Chưa có `shortlist`, `get_place`, `travel_min`, `verify`, `relax_options` |
 | `codebase/ai.py` | ❌ Chưa nối model | Nhánh thật vẫn báo `NotImplementedError`, chỉ chạy được `fake` |

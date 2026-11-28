@@ -89,7 +89,7 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 2–3 dòng (bắt buộc): nhóm dùng công cụ AI nào để làm gì, người kiểm lại phần nào. Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
-Nhóm dùng Claude Code để viết phần nối Amazon Bedrock trong `codebase/ai.py`, soạn nháp `spec.md`, `docs/design.md`, `docs/roadmap.md`, và để chạy thử từng câu bằng model thật rồi sửa prompt (`prompts.py`) sau khi thấy lỗi. Công chạy lại bằng khoá AWS của mình và kiểm các lời gọi model; Đức kiểm phần `prompts.py`, `verify` và test; Đạt và Quân kiểm dữ liệu, bộ câu thử và cách chấm. Mọi con số tiền và giờ trong đầu ra do code tính, không do model. Chi tiết từng việc: [docs/ai-usage.md](docs/ai-usage.md).
+Nhóm dùng Claude Code để viết phần nối Amazon Bedrock trong `codebase/ai.py`, soạn bản đầu `spec.md`, `docs/design.md`, `docs/roadmap.md`, và để chạy thử từng câu bằng model thật rồi sửa prompt (`prompts.py`) sau khi thấy lỗi. Công chạy lại bằng khoá AWS của mình và kiểm các lời gọi model; Đức kiểm phần `prompts.py`, `verify` và test; Đạt và Quân kiểm dữ liệu, bộ câu thử và cách chấm. Mọi con số tiền và giờ trong đầu ra do code tính, không do model. Chi tiết từng việc: [docs/ai-usage.md](docs/ai-usage.md).
 
 ## File mẫu — điền ở bước nào
 

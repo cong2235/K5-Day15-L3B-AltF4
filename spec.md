@@ -170,7 +170,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 
 ## §10. Phân công & changelog
 - Phân công (chi tiết theo giai đoạn: `docs/phan-cong.md`): Công: PM, nối model và prompt (`ai.py`, `prompts.py`), spec §0 §3 §4 §6 §9 §10, slide, video, nộp form · Đức: code không gọi model (`domain.py`, `verify.py`, `tools.py`, `agent.py`, `app.py`, `tests/`) · Đạt: dữ liệu địa điểm, bằng chứng pain, phỏng vấn, spec §1–§2 · Quân: bộ câu thử, metric, `grade.py`, báo cáo đánh giá, chi phí, spec §5 §7 §8. (Đổi chặng thì cập nhật ở đây.)
-- Dùng AI vào việc gì: Claude Code viết phần nối Amazon Bedrock (`ai.py`), soạn nháp spec, thiết kế, roadmap, và chạy thử từng câu bằng model thật để tìm lỗi rồi sửa prompt; trong sản phẩm, Claude Haiku 4.5 làm `parse_request`, `propose`, `repair`, `why`, còn tiền, giờ và quãng đường do code tính. Người kiểm: Công (khoá AWS, lời gọi model), Đức (`prompts.py`, `verify`, test), Đạt (dữ liệu, khảo sát), Quân (bộ câu thử, cách chấm); chi tiết `docs/ai-usage.md`. Bản nháp `spec.md`, `docs/design.md`, `docs/roadmap.md` do AI soạn, nhóm duyệt.
+- Dùng AI vào việc gì: Claude Code viết phần nối Amazon Bedrock (`ai.py`), soạn nháp spec, thiết kế, roadmap, và chạy thử từng câu bằng model thật để tìm lỗi rồi sửa prompt; trong sản phẩm, Claude Haiku 4.5 làm `parse_request`, `propose`, `repair`, `why`, còn tiền, giờ và quãng đường do code tính. Người kiểm: Công (khoá AWS, lời gọi model), Đức (`prompts.py`, `verify`, test), Đạt (dữ liệu, khảo sát), Quân (bộ câu thử, cách chấm); chi tiết `docs/ai-usage.md`. Claude Code soạn bản đầu `spec.md`, `docs/design.md`, `docs/roadmap.md`; nhóm duyệt và sửa theo dữ liệu thật.
 - Nhật ký thay đổi:
 
 **CP2 → CP4**

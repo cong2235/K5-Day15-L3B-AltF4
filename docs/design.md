@@ -1,7 +1,7 @@
 # Thiết kế: lịch trình 1 ngày ở Đà Nẵng vừa ngân sách
 
 > Soạn theo phương pháp pstack (`architect`: phác 2 hình dạng rồi chọn · `model-the-domain` · `boundary-discipline` · `explain-the-number` · `sequence-verifiable-units`).
-> Đây là **bản đề xuất của AI cho nhóm duyệt**. Số liệu chi phí là ước tính, phải đo lại bằng `python run.py simulate`. Dữ liệu địa điểm chưa có, nhóm tự dựng (xem mục 7).
+> Thiết kế đã được nhóm duyệt và cài đặt trong `codebase/` (Claude Code hỗ trợ soạn, xem [ai-usage.md](ai-usage.md)). Số chi phí đo bằng `python run.py simulate`, xem `cost/`. Dữ liệu địa điểm do nhóm tự dựng, ghi ở `data/DATA_CARD.md`.
 
 ## 1. Phạm vi lát cắt
 > Một nhóm bạn trẻ đi lần đầu đến Đà Nẵng · nhập ngân sách, số người, khung giờ, sở thích · AI quyết định chọn và sắp thứ tự điểm tham quan và bữa ăn của 1 ngày, thoả giờ mở cửa, thời gian di chuyển và ngân sách, hoặc nói không xếp được · nhóm nhận lịch từng giờ kèm tổng tiền và lý do chọn.
