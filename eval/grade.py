@@ -400,6 +400,14 @@ CASE_CHECKS = {
     # mọi bữa ăn trong stops có tag chay
     "K07": lambda o, p, t, c, d: _need(all("chay" in x.tags for x in places_of(p, d) if x.kind == "an"),
                                        "có bữa ăn không tag chay"),
+    # --- 3 câu của bộ câu thử dùng ở run-1 (thay bằng K19, K20, T10 lúc 28/11 09:30), giữ để chấm lại run-1 ---
+    # ≥1 điểm tag tam_linh
+    "T08": lambda o, p, t, c, d: _need(count_tag(p, d, ["tam_linh"]) >= 1, "thiếu điểm tam_linh"),
+    # có bữa trưa và bữa tối
+    "K08": lambda o, p, t, c, d: _need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối"),
+    # ≥1 điểm cluster hoi_an; có bữa tối
+    "K11": lambda o, p, t, c, d: (_need(any(x.cluster == "hoi_an" for x in places_of(p, d)), "không có điểm ở Hội An")
+                                  or _need(has_meal(p, d, D), "thiếu bữa tối")),
     # có bữa trưa và bữa tối; văn bản có cụm tổng
     "K19": lambda o, p, t, c, d: (_need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối")
                                   or _need(has(t, "tổng"), "không ghi tổng tiền")),
