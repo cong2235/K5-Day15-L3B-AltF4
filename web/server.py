@@ -12,6 +12,8 @@ import os
 import re
 import sys
 import threading
+import urllib.parse
+import urllib.request
 from collections import OrderedDict
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -35,6 +37,49 @@ BLOCK = re.compile(r"```json\s*(\{.*\})\s*```\s*$", re.S)
 SESSION_ID = re.compile(r"[A-Za-z0-9-]{8,64}")
 LOCK = threading.Lock()  # tracing giữ trạng thái chung, nên mỗi lúc chỉ chạy một lượt
 SESSIONS: OrderedDict = OrderedDict()  # mã phiên → Turn của lượt gần nhất (nằm trong bộ nhớ, tắt máy chủ là mất)
+
+
+# ---------------------------------------------------------------- tuyến đường bộ cho bản đồ (OSRM)
+# Máy chủ gọi OSRM thay trình duyệt: không bị tiện ích chặn quảng cáo chặn, có lưu đệm, chờ được lâu hơn.
+# Chỉ nhận toạ độ trong vùng Đà Nẵng – Hội An để endpoint này không thành proxy mở.
+OSRM = "https://router.project-osrm.org/route/v1/driving/"
+ROUTE_CACHE: OrderedDict = OrderedDict()
+MAX_ROUTE_POINTS = 8
+BBOX = (15.6, 16.35, 107.85, 108.45)   # lat min, lat max, lon min, lon max
+
+
+def _points(raw: str) -> list[tuple[float, float]] | None:
+    pts = []
+    for part in raw.split(";"):
+        try:
+            lat, lon = (float(x) for x in part.split(","))
+        except ValueError:
+            return None
+        if not (BBOX[0] <= lat <= BBOX[1] and BBOX[2] <= lon <= BBOX[3]):
+            return None
+        pts.append((round(lat, 5), round(lon, 5)))
+    return pts if 2 <= len(pts) <= MAX_ROUTE_POINTS else None
+
+
+def road_route(pts: list[tuple[float, float]]) -> dict | None:
+    key = tuple(pts)
+    if key in ROUTE_CACHE:
+        return ROUTE_CACHE[key]
+    url = OSRM + ";".join("%s,%s" % (lon, lat) for lat, lon in pts) + "?overview=full&geometries=geojson"
+    req = urllib.request.Request(url, headers={"User-Agent": "AltF4-demo/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=12) as r:
+            body = json.loads(r.read())
+        route = body["routes"][0]
+        out = {"line": [[lat, lon] for lon, lat in route["geometry"]["coordinates"]],
+               "km": round(route["distance"] / 1000, 1)}
+    except Exception as e:  # mạng, OSRM giới hạn lượt, dữ liệu lạ: trình duyệt sẽ nối nét đứt
+        print("[route] %s: %s" % (type(e).__name__, e), file=sys.stderr)
+        return None
+    ROUTE_CACHE[key] = out
+    while len(ROUTE_CACHE) > 500:
+        ROUTE_CACHE.popitem(last=False)
+    return out
 
 
 def run_turn(text: str, session: str | None) -> dict:
@@ -83,6 +128,18 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(data)
+
+    def do_GET(self) -> None:
+        if self.path.startswith("/api/route"):
+            query = urllib.parse.parse_qs(urllib.parse.urlsplit(self.path).query)
+            pts = _points((query.get("c") or [""])[0])
+            if pts is None:
+                self._json(400, {"error": "Toạ độ không hợp lệ."})
+                return
+            route = road_route(pts)
+            self._json(200 if route else 502, route or {"error": "Chưa lấy được đường bộ."})
+            return
+        super().do_GET()
 
     def do_POST(self) -> None:
         if self.path == "/api/choose":

@@ -86,23 +86,33 @@
     return map;
   }
 
-  async function roadPath(points) {
-    const key = points.join(';');
-    if (roads.has(key)) return roads.get(key);
+  async function getJson(url, ms) {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 6000);
+    const timer = setTimeout(() => ctl.abort(), ms);
     try {
-      const coords = points.map(([lat, lon]) => `${lon},${lat}`).join(';');
-      const res = await fetch(`${OSRM}${coords}?overview=full&geometries=geojson`, { signal: ctl.signal });
-      const body = await res.json();
-      const line = body.routes && body.routes[0] ? body.routes[0].geometry.coordinates.map(([lon, lat]) => [lat, lon]) : null;
-      roads.set(key, line);
-      return line;
+      const res = await fetch(url, { signal: ctl.signal });
+      return res.ok ? await res.json() : null;
     } catch {
       return null;
     } finally {
       clearTimeout(timer);
     }
+  }
+
+  // Đường bộ: ưu tiên máy chủ của trang (/api/route, gọi OSRM hộ, có lưu đệm, không bị tiện ích trình duyệt chặn);
+  // không có máy chủ đó (mở file tĩnh) thì gọi thẳng OSRM. Chỉ lưu đệm khi thành công, để lần sau còn thử lại.
+  async function roadPath(points) {
+    const key = points.join(';');
+    if (roads.has(key)) return roads.get(key);
+    let route = await getJson(`/api/route?c=${encodeURIComponent(key)}`, 15000);
+    if (!route || !route.line) {
+      const coords = points.map(([lat, lon]) => `${lon},${lat}`).join(';');
+      const body = await getJson(`${OSRM}${coords}?overview=full&geometries=geojson`, 12000);
+      const r = body && body.routes && body.routes[0];
+      route = r ? { line: r.geometry.coordinates.map(([lon, lat]) => [lat, lon]), km: Math.round(r.distance / 100) / 10 } : null;
+    }
+    if (route && route.line) roads.set(key, route);
+    return route && route.line ? route : null;
   }
 
   async function showRoute(option) {
@@ -123,15 +133,20 @@
       else m.setView(points[0], 14);
     });
     if (!straight) { mapNote.textContent = ''; return; }
-    mapNote.textContent = 'Đang lấy đường đi…';
-    const line = await roadPath(points);
+    mapNote.textContent = 'Đang lấy đường bộ…';
+    const route = await roadPath(points);
     if (token !== routeToken) return;          // người dùng đã chuyển sang phương án khác
-    if (line) {
+    if (route) {
       layer.removeLayer(straight);
-      L.polyline(line, { color: '#0b3d5c', weight: 4, opacity: 0.85 }).addTo(layer);
-      mapNote.textContent = 'Đường đi vẽ theo OSRM để tham khảo. Giờ, thời gian đi và tiền trong lịch do hệ thống tính.';
+      L.polyline(route.line, { color: '#0b3d5c', weight: 4, opacity: 0.85 }).addTo(layer);
+      mapNote.textContent = `Đường bộ theo OSRM${route.km ? `, khoảng ${String(route.km).replace('.', ',')} km` : ''}. `
+        + 'Giờ, thời gian đi và tiền trong lịch do hệ thống tính.';
     } else {
-      mapNote.textContent = 'Nét đứt nối các điểm theo thứ tự (chưa lấy được đường đi thật).';
+      mapNote.textContent = 'Chưa lấy được đường bộ, đang tạm nối thẳng các điểm. ';
+      const retry = el('button', 'chat__map-retry', 'Thử lại');
+      retry.type = 'button';
+      retry.addEventListener('click', () => showRoute(option));
+      mapNote.append(retry);
     }
   }
 

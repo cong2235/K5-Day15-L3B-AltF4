@@ -428,6 +428,7 @@ img[data-lightbox] { cursor: zoom-in; }
   .chat__map { border-left: 0; border-bottom: 1px solid rgb(28 26 23 / .1); }
 }
 .map-pin--meal span { background: var(--lantern-600); }
+.chat__map-retry { padding: 0; border: 0; background: none; cursor: pointer; font: inherit; font-weight: 600; color: var(--sea-600); text-decoration: underline; }
 
 .opts { display: flex; flex-wrap: wrap; gap: .4rem; }
 .opt {
