@@ -122,5 +122,5 @@ Nhóm dùng Claude Code để viết phần nối Amazon Bedrock trong `codebase
 | 4 | Bản chạy thử làm trọn lát cắt | `codebase/` · lệnh ở mục "Lệnh" |
 | 5 | Định nghĩa "tốt" + bộ câu thử | `data/DATA_CARD.md` · `eval/` |
 | 6 | Mô phỏng chi phí khi dùng thật | `cost/` |
-| 7 | Slide + demo + video dự phòng | `demo-slides.pdf` ở thư mục gốc · link video: ____ |
+| 7 | Slide + demo + video dự phòng | `demo-slides.pdf` ở thư mục gốc · link video: https://drive.google.com/drive/folders/14ITARiN16k6DhcwIrSvEzYc16R-Ma8An?usp=sharing |
 | + | *Bonus:* người dùng thử | `validation/log.md` |
