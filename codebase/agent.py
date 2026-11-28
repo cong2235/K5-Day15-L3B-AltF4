@@ -39,6 +39,12 @@ except ImportError:
 
 MAX_REPAIR = 3
 IDLE_NOTE_MIN = 30   # khoảng trống từ chừng này phút trở lên thì ghi rõ là thời gian rảnh
+REST_BAND = (11 * 60 + 30, 15 * 60)   # khoảng trống từ 60 phút trùng giờ này ≥ 45 phút thì gọi là nghỉ trưa
+
+
+def _is_rest(plan: Plan, i: int, data: core.Data) -> bool:
+    a, b = plan.stops[i - 1].leave, plan.stops[i].arrive
+    return 60 <= core.idle_min(plan, i, data) <= 150 and min(b, REST_BAND[1]) - max(a, REST_BAND[0]) >= 45
 
 TAG_LABEL = {"bien": "biển", "hai_san": "hải sản", "chay": "món chay", "an_vat": "ăn vặt", "cho": "chợ",
              "dac_san": "đặc sản", "cafe": "cafe", "check_in": "check-in", "van_hoa": "văn hoá",
@@ -157,6 +163,7 @@ def _plan(c: Constraints, cands: list[Place], data: core.Data, previous: Plan | 
             return None
     else:
         plan = core.fill(plan, c, cands, data) or plan
+    plan = core.fill_gaps(core.local_meals(plan, c, data), c, cands, data)
     return core.stretch(plan, c, data)
 
 
@@ -233,7 +240,10 @@ def _render_plan(c: Constraints, plan: Plan, notes: list[str], data: core.Data, 
             if c.transport == "grab":
                 leg += ", %s" % vnd(cost.legs[i - 1])
             idle = core.idle_min(plan, i, data)
-            if idle >= IDLE_NOTE_MIN:
+            if idle >= IDLE_NOTE_MIN and _is_rest(plan, i, data):
+                leg += " · nghỉ trưa khoảng %s (về khách sạn hoặc ngồi cà phê gần khu %s)" % (
+                    _duration(idle), CLUSTER_LABEL[data.places[plan.stops[i - 1].place_id].cluster])
+            elif idle >= IDLE_NOTE_MIN:
                 leg += " · rảnh khoảng %s, nghỉ ngơi hoặc dạo quanh khu %s" % (
                     _duration(idle), CLUSTER_LABEL[data.places[plan.stops[i - 1].place_id].cluster])
             lines.append(leg)
@@ -354,6 +364,15 @@ def _valid(plan: Plan | None, c: Constraints, data: core.Data) -> bool:
     return plan is not None and not core.verify(plan, c, data) and set(c.must) <= set(plan.ids)
 
 
+def _comfy(plan: Plan, main: Plan, data: core.Data) -> bool:
+    """Phương án phụ không được khó chịu hơn lịch chính quá 45 phút (vd đẩy Hội An sang sáng, biển vào trưa),
+    và khoảng chờ dài nhất không dài hơn của lịch chính quá 60 phút (không đưa lịch trống nửa ngày làm lựa chọn)."""
+    def longest(p: Plan) -> int:
+        return max([core.idle_min(p, i, data) for i in range(1, len(p.stops))] or [0])
+    return (core.discomfort(plan, data) <= core.discomfort(main, data) + 45
+            and longest(plan) <= max(longest(main), 120) + 60)
+
+
 def _distinct(plan: Plan, chosen: list[Plan]) -> bool:
     return all(len(set(plan.ids) ^ set(p.ids)) >= MIN_DIFF for p in chosen)
 
@@ -364,16 +383,21 @@ def _from_ids(ids, c: Constraints, cands: list[Place], data: core.Data) -> Plan 
     plan = core.schedule(ids, c, data) if ids else None
     if plan is None:
         return None
-    return core.stretch(core.fill(plan, c, cands, data) or plan, c, data)
+    plan = core.local_meals(core.fill(plan, c, cands, data) or plan, c, data)
+    return core.stretch(core.fill_gaps(plan, c, cands, data), c, data)
 
 
 def _code_variants(c: Constraints, main: Plan, data: core.Data):
     """Phương án dự phòng bằng code khi AI không đưa đủ: đổi gió (tránh điểm tham quan của lịch chính), tiết kiệm."""
     swap = tuple(i for i in main.ids if i not in c.must and data.places[i].kind != "an")
     c_swap = replace(c, exclude=tuple(dict.fromkeys(c.exclude + swap)))
-    yield "Đổi gió, điểm khác", core.plan_greedy(c_swap, core.shortlist(c_swap, data), data)
     c_cheap = replace(c, like=())          # bỏ ưu tiên sở thích → xếp theo giá
-    yield "Tiết kiệm hơn", core.plan_greedy(c_cheap, core.shortlist(c_cheap, data), data)
+    for label, cv in (("Đổi gió, điểm khác", c_swap), ("Tiết kiệm hơn", c_cheap)):
+        cands = core.shortlist(cv, data)
+        plan = core.plan_greedy(cv, cands, data)
+        if plan is not None:               # cùng các bước làm lịch dễ chịu như lịch chính
+            plan = core.fill_gaps(core.local_meals(plan, cv, data), cv, cands, data)
+        yield label, plan
 
 
 def _alternatives(c: Constraints, cands: list[Place], data: core.Data, main: Plan) -> list[tuple[str, Plan]]:
@@ -384,15 +408,15 @@ def _alternatives(c: Constraints, cands: list[Place], data: core.Data, main: Pla
             continue
         plan = _from_ids(tuple(str(i) for i in opt["ids"]), c, cands, data)
         label = str(opt.get("label") or "").strip()[:40] or "Phương án khác"
-        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]):
+        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]) and _comfy(plan, main, data):
             out.append((label, plan))
         else:
-            note("phương án AI '%s' không xếp được hoặc trùng lịch chính, bỏ" % label)
+            note("phương án AI '%s' không xếp được, trùng lịch chính hoặc giờ giấc khó chịu, bỏ" % label)
     for label, plan in _code_variants(c, main, data):
         if len(out) >= MAX_OPTIONS - 1:
             break
         plan = core.stretch(plan, c, data) if plan is not None else None
-        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]):
+        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]) and _comfy(plan, main, data):
             note("thêm phương án bằng code: %s" % label)
             out.append((label, plan))
     return out
@@ -408,7 +432,8 @@ def _option_json(label: str, plan: Plan, c: Constraints, data: core.Data, why: d
         if i:
             prev = plan.stops[i - 1].place_id
             leg = {"min": core.travel_min(prev, p.id, data), "idle": max(0, core.idle_min(plan, i, data)),
-                   "vnd": cost.legs[i - 1] if c.transport == "grab" else 0}
+                   "vnd": cost.legs[i - 1] if c.transport == "grab" else 0, "rest": _is_rest(plan, i, data),
+                   "area": CLUSTER_LABEL[data.places[prev].cluster]}
         stops.append({"id": p.id, "name": p.name, "kind": p.kind, "lat": p.lat, "lon": p.lon,
                       "arrive": fmt(s.arrive), "leave": fmt(s.leave), "price": _price(p, c),
                       "why": why.get(p.id) or _reason(p, s, c), "leg": leg})

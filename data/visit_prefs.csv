@@ -1,0 +1,26 @@
+id,good_windows,max_visit_min,why
+DN-001,,120,bảo tàng trong nhà: hợp giờ trưa nắng
+DN-002,,90,
+DN-003,18:30-22:00,75,cầu Rồng lên đèn sau 18:30; phun lửa 21:00 T6–CN (best_windows ở places.csv)
+DN-004,,90,trong nhà
+DN-005,,90,trong nhà
+DN-006,18:00-22:30,90,chợ đêm đông vui sau 18:00
+DN-007,18:00-23:00,90,chợ đêm đông vui sau 18:00
+DN-008,06:00-10:30;15:00-18:00,120,ngoài trời trên núi: tránh nắng 10:30–15:00
+DN-009,07:30-10:30;15:00-17:30,120,đỉnh núi ngoài trời: tránh nắng giữa trưa
+DN-010,,90,
+DN-011,05:30-09:30;15:30-18:00,150,tắm biển sáng sớm hoặc chiều mát; trời tối khoảng 17:30 vào tháng 11
+DN-012,07:00-10:30;14:30-17:00,180,leo núi đá: tránh nắng giữa trưa
+DN-013,18:00-23:00,90,chợ đêm đông vui sau 18:00
+DN-014,,480,
+DN-015,,300,
+DN-016,,240,
+DN-017,15:30-21:00,240,phố cổ đẹp nhất lúc chiều và lên đèn
+DN-019,,150,
+DN-020,08:00-11:00;14:30-18:00,120,đi thuyền thúng ngoài trời: tránh nắng giữa trưa
+DN-027,,90,
+DN-039,,45,
+DN-042,,90,
+DN-043,07:00-10:30;15:00-18:00,150,làng rau ngoài trời: tránh nắng giữa trưa
+DN-044,,90,
+DN-045,,420,

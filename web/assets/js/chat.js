@@ -221,7 +221,11 @@
     o.stops.forEach((s, i) => {
       if (s.leg) {
         let t = `đi lại khoảng ${s.leg.min} phút (ước tính)${o.transport === 'grab' ? `, ${vnd(s.leg.vnd)}` : ''}`;
-        if (s.leg.idle >= 30) t += ` · rảnh khoảng ${duration(s.leg.idle)}`;
+        if (s.leg.idle >= 30) {
+          t += s.leg.rest
+            ? ` · nghỉ trưa khoảng ${duration(s.leg.idle)} (về khách sạn hoặc ngồi cà phê gần khu ${s.leg.area})`
+            : ` · rảnh khoảng ${duration(s.leg.idle)}, dạo quanh khu ${s.leg.area}`;
+        }
         list.append(el('li', 'plan__leg', t));
       }
       const li = el('li', 'plan__stop');

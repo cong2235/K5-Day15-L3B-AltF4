@@ -222,6 +222,38 @@ def load_overrides(path: str, places: dict[str, Place]) -> dict[tuple[str, str],
     return out
 
 
+def load_road(path: str, places: dict[str, Place]) -> dict[tuple[str, str], tuple[float, float]]:
+    """data/travel_road.csv (data/build_road_matrix.py tạo) → {(a, b): (phút OSRM, km)}. Bỏ qua cặp có id không còn trong places."""
+    out: dict[tuple[str, str], tuple[float, float]] = {}
+    for n, r in _rows(path, ("from_id", "to_id", "osrm_min", "km")):
+        if r["from_id"] in places and r["to_id"] in places:
+            try:
+                out[(r["from_id"], r["to_id"])] = (float(r["osrm_min"]), float(r["km"]))
+            except ValueError as e:
+                raise DataError("%s dòng %d: %s" % (path, n, e)) from None
+    return out
+
+
+@dataclass(frozen=True)
+class Pref:
+    """Sở thích về giờ của một điểm (data/visit_prefs.csv, nhóm tự ước tính): không phải ràng buộc cứng,
+    chỉ dùng để chọn thứ tự và giờ dễ chịu hơn."""
+    good_windows: tuple[tuple[int, int], ...] = ()   # giờ nên có mặt (ngoài trời: tránh nắng trưa; chợ đêm: tối)
+    max_visit_min: int | None = None                  # ở lâu nhất khi kéo dài để lấp giờ trống
+
+
+def load_prefs(path: str, places: dict[str, Place]) -> dict[str, Pref]:
+    out: dict[str, Pref] = {}
+    for n, r in _rows(path, ("id", "good_windows", "max_visit_min")):
+        if r["id"] not in places:
+            continue
+        try:
+            out[r["id"]] = Pref(_windows(r["good_windows"]), int(r["max_visit_min"]) if r["max_visit_min"] else None)
+        except ValueError as e:
+            raise DataError("%s dòng %d: %s" % (path, n, e)) from None
+    return out
+
+
 @dataclass(frozen=True)
 class Rate:
     mode: str

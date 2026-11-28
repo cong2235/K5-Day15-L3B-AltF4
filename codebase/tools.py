@@ -12,11 +12,13 @@ from __future__ import annotations
 import os
 
 import verify as core
-from domain import Constraints, DataError, Place, Plan, Relax, Violation, load_overrides, load_places, load_rates
+from domain import (Constraints, DataError, Place, Plan, Relax, Violation, load_overrides, load_places, load_prefs,
+                    load_rates, load_road)
 from tracing import tool
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REAL = {"places": "data/places.csv", "travel": "data/travel_override.csv", "rates": "data/transport_rates.csv"}
+REAL = {"places": "data/places.csv", "travel": "data/travel_override.csv", "rates": "data/transport_rates.csv",
+        "road": "data/travel_road.csv", "prefs": "data/visit_prefs.csv"}
 FIXTURE = {"places": "tests/places_fixture.csv", "travel": "tests/travel_override_fixture.csv",
            "rates": "tests/transport_rates_fixture.csv"}
 
@@ -37,7 +39,9 @@ def data() -> core.Data:
         if not os.path.exists(full["rates"]):
             raise DataError("thiếu %s: ngân sách gồm cả tiền đi lại nên cần đơn giá" % paths["rates"])
         overrides = load_overrides(full["travel"], places) if os.path.exists(full["travel"]) else {}
-        _loaded.update(paths=paths, data=core.Data(places, overrides, load_rates(full["rates"])))
+        road = load_road(full["road"], places) if "road" in full and os.path.exists(full["road"]) else {}
+        prefs = load_prefs(full["prefs"], places) if "prefs" in full and os.path.exists(full["prefs"]) else {}
+        _loaded.update(paths=paths, data=core.Data(places, overrides, load_rates(full["rates"]), road, prefs))
     return _loaded["data"]
 
 

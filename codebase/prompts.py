@@ -124,7 +124,11 @@ Tập điểm phải xếp được, nên:
 Chọn sao cho lịch kín và hợp ý nhóm:
 a. Hợp sở thích, kể cả quán ăn: thích hải sản thì chọn quán hải sản, thích đặc sản thì quán đặc sản. Chỉ chọn quán chay khi nhóm ăn chay hoặc không còn quán hợp lệ khác.
 b. Đủ điểm để lấp khung giờ: khung giờ dài thì chọn 5–6 điểm, có điểm mở buổi sáng, buổi chiều và buổi tối tương ứng với khung giờ (vd chợ đêm, cầu, phố cổ cho buổi tối).
-c. Các điểm gần nhau, ít đổi khu, để ít thời gian và tiền đi lại."""
+c. Các điểm gần nhau, ít đổi khu, để ít thời gian và tiền đi lại.
+d. Đúng giờ đẹp (cột "nên đến"): biển, núi, làng quê ngoài trời vào sáng sớm hoặc chiều mát, tránh nắng 11h–15h;
+   cầu Rồng, chợ đêm, phố cổ Hội An cho buổi chiều tối. Giữa trưa nên là bữa trưa, bảo tàng trong nhà, cà phê hoặc nghỉ.
+e. Bữa tối cùng khu với điểm tham quan buổi tối (đã sang Hội An thì ăn tối ở Hội An, không quay về Đà Nẵng chỉ để ăn).
+f. Không nhồi: khung giờ dài trên 10 tiếng thì chừa nghỉ trưa khoảng 1–2 tiếng thay vì xếp kín."""
 
 SYSTEM_WHY = """Bạn viết lý do ngắn vì sao mỗi điểm hợp với nhóm, dựa trên sở thích của nhóm và tag của điểm.
 Trả đúng một object JSON, không thêm chữ nào khác: {"<id>": "<lý do>", ...}, đủ mọi id được đưa.
@@ -201,6 +205,9 @@ def _candidates(c: Constraints, cands: list[Place]) -> str:
             p.visit_min, core.ticket(p, c))
         if p.best_windows:
             row += " | giờ đẹp %s" % _windows(p.best_windows)
+        good = core.good_windows(p, tools.data())
+        if good:
+            row += " | nên đến %s" % _windows(good)
         rows.append(row)
     return "\n".join(rows)
 
