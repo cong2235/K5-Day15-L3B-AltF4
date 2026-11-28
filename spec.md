@@ -14,22 +14,22 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
 ## §1. Người dùng & bằng chứng
 - Người dùng chính: người lên lịch trong một nhóm bạn trẻ 2–4 người (sinh viên / mới đi làm), tự đi du lịch lần đầu đến Đà Nẵng, tự lên kế hoạch, tự trả tiền.
 - Việc họ cố làm xong: sắp xếp một ngày tham quan và ăn uống ở nơi lạ sao cho kịp giờ và vừa tiền.
-- Hôm nay họ giải bằng gì, hỏng ở đâu: **[CẦN BẰNG CHỨNG]** từ phỏng vấn / khảo sát.
+- Hôm nay họ giải bằng gì, hỏng ở đâu (khảo sát n = 22, `evidence/summary.md`): lục nhiều nguồn cùng lúc — Google Maps 11/22, TikTok / Reels / YouTube 10/22, nhóm Facebook 7/22, ChatGPT / Gemini 6/22; trung vị **90 phút** để lên lịch một ngày. Hỏng ở: đến nơi điểm đã đóng cửa (7/22), đi vòng / di chuyển lâu hơn (8/22), bỏ điểm vì không kịp giờ (2/22), tiêu nhiều hơn dự tính (11/22). Trong 15 người đã dùng trợ lý AI chung, **7 người gặp thông tin sai** (giờ mở, giá, địa điểm không có thật).
 - Pain: nhóm bạn tự đi nơi lạ phải lục nhiều nguồn để chọn chỗ vừa ngân sách, không biết điểm nào gần nhau và giờ mở cửa ra sao, nên dễ xếp lịch lệch giờ, đi vòng, tốn hơn dự tính.
-- Bằng chứng: **[CẦN BẰNG CHỨNG]** ≥3 phỏng vấn người vừa đi tỉnh lạ, hoặc khảo sát ≥20 người, + ≥5 trích dẫn nguyên văn đã ẩn tên → `evidence/summary.md`.
-- **Tiền đề cần kiểm** (pstack: attack the premise): *nỗi đau là lệch lịch / giờ / tiền, hay là thiếu thông tin, hay là không tin nguồn?* Đếm số người nhắc mỗi loại. Nếu "lệch lịch" không thuộc nhóm phổ biến nhất thì phải thu hẹp lại lát cắt (ghi §10).
+- Bằng chứng: **khảo sát đạt ngưỡng, n = 22** sau lọc (26 phiếu, loại 4 theo luật ghi trước) · **13/22 (59%)** gặp ≥1 sự cố giờ / quãng đường · 5 trích dẫn nguyên văn câu 13 · chi tiết và giới hạn mẫu: `evidence/summary.md`, `evidence/survey/results.csv`. Phỏng vấn: chưa làm.
+- **Tiền đề cần kiểm** (pstack: attack the premise): *nỗi đau là lệch lịch / giờ / tiền, hay là thiếu thông tin, hay là không tin nguồn?* Đếm số người nhắc mỗi loại. Nếu "lệch lịch" không thuộc nhóm phổ biến nhất thì phải thu hẹp lại lát cắt (ghi §10). **Kết quả câu 10:** tính thứ tự + ước tiền + kiểm giờ mở = 10/22, tìm chỗ đáng đi 6/22, thống nhất nhóm 4/22, không tin nguồn 2/22 → tiền đề đứng, giữ lát cắt.
 
 ## §2. Impact & quyết định chọn
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-| Lịch trình 1 ngày vừa ngân sách, kiểm khả thi bằng code | **[CẦN SỐ]** | **[CẦN SỐ]** | **[CẦN SỐ]** giờ lên kế hoạch | **[CẦN SỐ]** | Có (khuôn BTC gợi ý C1) | **Chọn** |
-| Tìm quán ăn đặc sản theo vùng | **[CẦN SỐ]** | | | | Có | Loại: ít quyết định AI, khó đo "đặc biệt" |
+| Lịch trình 1 ngày vừa ngân sách, kiểm khả thi bằng code | 59% số chuyến tự đi gặp sự cố giờ / quãng đường (khảo sát 13/22) | ~860.000 lượt khách nội địa / tháng ở Đà Nẵng (9,5 triệu / 11 tháng 2025, Cục Thống kê Đà Nẵng qua Báo Văn hoá) × 10% tự đi nhóm trẻ *(tự ước tính)* ≈ 86.000 chuyến | 90 phút lên lịch / ngày (khảo sát, trung vị) | ≈ 129.000 giờ lên lịch / tháng; ≈ 51.000 chuyến gặp sự cố / tháng | Có (khuôn BTC gợi ý C1) | **Chọn** |
+| Tìm quán ăn đặc sản theo vùng | "Tìm chỗ đáng đi, quán đáng ăn" là phần mất công nhất với 6/22 (câu 10) | | | | Có | Loại: ít quyết định AI, khó đo "đặc biệt" |
 | Xếp lại lịch khi mưa / đóng cửa | | | | | Khó (cần thêm dữ liệu thời tiết) | Để Lượt 2 hoặc sau |
 
-- **Impact / tháng** = __ người × __ lần × __ phút = __ — **[CẦN SỐ, có nguồn hoặc ghi (tự ước tính)]**.
+- **Impact / tháng** ≈ 86.000 chuyến *(860.000 lượt khách nội địa / tháng, nguồn: https://baovanhoa.vn/du-lich/du-lich-da-nang-don-165-trieu-luot-khach-sau-11-thang-185181.html; × 10% tự đi theo nhóm trẻ, tự ước tính)* × 90 phút lên lịch (khảo sát) ≈ **129.000 giờ / tháng**; và ≈ 86.000 × 59% ≈ **51.000 chuyến / tháng gặp sự cố** đóng cửa / đi vòng / bỏ điểm. Tiêu thêm trung vị 200.000đ / người / ngày (khảo sát), **không** quy hết cho lịch sai vì câu 9 không tách nguyên nhân.
 - Hướng đã loại: Hà Giang (đổi sang Đà Nẵng vì nhiều loại điểm đa dạng và nhóm muốn kiểm khả thi nhiều cụm); lát cắt "quán ăn đặc sản" (xem bảng).
-- Số lần / tháng từng kiểu người dùng: **[CẦN SỐ]** từ khảo sát (dùng cho §8).
+- Số lần / tháng từng kiểu người dùng (khảo sát câu 5, 12): mỗi người tự đi trung bình **2,5 chuyến / năm ≈ 0,21 chuyến / tháng**; lịch sửa lại trước chuyến đi: không sửa 4/22 · 1–2 lần 12/22 · 3–5 lần 3/22 · trên 5 lần 3/22 (dùng cho persona §8).
 
 ## §3. Giải pháp tương tự
 **[NHÓM CHỐT]** mỗi người thử một sản phẩm 10 phút rồi ghi một điều đáng học, một điều đáng né, mình khác gì. Gợi ý nhóm cần thử: bản đồ trực tuyến, ứng dụng lập lịch trình du lịch, trợ lý AI chung (dán yêu cầu y hệt).
