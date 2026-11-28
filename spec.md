@@ -32,8 +32,14 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
 - Số lần / tháng từng kiểu người dùng (khảo sát câu 5, 12): mỗi người tự đi trung bình **2,5 chuyến / năm ≈ 0,21 chuyến / tháng**; lịch sửa lại trước chuyến đi: không sửa 4/22 · 1–2 lần 12/22 · 3–5 lần 3/22 · trên 5 lần 3/22 (dùng cho persona §8).
 
 ## §3. Giải pháp tương tự
-**[NHÓM CHỐT]** mỗi người thử một sản phẩm 10 phút rồi ghi một điều đáng học, một điều đáng né, mình khác gì. Gợi ý nhóm cần thử: bản đồ trực tuyến, ứng dụng lập lịch trình du lịch, trợ lý AI chung (dán yêu cầu y hệt).
+Nhóm đã thử **một** sản phẩm: **ChatGPT** (trợ lý AI chung), ngày 28/11/2026, dán nguyên văn 4 câu của bộ câu thử (T01 biển và hải sản · K01 Bà Nà và Hội An với 300k · T05 ăn tối rồi xem cầu Rồng · K09 yên tĩnh và chợ đêm). Kết quả ChatGPT trả về được tổng hợp ở [docs/so-sanh-chatgpt.md](docs/so-sanh-chatgpt.md). **Chưa thử** Google Maps hay ứng dụng lập lịch chuyên dụng (Layla, Wanderlog, Mindtrip); sẽ ghi thêm nếu kịp trước khi khoá repo.
+
+| Sản phẩm | Điều đáng học | Điều đáng né | Mình khác gì |
+|---|---|---|---|
+| ChatGPT (trợ lý chung) | Ra ngay lịch từng giờ kèm bảng chi và nhiều lời nhắc "kiểm tra lại giá, giờ mở cửa". Câu T05 xếp xem cầu Rồng đúng 21:00 và dặn đến trước 20–30 phút. Câu K09 tách "chiều yên tĩnh, tối chợ đêm" thành hai khung giờ thay vì bỏ một vế. Câu K01 nói rõ 300k không đủ vé Bà Nà | Cả 4 bảng chi cộng đúng bằng ngân sách, có dòng "dự phòng" (150k / 20k / 350k / 220k), tức là con số lấp cho vừa chứ không cộng từ giá có nguồn. Không thấy thời gian di chuyển giữa từng điểm, tiền đi lại gộp một dòng. Tên quán (Fatfish, Le Rendez-Vous, các quán cà phê sân vườn) không gắn dữ liệu giá hay giờ, nên bản thân lịch cũng dặn tự kiểm lại. Câu K01 đổi yêu cầu thành "chỉ ghé chân núi Bà Nà", không nói "không xếp được" cho đúng yêu cầu ban đầu | Điểm và giá lấy từ `places.csv` có nguồn và ngày kiểm; tiền, giờ, quãng đường do code tính; `verify` chặn lịch vi phạm; bất khả thi thì nói "không xếp được" kèm cách nới đã kiểm. Đổi lại, chỉ có 34 điểm ở Đà Nẵng và Hội An |
+
 - Điều mình muốn khác: **đo được tính khả thi** (0 vi phạm giờ mở cửa / ngân sách, kiểm bằng code), không bịa địa điểm, và nói được "không xếp được".
+- Nhận xét trung thực: ở T05 và K09, ChatGPT làm đúng chỗ mà Lượt 1 của nhóm trượt (xem `eval/report.md` mục 2). Điểm mạnh của nhóm là kiểm được và lần ngược được con số, không phải lúc nào cũng cho lịch hay hơn.
 
 ## §4. Thiết kế
 - **Lát cắt MỘT CÂU:** Một nhóm bạn trẻ đi lần đầu đến Đà Nẵng (gồm Hội An) · nhập ngân sách, số người, khung giờ, sở thích · AI quyết định chọn và sắp thứ tự điểm tham quan và bữa ăn của 1 ngày, thoả giờ mở cửa, thời gian di chuyển và ngân sách, hoặc nói không xếp được · nhóm nhận lịch từng giờ kèm tổng tiền và lý do chọn.
