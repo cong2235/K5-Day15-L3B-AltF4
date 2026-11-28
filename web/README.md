@@ -72,3 +72,12 @@ web/
 2. Chụp lại giao diện bằng skill `web-visual-qa`:
    `python .claude/skills/web-visual-qa/scripts/screenshot.py web/index.html --full --full-height 9000`
    `python .claude/skills/web-visual-qa/scripts/screenshot.py web/dia-diem.html --query id=hoi-an --full --full-height 4200`
+
+## Trợ lý: nhiều phương án, sửa bằng lời, bản đồ tuyến
+
+| Tính năng | Cách làm | Ghi chú |
+|---|---|---|
+| 2–3 phương án cho mỗi yêu cầu | `agent.answer_options()`: phương án đầu là lịch chính (giống `answer()`); AI đề xuất thêm các tập điểm theo chủ đề khác (`prompts.propose_alternatives`), code xếp giờ và `verify` từng phương án; AI đưa không đủ thì code thêm "Đổi gió" và "Tiết kiệm hơn" | Mỗi phương án khác lịch chính ít nhất 2 điểm. Khung eval vẫn gọi `answer()`, không đổi |
+| Chọn phương án | Bấm thẻ → `POST /api/choose` → phương án đó thành nền cho lần sửa sau | Máy chủ chỉ nhớ phương án của câu trả lời mới nhất |
+| Sửa bằng lời | Gõ hoặc bấm micro (Web Speech API, `vi-VN`, có ở Chrome / Edge): "thay chỗ đi biển lúc 16h bằng chùa". Prompt sửa lịch thấy giờ từng điểm nên hiểu "lúc 16h"; code đảm bảo loại hình vừa yêu cầu có mặt trong lịch đã sửa | Giọng nói chỉ điền vào ô, người dùng xem lại rồi mới gửi |
+| Bản đồ tuyến | Khung chat mở thành hai cột; Leaflet + nền OpenStreetMap, ghim số theo thứ tự (quán ăn màu đỏ); đường đi thật lấy từ máy chủ OSRM công cộng (`router.project-osrm.org`), lỗi hoặc quá 6 giây thì nối nét đứt | OSRM công cộng chỉ để demo, có giới hạn lượt; dùng thật thì tự dựng OSRM hoặc dùng API có hợp đồng. Giờ và tiền trong lịch vẫn do code tính, không lấy từ OSRM |

@@ -28,7 +28,7 @@ from dataclasses import dataclass, replace
 import rules
 import tools
 import verify as core
-from domain import (DAY_NAMES, AskBack, Constraints, OutOfScope, Place, Plan, Relax, fmt, plan_from_dict,
+from domain import (DAY_NAMES, AskBack, Constraints, OutOfScope, Place, Plan, Relax, Stop, fmt, plan_from_dict,
                     plan_to_json, request_from_dict, vnd)
 from tracing import note
 
@@ -78,6 +78,7 @@ class Turn:
     text: str
     constraints: Constraints | None = None
     plan: Plan | None = None
+    options: tuple[Plan, ...] = ()   # các phương án đã đưa (web); người dùng chọn cái nào thì plan = cái đó
 
 
 def _parse(text: str, places: dict[str, Place]):
@@ -221,8 +222,8 @@ def _price(p: Place, c: Constraints) -> str:
     return "%s/người × %d = %s" % (vnd(p.price_pp), c.people, vnd(core.ticket(p, c)))
 
 
-def _render_plan(c: Constraints, plan: Plan, notes: list[str], data: core.Data) -> str:
-    why = _reasons(c, plan, data)
+def _render_plan(c: Constraints, plan: Plan, notes: list[str], data: core.Data, why: dict | None = None) -> str:
+    why = why if why is not None else _reasons(c, plan, data)
     cost = core.cost(plan, c, data)
     lines = [_understood(c), *notes, ""]
     for i, s in enumerate(plan.stops):
@@ -298,9 +299,9 @@ def _render_infeasible(c: Constraints, relax: list[Relax], notes: list[str], dat
 
 # ---------------------------------------------------------------- luồng chính
 
-def answer(text: str, prev: Turn | None = None) -> dict:
-    """{"output": str, "turn": Turn}. Khung eval gọi answer(text) và chỉ đọc "output"."""
-    data = tools.data()
+def _understand(text: str, prev: Turn | None, data: core.Data):
+    """Hiểu tin nhắn → ("done", kết quả trả ngay: từ chối / hỏi lại) hoặc ("ok", c, notes, full). Dùng chung cho
+    answer() (khung eval) và answer_options() (web), để hai đường hiểu yêu cầu giống hệt nhau."""
     banner = ["[Đang dùng dữ liệu thử synthetic: %s, chưa có data/places.csv.]" % tools.source()] \
         if tools.using_fixture() else []
     if prev is not None and prev.constraints is not None:
@@ -313,10 +314,10 @@ def answer(text: str, prev: Turn | None = None) -> dict:
     if isinstance(req, OutOfScope):
         note("từ chối: %s" % req.reason)
         out = "\n".join(banner + [REFUSE_TEXT[req.reason], CAN_DO, _block("refuse")])
-        return {"output": out, "turn": prev}       # giữ lịch cũ để người dùng sửa tiếp
+        return ("done", {"output": out, "turn": prev})       # giữ lịch cũ để người dùng sửa tiếp
     if isinstance(req, AskBack):
         note("hỏi lại: %s" % req.field)
-        return {"output": "\n".join(banner + [req.question, _block("ask_back")]), "turn": Turn(full)}
+        return ("done", {"output": "\n".join(banner + [req.question, _block("ask_back")]), "turn": Turn(full)})
     c = req
     notes = list(banner)
     notes += ["Mình chưa có dữ liệu về \"%s\", nên không xếp chỗ này và không đoán giờ hay giá." % n
@@ -324,6 +325,16 @@ def answer(text: str, prev: Turn | None = None) -> dict:
     for pid, msg in _unavailable(c, data.places):
         notes.append(msg)
         c = replace(c, must=tuple(x for x in c.must if x != pid))
+    return ("ok", c, notes, full)
+
+
+def answer(text: str, prev: Turn | None = None) -> dict:
+    """{"output": str, "turn": Turn}. Khung eval gọi answer(text) và chỉ đọc "output"."""
+    data = tools.data()
+    step = _understand(text, prev, data)
+    if step[0] == "done":
+        return step[1]
+    _, c, notes, full = step
     cands = tools.shortlist(c)
     plan = _plan(c, cands, data, prev.plan if prev is not None else None)
     if plan is not None and not core.verify(plan, c, data):
@@ -331,3 +342,131 @@ def answer(text: str, prev: Turn | None = None) -> dict:
         return {"output": _render_plan(c, plan, notes, data), "turn": Turn(full, c, plan)}
     note("không xếp được, tìm cách nới")
     return {"output": _render_infeasible(c, tools.relax_options(c), notes, data), "turn": Turn(full, c)}
+
+
+# ---------------------------------------------------------------- nhiều phương án (chỉ web dùng, khung eval không gọi)
+
+MAX_OPTIONS = 3
+MIN_DIFF = 2          # phương án phụ phải khác phương án chính ít nhất chừng này điểm
+
+
+def _valid(plan: Plan | None, c: Constraints, data: core.Data) -> bool:
+    return plan is not None and not core.verify(plan, c, data) and set(c.must) <= set(plan.ids)
+
+
+def _distinct(plan: Plan, chosen: list[Plan]) -> bool:
+    return all(len(set(plan.ids) ^ set(p.ids)) >= MIN_DIFF for p in chosen)
+
+
+def _from_ids(ids, c: Constraints, cands: list[Place], data: core.Data) -> Plan | None:
+    """Tập điểm (AI chọn) → code xếp giờ, lấp thêm điểm, kéo dài thời gian ở. Không xếp được thì None."""
+    ids = tuple(dict.fromkeys(c.must + tuple(i for i in ids if i in data.places)))
+    plan = core.schedule(ids, c, data) if ids else None
+    if plan is None:
+        return None
+    return core.stretch(core.fill(plan, c, cands, data) or plan, c, data)
+
+
+def _code_variants(c: Constraints, main: Plan, data: core.Data):
+    """Phương án dự phòng bằng code khi AI không đưa đủ: đổi gió (tránh điểm tham quan của lịch chính), tiết kiệm."""
+    swap = tuple(i for i in main.ids if i not in c.must and data.places[i].kind != "an")
+    c_swap = replace(c, exclude=tuple(dict.fromkeys(c.exclude + swap)))
+    yield "Đổi gió, điểm khác", core.plan_greedy(c_swap, core.shortlist(c_swap, data), data)
+    c_cheap = replace(c, like=())          # bỏ ưu tiên sở thích → xếp theo giá
+    yield "Tiết kiệm hơn", core.plan_greedy(c_cheap, core.shortlist(c_cheap, data), data)
+
+
+def _alternatives(c: Constraints, cands: list[Place], data: core.Data, main: Plan) -> list[tuple[str, Plan]]:
+    out: list[tuple[str, Plan]] = []
+    raw = _ai("propose_alternatives", c, cands, main, MAX_OPTIONS - 1)
+    for opt in (raw or {}).get("options") or []:
+        if len(out) >= MAX_OPTIONS - 1 or not isinstance(opt, dict) or not isinstance(opt.get("ids"), list):
+            continue
+        plan = _from_ids(tuple(str(i) for i in opt["ids"]), c, cands, data)
+        label = str(opt.get("label") or "").strip()[:40] or "Phương án khác"
+        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]):
+            out.append((label, plan))
+        else:
+            note("phương án AI '%s' không xếp được hoặc trùng lịch chính, bỏ" % label)
+    for label, plan in _code_variants(c, main, data):
+        if len(out) >= MAX_OPTIONS - 1:
+            break
+        plan = core.stretch(plan, c, data) if plan is not None else None
+        if _valid(plan, c, data) and _distinct(plan, [main] + [p for _, p in out]):
+            note("thêm phương án bằng code: %s" % label)
+            out.append((label, plan))
+    return out
+
+
+def _option_json(label: str, plan: Plan, c: Constraints, data: core.Data, why: dict[str, str]) -> dict:
+    """Một phương án cho trang web: mọi giờ, tiền, toạ độ do code viết từ dữ liệu."""
+    cost = core.cost(plan, c, data)
+    stops = []
+    for i, s in enumerate(plan.stops):
+        p = data.places[s.place_id]
+        leg = None
+        if i:
+            prev = plan.stops[i - 1].place_id
+            leg = {"min": core.travel_min(prev, p.id, data), "idle": max(0, core.idle_min(plan, i, data)),
+                   "vnd": cost.legs[i - 1] if c.transport == "grab" else 0}
+        stops.append({"id": p.id, "name": p.name, "kind": p.kind, "lat": p.lat, "lon": p.lon,
+                      "arrive": fmt(s.arrive), "leave": fmt(s.leave), "price": _price(p, c),
+                      "why": why.get(p.id) or _reason(p, s, c), "leg": leg})
+    return {"label": label, "total_vnd": cost.total, "transport_vnd": cost.transport,
+            "budget_vnd": c.budget_total, "transport": c.transport, "stops": stops}
+
+
+def _honor_new_likes(main: Plan, c: Constraints, prev: Turn | None, cands: list[Place], data: core.Data) -> Plan:
+    """Người dùng vừa sửa "thay X bằng <loại hình>" mà lịch mới chưa có loại hình đó: thử đưa một ứng viên có tag đó
+    vào (thay một điểm tham quan không bắt buộc, hoặc thêm nếu còn chỗ). Chỉ nhận lịch qua verify; không được thì giữ."""
+    if prev is None or prev.constraints is None:
+        return main
+    added = set(c.like) - set(prev.constraints.like)
+    if not added or any(set(data.places[i].tags) & added for i in main.ids):
+        return main
+    picks = [p for p in cands if set(p.tags) & added and p.kind != "an" and p.id not in main.ids][:3]
+    drops = [None] + [i for i in reversed(main.ids) if i not in c.must and data.places[i].kind != "an"]
+    for p in picks:
+        for drop in drops:
+            ids = tuple(i for i in main.ids if i != drop) + (p.id,)
+            plan = core.schedule(ids, c, data) if len(ids) <= core.MAX_STOPS else None
+            if _valid(plan, c, data):
+                note("sửa theo yêu cầu: đưa %s vào lịch%s" % (p.id, " thay %s" % drop if drop else ""))
+                return core.stretch(plan, c, data)
+    return main
+
+
+def answer_options(text: str, prev: Turn | None = None) -> dict:
+    """Như answer(), thêm "options": 2–3 phương án đã qua verify (phương án đầu = lịch chính, giống answer()).
+    Từ chối / hỏi lại / không xếp được thì "options" rỗng và dùng "output" như answer()."""
+    data = tools.data()
+    step = _understand(text, prev, data)
+    if step[0] == "done":
+        return {**step[1], "options": []}
+    _, c, notes, full = step
+    cands = tools.shortlist(c)
+    main = _plan(c, cands, data, prev.plan if prev is not None else None)
+    if not _valid(main, c, data):
+        note("không xếp được, tìm cách nới")
+        return {"output": _render_infeasible(c, tools.relax_options(c), notes, data), "turn": Turn(full, c),
+                "options": []}
+    main = _honor_new_likes(main, c, prev, cands, data)
+    plans = [("Hợp yêu cầu nhất" if prev is None or prev.plan is None else "Lịch đã sửa", main)]
+    plans += _alternatives(c, cands, data, main)
+    seen: dict[str, Stop] = {}
+    for _, p in plans:
+        for s in p.stops:
+            seen.setdefault(s.place_id, s)
+    why = _reasons(c, Plan(tuple(seen.values())), data)      # một lần gọi model cho lý do của mọi phương án
+    notes += _snack_notes(c, main, data)
+    return {"output": _render_plan(c, main, notes, data, why), "turn": Turn(full, c, main, tuple(p for _, p in plans)),
+            "options": [_option_json(label, p, c, data, why) for label, p in plans],
+            "understood": _understood(c), "notes": notes,
+            "checked_on": min(data.places[s.place_id].checked_on for _, p in plans for s in p.stops)}
+
+
+def choose(turn: Turn | None, index: int) -> Turn | None:
+    """Người dùng chọn phương án thứ index trên web → lịch đó thành nền cho các lần sửa sau."""
+    if turn is None or not (0 <= index < len(turn.options)):
+        return turn
+    return replace(turn, plan=turn.options[index])

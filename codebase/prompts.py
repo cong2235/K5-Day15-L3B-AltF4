@@ -95,6 +95,11 @@ Hình dạng JSON: giống YÊU CẦU HIỆN TẠI, thêm "status", "reason" và
 Cách áp tin nhắn:
 - Giữ nguyên mọi trường tin nhắn không nhắc tới.
 - "bỏ X", "không đi X", "thay X bằng …": thêm X vào exclude_names, xoá X khỏi must_names. Chép đúng tên trong danh sách địa điểm.
+- Người dùng chỉ điểm bằng giờ, buổi hay vị trí trong lịch ("chỗ lúc 16h", "điểm buổi chiều", "quán tối", "điểm đầu tiên"):
+  tra LỊCH HIỆN TẠI (mỗi dòng có giờ đến–giờ rời) để biết đó là điểm nào, rồi áp như "bỏ X" / "thay X bằng …" với đúng tên điểm đó.
+  "Thay đi biển lúc 16h bằng chùa" = thêm điểm biển đang ở khung đó vào exclude_names và thêm tag tam_linh vào like.
+  Giờ người dùng nêu có thể lệch vài chục phút so với lịch: lấy điểm gần giờ đó nhất.
+- Tin nhắn đòi thay, bỏ, thêm, đổi giờ hay đổi thứ tự một điểm trong lịch LUÔN là status "ok", không bao giờ là refuse "other".
 - "thêm X", "muốn ghé X", "thay … bằng X": X là tên một điểm thì thêm vào must_names và xoá khỏi exclude_names; X là một loại hình (cà phê, chùa, biển…) thì thêm tag vào like.
 - "không thích X", "tránh X" với X là loại hình: thêm tag vào avoid, xoá khỏi like.
 - Ngân sách: nêu con số mới thì thay; "thêm 200k" thì cộng vào budget_total; "mỗi người" thì nhân với số người.
@@ -276,7 +281,9 @@ def parse_request(text: str):
 
 def revise_request(c: Constraints, plan: Plan | None, text: str):
     names = tools.data().places
-    current = " → ".join(names[s.place_id].name for s in plan.stops) if plan else "chưa có lịch hợp lệ"
+    current = "\n".join("%s–%s %s (loại %s)" % (fmt(s.arrive), fmt(s.leave), names[s.place_id].name,
+                                                 names[s.place_id].kind)
+                        for s in plan.stops) if plan else "chưa có lịch hợp lệ"
     user = "%s\n\nYÊU CẦU HIỆN TẠI\n%s\n\nLỊCH HIỆN TẠI\n%s\n\n<tin_nhan_moi>\n%s\n</tin_nhan_moi>" % (
         _catalog(), _request_json(c), current, text.replace("</tin_nhan_moi>", ""))
     out = _ask(SYSTEM_REVISE, user)
@@ -289,6 +296,22 @@ def propose(c: Constraints, cands: list[Place], previous: Plan | None = None):
         user += ("\n\nLỊCH TRƯỚC KHI NGƯỜI DÙNG SỬA\n%s\nGiữ lại các điểm của lịch trước nếu chúng vẫn có trong danh sách "
                  "ứng viên và vẫn hợp yêu cầu, chỉ đổi phần cần đổi." % _plan_json(previous))
     return _ask(SYSTEM_PLAN, user + "\n\nHãy chọn tập điểm." + JSON_ONLY)
+
+
+SYSTEM_ALTERNATIVES = SYSTEM_PLAN.replace(
+    'Trả đúng một object JSON, không thêm chữ nào khác: {"ids": ["DN-001", "DN-014", ...]}',
+    'Lần này nhóm ĐÃ CÓ một phương án chính. Bạn đề xuất thêm các PHƯƠNG ÁN KHÁC để nhóm có lựa chọn.\n'
+    'Mỗi phương án theo một chủ đề khác nhau rõ rệt mà vẫn hợp yêu cầu của nhóm, ví dụ: tiết kiệm hơn, ít di chuyển '
+    '(gom một khu), nghiêng về thiên nhiên, văn hoá, tâm linh, ẩm thực, check-in. Mỗi phương án khác phương án chính '
+    'ít nhất hai điểm và khác nhau giữa các phương án. label là tên chủ đề bằng tiếng Việt, tối đa 5 chữ, không có chữ số.\n'
+    'Trả đúng một object JSON, không thêm chữ nào khác: {"options": [{"label": "...", "ids": ["DN-001", ...]}, ...]}')
+assert SYSTEM_ALTERNATIVES != SYSTEM_PLAN
+
+
+def propose_alternatives(c: Constraints, cands: list[Place], main: Plan, k: int):
+    user = ("%s\n\nPHƯƠNG ÁN CHÍNH (đã có)\n%s\n\nHãy đề xuất %d phương án khác. Trả lời ngay bằng object JSON "
+            "{\"options\": [...]}, không phân tích, không giải thích." % (_context(c, cands), _plan_json(main), k))
+    return _ask(SYSTEM_ALTERNATIVES, user)
 
 
 def repair(c: Constraints, cands: list[Place], ids: tuple[str, ...], problems: list[Violation]):

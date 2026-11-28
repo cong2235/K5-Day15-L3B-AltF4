@@ -26,7 +26,7 @@ for _stream in (sys.stdout, sys.stderr):
 
 import ai  # noqa: E402
 import tracing  # noqa: E402
-from agent import answer  # noqa: E402
+from agent import answer_options, choose  # noqa: E402
 
 MAX_BODY = 16 * 1024
 MAX_TEXT = 2000
@@ -42,7 +42,7 @@ def run_turn(text: str, session: str | None) -> dict:
         prev = SESSIONS.get(session) if session else None
         tracing.begin("web")
         try:
-            res = answer(text, prev)
+            res = answer_options(text, prev)
         finally:
             summary, _ = tracing.end()
         if session:
@@ -57,7 +57,21 @@ def run_turn(text: str, session: str | None) -> dict:
         "result": json.loads(m.group(1)) if m else None,
         "meta": {k: summary[k] for k in ("models", "model_calls", "tokens_in", "tokens_out")},
         "editing": bool(res.get("turn") and res["turn"].constraints),
+        "options": res.get("options") or [],
+        "understood": res.get("understood"),
+        "notes": res.get("notes") or [],
+        "checked_on": res.get("checked_on"),
     }
+
+
+def choose_option(session: str, index: int) -> bool:
+    """Người dùng bấm chọn một phương án: lịch đó thành nền cho tin nhắn sửa tiếp theo."""
+    with LOCK:
+        turn = SESSIONS.get(session)
+        if turn is None or not getattr(turn, "options", ()) or not 0 <= index < len(turn.options):
+            return False
+        SESSIONS[session] = choose(turn, index)
+        return True
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -71,6 +85,17 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_POST(self) -> None:
+        if self.path == "/api/choose":
+            try:
+                length = int(self.headers.get("Content-Length") or 0)
+                body = json.loads(self.rfile.read(min(length, MAX_BODY)) or b"{}")
+                session, index = str(body.get("session") or ""), int(body.get("index"))
+            except (ValueError, TypeError, AttributeError):
+                self._json(400, {"error": "Yêu cầu không đọc được."})
+                return
+            ok = SESSION_ID.fullmatch(session) is not None and choose_option(session, index)
+            self._json(200 if ok else 404, {"ok": ok})
+            return
         if self.path != "/api/chat":
             self.send_error(404)
             return

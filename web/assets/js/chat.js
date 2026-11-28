@@ -46,13 +46,120 @@
       <textarea id="chat-input" rows="2" maxlength="2000"
         placeholder="VD: 4 người, 2 triệu cả nhóm, Chủ Nhật 8h–21h, thích biển và hải sản"></textarea>
       <button class="chat__send" type="submit">Gửi</button>
-    </form>`;
+    </form>
+    <div class="chat__map" hidden>
+      <div class="chat__map-canvas" role="region" aria-label="Bản đồ tuyến đường của lịch đang chọn"></div>
+      <p class="chat__map-note"></p>
+    </div>`;
 
   document.body.append(launcher, panel);
   const log = panel.querySelector('.chat__log');
   const form = panel.querySelector('.chat__compose');
   const input = panel.querySelector('#chat-input');
   const sendBtn = panel.querySelector('.chat__send');
+  const mapBox = panel.querySelector('.chat__map');
+  const mapCanvas = panel.querySelector('.chat__map-canvas');
+  const mapNote = panel.querySelector('.chat__map-note');
+
+  const vnd = (n) => `${Number(n).toLocaleString('vi-VN')}đ`;
+  const duration = (m) => [Math.floor(m / 60) ? `${Math.floor(m / 60)} tiếng` : '', m % 60 ? `${m % 60} phút` : ''].filter(Boolean).join(' ');
+
+  // ---------- bản đồ tuyến (Leaflet + OpenStreetMap; đường đi thật lấy từ OSRM, không có thì nối nét đứt) ----------
+  const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · tuyến: OSRM';
+  const OSRM = 'https://router.project-osrm.org/route/v1/driving/';
+  let map = null;
+  let layer = null;
+  let pins = [];
+  let routeToken = 0;
+  const roads = new Map();
+
+  function ensureMap() {
+    if (!window.L) return null;
+    panel.classList.add('chat--map');
+    mapBox.hidden = false;
+    if (!map) {
+      map = L.map(mapCanvas, { scrollWheelZoom: true });
+      L.tileLayer(TILE_URL, { maxZoom: 18, attribution: ATTRIBUTION }).addTo(map);
+      layer = L.layerGroup().addTo(map);
+    }
+    return map;
+  }
+
+  async function roadPath(points) {
+    const key = points.join(';');
+    if (roads.has(key)) return roads.get(key);
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 6000);
+    try {
+      const coords = points.map(([lat, lon]) => `${lon},${lat}`).join(';');
+      const res = await fetch(`${OSRM}${coords}?overview=full&geometries=geojson`, { signal: ctl.signal });
+      const body = await res.json();
+      const line = body.routes && body.routes[0] ? body.routes[0].geometry.coordinates.map(([lon, lat]) => [lat, lon]) : null;
+      roads.set(key, line);
+      return line;
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function showRoute(option) {
+    const m = ensureMap();
+    if (!m) return;
+    const token = ++routeToken;
+    layer.clearLayers();
+    const points = option.stops.map((s) => [s.lat, s.lon]);
+    pins = option.stops.map((s, i) => L.marker([s.lat, s.lon], {
+      icon: L.divIcon({ className: `map-pin${s.kind === 'an' ? ' map-pin--meal' : ''}`, html: `<span>${i + 1}</span>`, iconSize: [32, 32], iconAnchor: [16, 16] }),
+      title: s.name, alt: s.name, riseOnHover: true,
+    }).bindTooltip(`${i + 1}. ${s.name} · ${s.arrive}–${s.leave}`, { direction: 'top', offset: [0, -14] }).addTo(layer));
+    const straight = points.length > 1
+      ? L.polyline(points, { color: '#1673a3', weight: 3, opacity: 0.7, dashArray: '6 8' }).addTo(layer) : null;
+    requestAnimationFrame(() => {
+      m.invalidateSize();
+      if (points.length > 1) m.fitBounds(L.latLngBounds(points).pad(0.18));
+      else m.setView(points[0], 14);
+    });
+    if (!straight) { mapNote.textContent = ''; return; }
+    mapNote.textContent = 'Đang lấy đường đi…';
+    const line = await roadPath(points);
+    if (token !== routeToken) return;          // người dùng đã chuyển sang phương án khác
+    if (line) {
+      layer.removeLayer(straight);
+      L.polyline(line, { color: '#0b3d5c', weight: 4, opacity: 0.85 }).addTo(layer);
+      mapNote.textContent = 'Đường đi vẽ theo OSRM để tham khảo. Giờ, thời gian đi và tiền trong lịch do hệ thống tính.';
+    } else {
+      mapNote.textContent = 'Nét đứt nối các điểm theo thứ tự (chưa lấy được đường đi thật).';
+    }
+  }
+
+  // ---------- nói để nhập (Web Speech API, có ở Chrome / Edge) ----------
+  const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (Speech) {
+    const mic = el('button', 'chat__mic');
+    mic.type = 'button';
+    mic.setAttribute('aria-label', 'Nói để nhập yêu cầu');
+    mic.setAttribute('aria-pressed', 'false');
+    mic.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>';
+    form.classList.add('chat__compose--mic');
+    form.insertBefore(mic, sendBtn);
+    let rec = null;
+    mic.addEventListener('click', () => {
+      if (rec) { rec.stop(); return; }
+      rec = new Speech();
+      rec.lang = 'vi-VN';
+      rec.interimResults = true;
+      const before = input.value ? `${input.value.trimEnd()} ` : '';
+      rec.onresult = (e) => { input.value = before + Array.from(e.results).map((r) => r[0].transcript).join(''); };
+      rec.onend = () => { rec = null; mic.classList.remove('is-on'); mic.setAttribute('aria-pressed', 'false'); input.focus(); };
+      rec.onerror = rec.onend;
+      rec.start();
+      mic.classList.add('is-on');
+      mic.setAttribute('aria-pressed', 'true');
+    });
+  }
 
   // ---------- form nhanh ----------
   function quickForm() {
@@ -93,7 +200,74 @@
   const STOP = /^(\d{2}:\d{2}–\d{2}:\d{2}) · (.+?) — (.+?) — (.+)$/;
   const LEG = /^\s*↳\s*(.+)$/;
 
+  function planBody(o, data) {
+    const wrap = el('div', 'opts__body');
+    const list = el('ol', 'plan');
+    o.stops.forEach((s, i) => {
+      if (s.leg) {
+        let t = `đi lại khoảng ${s.leg.min} phút (ước tính)${o.transport === 'grab' ? `, ${vnd(s.leg.vnd)}` : ''}`;
+        if (s.leg.idle >= 30) t += ` · rảnh khoảng ${duration(s.leg.idle)}`;
+        list.append(el('li', 'plan__leg', t));
+      }
+      const li = el('li', 'plan__stop');
+      li.append(el('span', 'plan__time', `${s.arrive}–${s.leave}`), el('strong', 'plan__name', `${i + 1}. ${s.name}`),
+        el('span', 'plan__price', s.price), el('span', 'plan__why', s.why));
+      li.addEventListener('mouseenter', () => pins[i] && pins[i].openTooltip());
+      li.addEventListener('mouseleave', () => pins[i] && pins[i].closeTooltip());
+      list.append(li);
+    });
+    wrap.append(list, el('p', 'msg__total', o.transport === 'grab'
+      ? `Tổng: ${vnd(o.total_vnd)}, trong đó đi lại ${vnd(o.transport_vnd)} (ước tính). Ngân sách: ${vnd(o.budget_vnd)}.`
+      : `Tổng: ${vnd(o.total_vnd)}, đã gồm thuê xe máy theo ngày (ước tính). Ngân sách: ${vnd(o.budget_vnd)}.`));
+    if (data.checked_on) {
+      wrap.append(el('p', 'msg__fine', `Giờ mở cửa và giá là tham khảo theo dữ liệu kiểm ngày ${data.checked_on}; hãy xác nhận lại với nơi đến trước khi đi.`));
+    }
+    return wrap;
+  }
+
+  // Nhiều phương án: thẻ chọn ở trên, lịch của phương án đang chọn ở dưới, tuyến đường hiện ở bản đồ bên phải.
+  // Chọn phương án nào thì báo máy chủ (/api/choose), để tin nhắn sửa tiếp theo áp lên đúng lịch đó.
+  function renderOptions(data) {
+    const box = el('div', 'msg msg--bot');
+    const n = data.options.length;
+    box.append(el('p', 'msg__status msg__status--plan', n > 1 ? `${n} phương án đã kiểm` : STATUS.plan));
+    if (data.understood) box.append(el('p', 'msg__understood', data.understood));
+    (data.notes || []).forEach((t) => box.append(el('p', 'msg__note', t)));
+    const tabs = el('div', 'opts');
+    tabs.setAttribute('role', 'tablist');
+    tabs.setAttribute('aria-label', 'Các phương án lịch');
+    const slot = el('div');
+    const buttons = data.options.map((o, i) => {
+      const b = el('button', 'opt');
+      b.type = 'button';
+      b.setAttribute('role', 'tab');
+      b.append(el('span', 'opt__label', o.label), el('span', 'opt__meta', `${o.stops.length} điểm · ${vnd(o.total_vnd)}`));
+      b.addEventListener('click', () => select(i, true));
+      tabs.append(b);
+      return b;
+    });
+    const owner = session;
+    function select(i, tell) {
+      buttons.forEach((b, j) => b.setAttribute('aria-selected', String(i === j)));
+      slot.replaceChildren(planBody(data.options[i], data));
+      showRoute(data.options[i]);
+      if (tell) {
+        fetch('/api/choose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session: owner, index: i }) })
+          .catch(() => {});
+      }
+    }
+    if (n > 1) box.append(tabs);
+    box.append(slot);
+    box.append(el('p', 'msg__hint', n > 1
+      ? 'Chọn một phương án, rồi muốn đổi gì thì nói hoặc gõ tiếp. Ví dụ: "thay chỗ đi biển lúc 16h bằng chùa", "bỏ chợ Hàn", "về muộn hơn 1 tiếng".'
+      : 'Muốn đổi gì thì nói hoặc gõ tiếp, mình sửa trên lịch này. Ví dụ: "thay chỗ lúc 16h bằng quán cà phê".'));
+    box.deactivate = () => buttons.forEach((b) => { b.disabled = true; });
+    select(0, false);
+    return box;
+  }
+
   function renderBot(data) {
+    if (data.options && data.options.length) return withMeta(renderOptions(data), data);
     const box = el('div', 'msg msg--bot');
     const status = data.result && data.result.status;
     if (status) box.append(el('p', `msg__status msg__status--${status}`, STATUS[status] || status));
@@ -124,6 +298,10 @@
     if (data.editing) {
       box.append(el('p', 'msg__hint', 'Muốn đổi gì thì nhắn tiếp, mình sửa trên lịch này. Ví dụ: bỏ một điểm, thêm quán cà phê, tăng ngân sách, về muộn hơn.'));
     }
+    return withMeta(box, data);
+  }
+
+  function withMeta(box, data) {
     const m = data.meta;
     if (m) {
       box.append(el('p', 'msg__meta', m.model_calls
@@ -134,6 +312,10 @@
   }
 
   function push(node) {
+    // lịch cũ không chọn được nữa: máy chủ chỉ nhớ các phương án của câu trả lời mới nhất
+    if (node.classList.contains('msg--bot') || node.classList.contains('msg--divider')) {
+      log.querySelectorAll('.msg--bot').forEach((b) => b.deactivate && b.deactivate());
+    }
     log.append(node);
     // câu trả lời dài (lịch) thì cuộn tới đầu câu, để thấy "Mình hiểu" và điểm đầu tiên
     log.scrollTop = node.classList.contains('msg--bot') ? node.offsetTop - log.offsetTop - 12 : log.scrollHeight;
