@@ -1,7 +1,7 @@
 # AI SPEC — Lịch trình 1 ngày ở Đà Nẵng vừa ngân sách · Nhóm AltF4 · Lớp L3B
 
 > Mốc nộp: §7 chốt chuẩn "đạt" tại **CP2 19:30 Thứ Sáu 27/11** · §0–§7 nộp **CP3 10:00 Thứ Bảy 28/11** · đủ §0–§10 **CP4 14:30 Thứ Bảy 28/11** · §10 changelog ghi tiếp đến **23:59 Thứ Bảy 28/11**.
-> **Trạng thái:** bản nháp do AI soạn từ phân tích đề tài. Mục đánh dấu **[CẦN BẰNG CHỨNG]** hoặc **[NHÓM CHỐT]** chưa có số thật, không được nộp khi còn dấu này. Chi tiết thiết kế: [docs/design.md](docs/design.md) · lộ trình: [docs/roadmap.md](docs/roadmap.md).
+> **Trạng thái:** bản nộp cho CP3; các mục còn thiếu số được ghi rõ là "chưa chạy" kèm hạn cập nhật, không để chỗ trống. Chi tiết thiết kế: [docs/design.md](docs/design.md) · lộ trình: [docs/roadmap.md](docs/roadmap.md).
 
 Track: C (Du lịch) — bài toán nhóm tự mở rộng từ gợi ý C1 (lịch trình một ngày).
 Phạm vi địa lý: **Đà Nẵng gồm cả Hội An** (Hội An là cụm xa, cùng loại với Bà Nà). Chi tiết [docs/design.md](docs/design.md) mục 1.
@@ -137,7 +137,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 - **Không có căn cứ (lớp 1):** địa điểm ngoài dữ liệu thì nói "chưa có dữ liệu về chỗ này", không bịa.
 - **Người dùng sửa:** nhập lại yêu cầu ("bỏ điểm X") → chạy lại với ràng buộc mới.
 - **Bị đòi ngoài phạm vi (lớp 3):** đặt vé, thanh toán, tỉnh khác → từ chối ngắn, nói việc AI làm được.
-- **Đặc thù lĩnh vực (lớp 4):** bất khả thi → nói không xếp được và đưa 1–2 cách nới (tăng ngân sách tới __, bớt điểm __) đã được `verify` xác nhận.
+- **Đặc thù lĩnh vực (lớp 4):** bất khả thi → nói không xếp được và đưa 1–2 cách nới (nới ngân sách hoặc bớt điểm; ví dụ ở câu K01 trong `run-1`, bỏ Sun World Bà Nà Hills và Phố cổ Hội An thì có lịch 4 điểm hợp lệ) đã được `verify` xác nhận.
 
 ## §7. Đánh giá & chuẩn "đạt"
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 6 · kho 18 · tu_choi 6; nguồn: nguoi_dung 3 (khảo sát câu 13) · data_that 8 · tu_viet 19 → 11/30 từ người dùng / data thật; số câu theo status giữ nguyên 19 · 3 · 6 nên ngưỡng không đổi — chi tiết thay đổi ở `eval/README.md` mục 2) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
@@ -149,13 +149,13 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
   > (c) `xu_ly_bat_kha_thi` ≥ 80% câu chỉ cho phép `infeasible`: nói không xếp được và có ≥1 cách nới mà `verify` xác nhận (hiện 3 câu → 3/3);
   > (d) `tu_choi_dung` 100% câu cho phép `refuse`: từ chối, không có lịch, không lộ SYSTEM prompt (6/6).
 - Lý do chọn ngưỡng *(tự ước tính, chưa có lượt chạy khi chốt)*: (b) và (d) là 100% vì một lần bịa địa điểm hay một lần làm việc ngoài thẩm quyền đã đủ làm người dùng mất tiền. (a) để chừa 2 câu trượt cho lỗi parse tiếng Việt tự do, vì đó là phần model dễ sai nhất (giả định A5, `docs/discovery.md` 4.1). (c) với 3 câu thì thực chất là 100%; nếu thêm câu bất khả thi ở CP3 thì ngưỡng 80% mới có tác dụng.
-- Kết quả: lượt 1 **27/30 (90%)**, đạt chuẩn (4/4 metric) — run ID `run-1@20261128-000747`, Claude Haiku 4.5 · lượt 2 __/__ (__%) — run ID __ → `eval/report.md`.
+- Kết quả: lượt 1 **27/30 (90%)**, đạt chuẩn (4/4 metric) — run ID `run-1@20261128-000747`, Claude Haiku 4.5 · lượt 2 chưa chạy (làm sau khi chọn cải tiến theo nhóm lỗi ở `eval/report.md`, ghi trước CP4 14:30) → `eval/report.md`.
 
 ## §8. Chi phí khi dùng thật
-- Persona + giá: `cost/personas.yaml` — 3 persona theo số lần sửa lịch (xếp một lần 18% · sửa 1–2 lần 55% · sửa ≥3 lần 27%, theo khảo sát câu 12, n = 22; số phiên và số lượt mỗi phiên **tự ước tính**) · người dùng / tháng thấp 1.400 · cơ sở 2.800 · cao 8.500 (từ ~17,3 triệu lượt khách lưu trú Đà Nẵng 2025, cách tính và nguồn ghi trong file) · giá 3 mức: Claude Haiku 4.5 (đang chạy), Haiku 5.5, Sonnet 4.6 · lượt mô phỏng: `cost/simulate-__.csv` (khung đã chạy thử 10 phiên bằng model giả, chưa tính).
+- Persona + giá: `cost/personas.yaml` — 3 persona theo số lần sửa lịch (xếp một lần 18% · sửa 1–2 lần 55% · sửa ≥3 lần 27%, theo khảo sát câu 12, n = 22; số phiên và số lượt mỗi phiên **tự ước tính**) · người dùng / tháng thấp 1.400 · cơ sở 2.800 · cao 8.500 (từ ~17,3 triệu lượt khách lưu trú Đà Nẵng 2025, cách tính và nguồn ghi trong file) · giá 3 mức: Claude Haiku 4.5 (đang chạy), Haiku 5.5, Sonnet 4.6 · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, Claude Haiku 4.5 thật qua Bedrock, 0 phiên lỗi; tỉ lệ đạt lấy từ `run-1` 27/30 = 90%; tóm tắt `cost/simulate-1-summary.md`).
 - Ước tính thô ban đầu: 3–6 lần gọi model mỗi lượt; vài trăm đồng mỗi lượt với model cỡ nhỏ (**tự ước tính**, thay bằng số `simulate` đo, xem `docs/design.md` mục 9).
-- Chi phí / task thành công: __ (model __). Chi phí / tháng: thấp __ · cơ sở __ · cao __.
-- So với impact (§2): **[điền sau khi có số]**.
+- Chi phí / task thành công: **≈ 1.312 ₫ (0,0504 USD), model Claude Haiku 4.5**, đo trên 50 phiên (≈ 1.180 ₫ / phiên; trung bình 3,4 lượt hỏi / phiên). Chi phí / tháng: thấp (1.400 người) ≈ 2,09 triệu ₫ · cơ sở (2.800) ≈ 4,17 triệu ₫ · cao (8.500) ≈ 12,67 triệu ₫. Cùng token nếu tính giá Haiku 5.5: ≈ 131 ₫ / task thành công; giá Sonnet 4.6: ≈ 3.935 ₫ / task thành công. Số phiên và số lượt mỗi phiên là *tự ước tính*; tỉ giá 26.000 ₫/USD *(tự ước tính)*. Sẽ chạy lại với tỉ lệ đạt của Lượt 2 trước CP4 (`--rate-from eval/run-2.csv`).
+- So với impact (§2): chi phí cơ sở ≈ 1.491 ₫ / người / tháng (Haiku 4.5), trong khi mỗi chuyến tự đi mất khoảng 90 phút lên lịch (khảo sát) và 59% gặp sự cố giờ hoặc quãng đường. Chi phí model nhỏ so với thời gian người dùng bỏ ra; chưa tính hosting và giờ công người duyệt.
 
 ## §9. Rủi ro & an toàn
 - Dữ liệu: không thu dữ liệu cá nhân; phỏng vấn / khảo sát ghi P1, P2…, không tên, không số điện thoại; dữ liệu địa điểm là thông tin công khai có nguồn.
@@ -164,7 +164,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 
 ## §10. Phân công & changelog
 - Phân công (chi tiết theo giai đoạn: `docs/phan-cong.md`): Công: PM, nối model và prompt (`ai.py`, `prompts.py`), spec §0 §3 §4 §6 §9 §10, slide, video, nộp form · Đức: code không gọi model (`domain.py`, `verify.py`, `tools.py`, `agent.py`, `app.py`, `tests/`) · Đạt: dữ liệu địa điểm, bằng chứng pain, phỏng vấn, spec §1–§2 · Quân: bộ câu thử, metric, `grade.py`, báo cáo đánh giá, chi phí, spec §5 §7 §8. (Đổi chặng thì cập nhật ở đây.)
-- Dùng AI vào việc gì: **[NHÓM ĐIỀN]**; chi tiết `docs/ai-usage.md`. Bản nháp `spec.md`, `docs/design.md`, `docs/roadmap.md` do AI soạn, nhóm duyệt.
+- Dùng AI vào việc gì: Claude Code viết phần nối Amazon Bedrock (`ai.py`), soạn nháp spec, thiết kế, roadmap, và chạy thử từng câu bằng model thật để tìm lỗi rồi sửa prompt; trong sản phẩm, Claude Haiku 4.5 làm `parse_request`, `propose`, `repair`, `why`, còn tiền, giờ và quãng đường do code tính. Người kiểm: Công (khoá AWS, lời gọi model), Đức (`prompts.py`, `verify`, test), Đạt (dữ liệu, khảo sát), Quân (bộ câu thử, cách chấm); chi tiết `docs/ai-usage.md`. Bản nháp `spec.md`, `docs/design.md`, `docs/roadmap.md` do AI soạn, nhóm duyệt.
 - Nhật ký thay đổi:
 
 **CP2 → CP4**
