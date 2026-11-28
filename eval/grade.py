@@ -347,6 +347,12 @@ def _place(name, data):
     return data.places[pid]
 
 
+def _contiguous(flags):
+    """Các vị trí True nằm liền một khối (không có False chen giữa hai True)."""
+    idx = [i for i, f in enumerate(flags) if f]
+    return not idx or idx[-1] - idx[0] + 1 == len(idx)
+
+
 def _line_with(text, phrase, clock):
     """Có dòng nào vừa nhắc `phrase` vừa có giờ `clock` (HH:MM) không."""
     return any(has(line, phrase) and clock in line for line in text.splitlines())
@@ -375,8 +381,6 @@ CASE_CHECKS = {
     "T06": lambda o, p, t, c, d: _need(count_tag(p, d, ["an_vat", "cafe"]) >= 2, "cần ≥2 điểm an_vat/cafe"),
     # ≥1 điểm tag an_vat hoặc cho
     "T07": lambda o, p, t, c, d: _need(count_tag(p, d, ["an_vat", "cho"]) >= 1, "thiếu điểm an_vat/cho"),
-    # ≥1 điểm tag tam_linh
-    "T08": lambda o, p, t, c, d: _need(count_tag(p, d, ["tam_linh"]) >= 1, "thiếu điểm tam_linh"),
     # ≥2 bữa ăn tag dac_san
     "T09": lambda o, p, t, c, d: _need(count_tag(p, d, ["dac_san"], "an") >= 2, "cần ≥2 bữa ăn dac_san"),
     # văn bản nêu lý do có ngân sách hoặc thời gian di chuyển
@@ -396,8 +400,17 @@ CASE_CHECKS = {
     # mọi bữa ăn trong stops có tag chay
     "K07": lambda o, p, t, c, d: _need(all("chay" in x.tags for x in places_of(p, d) if x.kind == "an"),
                                        "có bữa ăn không tag chay"),
-    # có bữa trưa và bữa tối
-    "K08": lambda o, p, t, c, d: _need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối"),
+    # có bữa trưa và bữa tối; văn bản có cụm tổng
+    "K19": lambda o, p, t, c, d: (_need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối")
+                                  or _need(has(t, "tổng"), "không ghi tổng tiền")),
+    # các điểm cụm hoi_an trong stops nằm liền nhau; có bữa trưa
+    "K20": lambda o, p, t, c, d: (_need(_contiguous([x.cluster == "hoi_an" for x in places_of(p, d)]),
+                                        "đi Hội An → nơi khác → quay lại Hội An")
+                                  or _need(has_meal(p, d, L), "thiếu bữa trưa")),
+    # ≥1 điểm tag bien; có bữa trưa và bữa tối; văn bản có cụm đi lại
+    "T10": lambda o, p, t, c, d: (_need(count_tag(p, d, ["bien"]) >= 1, "thiếu điểm tag bien")
+                                  or _need(has_meal(p, d, L) and has_meal(p, d, D), "thiếu bữa trưa hoặc tối")
+                                  or _need(has(t, "đi lại"), "không nêu tiền đi lại")),
     # nếu plan: ≥1 yen_tinh và ≥1 soi_dong; nếu ask_back: đúng 1 dấu ? và câu hỏi có ưu tiên / yên tĩnh / sôi động
     "K09": _ask_or_plan(lambda o, p, t, c, d: _need(count_tag(p, d, ["yen_tinh"]) >= 1 and
                                                          count_tag(p, d, ["soi_dong"]) >= 1,
@@ -410,9 +423,6 @@ CASE_CHECKS = {
                                           d.places.get(i) is not None and d.places[i].cluster == "ba_na"
                                           for i in str(r["change"])[5:].split("+")) for r in o["relax"]),
                                       "không có relax tăng ngân sách / bỏ Bà Nà")),
-    # ≥1 điểm cluster hoi_an; có bữa tối
-    "K11": lambda o, p, t, c, d: (_need(any(x.cluster == "hoi_an" for x in places_of(p, d)), "không có điểm ở Hội An")
-                                  or _need(has_meal(p, d, D), "thiếu bữa tối")),
     # ≥1 điểm tag bien; total_vnd = cost(stops, c) và không bằng 0 nếu có điểm tính phí
     "K12": lambda o, p, t, c, d: (_need(count_tag(p, d, ["bien"]) >= 1, "thiếu điểm tag bien")
                                   or _need(o["total_vnd"] != 0 or core.cost(p, c, d).total == 0, "total_vnd = 0")),

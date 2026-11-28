@@ -8,8 +8,8 @@
 #   phiên      = một lần lên lịch cho MỘT ngày đi chơi.
 #   lượt hỏi   = một lần gọi answer(): lịch đầu tiên + mỗi lần sửa lại (khảo sát câu 12).
 #
-# TRẠNG THÁI 27/11 22:00: share và số lượt là (tự ước tính) vì kết quả khảo sát chưa xuất (6 phiếu lúc CP2).
-# Khi có evidence/survey/results.csv: thay share bằng tỉ lệ câu 12, uses_per_month bằng câu 5 + số ngày đi, rồi ghi nguồn.
+# Cập nhật 28/11 09:30 theo khảo sát n = 22 (evidence/survey/results.csv, đã lọc theo questions.md):
+#   share = phân bố câu 12 (số lần sửa lịch); số người / nhóm = câu 4. Số phiên / tháng và số lượt / phiên vẫn (tự ước tính).
 
 sessions: 50        # số phiên mô phỏng — bản nộp ≥50
 seed: 42            # giữ cố định để chạy lại ra cùng chuỗi phiên
@@ -18,25 +18,25 @@ users:              # số người lên lịch / tháng nếu sản phẩm ra m
   low: 1400
   base: 2800
   high: 8500
-  source: "Tổng khách lưu trú Đà Nẵng 2025 ~17,3 triệu lượt (VietnamNet, https://vietnamnet.vn/en/da-nang-tourism-surpasses-pre-pandemic-peak-remains-top-regional-leader-2477340.html, xem 27/11/2026) → ~1,44 triệu lượt / tháng × 59% khách nội địa (tỉ lệ trong kế hoạch 2025: 7,1 / 12 triệu, https://nhadautu.vn/da-nang-dat-muc-tieu-don-gan-12-trieu-luot-khach-nam-2025-d92319.html — số kế hoạch, không phải thống kê) ÷ 3 người / nhóm (tự ước tính, kiểm bằng khảo sát câu 4) ≈ 283.000 người lên lịch / tháng. Tỉ lệ dùng sản phẩm: thấp 0,5% · cơ sở 1% · cao 3% (tự ước tính)"
+  source: "Tổng khách lưu trú Đà Nẵng 2025 ~17,3 triệu lượt (VietnamNet, https://vietnamnet.vn/en/da-nang-tourism-surpasses-pre-pandemic-peak-remains-top-regional-leader-2477340.html, xem 27/11/2026) → ~1,44 triệu lượt / tháng × 59% khách nội địa (tỉ lệ trong kế hoạch 2025: 7,1 / 12 triệu, https://nhadautu.vn/da-nang-dat-muc-tieu-don-gan-12-trieu-luot-khach-nam-2025-d92319.html — số kế hoạch, không phải thống kê) ÷ 3 người / nhóm (khảo sát câu 4, n = 22: trung bình quy về số ≈ 3,0) ≈ 283.000 người lên lịch / tháng. Tỉ lệ dùng sản phẩm: thấp 0,5% · cơ sở 1% · cao 3% (tự ước tính)"
 
 personas:           # ≥3 kiểu người dùng; share cộng lại = 1
   - name: xep_mot_lan
-    share: 0.45             # tỉ lệ người dùng kiểu này
+    share: 0.18             # 4/22 chọn "Không sửa"
     uses_per_month: 1       # đi 1 ngày, lên lịch 1 lần
     turns_per_session: 1    # nhận lịch đầu tiên, không sửa
-    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"Không sửa\" ở khảo sát câu 12"
+    source: "khảo sát câu 12: 4/22 phiếu \"Không sửa\" (evidence/survey/results.csv); số phiên, số lượt (tự ước tính)"
   - name: sua_vai_lan
-    share: 0.40
+    share: 0.55             # 12/22 chọn "1–2 lần"
     uses_per_month: 1
     turns_per_session: 3    # lịch đầu + 1–2 lần sửa
-    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"1–2 lần\" ở khảo sát câu 12"
+    source: "khảo sát câu 12: 12/22 phiếu \"1–2 lần\"; số lượt = lịch đầu + 2 lần sửa (tự ước tính)"
   - name: len_ke_hoach_ky
-    share: 0.15
+    share: 0.27             # 6/22 chọn "3–5 lần" hoặc "Trên 5 lần"
     uses_per_month: 2       # chuyến 2 ngày, lên lịch từng ngày
     turns_per_session: 5    # lịch đầu + 3–5 lần sửa
     types: [thuong, kho, tu_choi]   # nhóm hỏi nhiều thì cũng hay hỏi ngoài phạm vi (đặt vé, khách sạn)
-    source: "(tự ước tính) — thay bằng tỉ lệ chọn \"3–5 lần\" + \"Trên 5 lần\" ở khảo sát câu 12"
+    source: "khảo sát câu 12: 3/22 \"3–5 lần\" + 3/22 \"Trên 5 lần\"; 2 phiên (chuyến 2 ngày) và 5 lượt (tự ước tính)"
 # Mỗi lượt hỏi lấy ngẫu nhiên một đầu vào trong eval/benchmark.csv (mặc định type thuong và kho).
 
 prices:             # USD / 1 triệu token, bảng giá chung của BTC (further-reading/model-prices.md của repo đề), giá Anthropic API trực tiếp

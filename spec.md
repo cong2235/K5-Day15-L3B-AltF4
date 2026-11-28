@@ -111,10 +111,11 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 |---|---|---|---|
 | Ngân sách quá thấp cho yêu cầu | 4 | Nói không xếp được, nêu cách nới có kiểm chứng | K01, K10 |
 | Muốn 8 điểm trong 4 giờ | 4 | Không xếp được, gợi ý bớt điểm | K02 |
-| Ngân sách sát, vẫn xếp được | 4 | Đưa lịch vừa tiền, không từ chối cho an toàn | K08 |
+| Ngân sách sát, vẫn xếp được (khảo sát phiếu 21: "tiền đi chơi quá đắt, phải xin thêm") | 4 | Đưa lịch vừa tiền, đủ bữa, không từ chối cho an toàn | K19 |
 | Có người ăn chay / dị ứng | 4 | Mọi bữa có món chay, không quán hải sản | K07 |
-| Cụm xa (Bà Nà, Hội An) | 4 | Tính đúng thời gian di chuyển; Hội An là trong phạm vi | K10, K11 |
-| Đòi đi điểm đang nghỉ hôm đó | 1 | Nói điểm đó đóng, đề xuất thay thế | K06 |
+| Cụm xa (Bà Nà, Hội An), lịch đi vòng (khảo sát phiếu 22: "Chỗ đi chơi quá xa") | 4 | Tính đúng thời gian di chuyển, gom điểm cùng cụm; Hội An là trong phạm vi | K10, K20 |
+| Nhóm không có xe, đi Grab (khảo sát phiếu 10) | 4 | Tính tiền Grab từng chặng vào tổng | T10 |
+| Đòi đi điểm đang nghỉ hôm đó / ngoài giờ mở | 1 | Nói điểm đó đóng, đề xuất thay thế | K06, K16, K17, K18 |
 | Địa điểm không có trong dữ liệu | 1 | Nói chưa có dữ liệu, không bịa giờ hay giá | K13 |
 | Tiền đề sai ("chợ Hàn mở 24/7") | 1 | Sửa theo giờ trong dữ liệu | K14 |
 | Người dùng dán lịch tự soạn bị lệch | 1 | Không xác nhận lịch sai, đưa lịch thay thế đã kiểm | K15 |
@@ -139,7 +140,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 - **Đặc thù lĩnh vực (lớp 4):** bất khả thi → nói không xếp được và đưa 1–2 cách nới (tăng ngân sách tới __, bớt điểm __) đã được `verify` xác nhận.
 
 ## §7. Đánh giá & chuẩn "đạt"
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 6 · kho 18 · tu_choi 6; nguồn: data_that 8 · tu_viet 22, thêm câu `nguoi_dung` từ khảo sát / phỏng vấn trước lượt 1; số câu theo status giữ nguyên 19 · 3 · 6 nên ngưỡng không đổi — chi tiết thay đổi ở `eval/README.md` mục 2) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` (30 câu: thuong 6 · kho 18 · tu_choi 6; nguồn: nguoi_dung 3 (khảo sát câu 13) · data_that 8 · tu_viet 19 → 11/30 từ người dùng / data thật; số câu theo status giữ nguyên 19 · 3 · 6 nên ngưỡng không đổi — chi tiết thay đổi ở `eval/README.md` mục 2) · metric: `eval/metric_spec.yaml` (4 metric, đều chấm bằng code).
 - Mỗi câu ghi ở đầu `pass_criterion` các status được chấp nhận (`status=…`) và ràng buộc đúng (`c=…`). Grader chạy `verify` và `cost` trên `c=`, không dùng ràng buộc model tự hiểu.
 - **Chuẩn "đạt" (Công đã chốt, khoá lúc 19:30 Thứ Sáu 27/11, rồi không sửa):**
   > Đạt khi cả 4 metric trong `eval/metric_spec.yaml` đạt ngưỡng (với N câu áp dụng, cần ít nhất ceil(ngưỡng × N) câu):
@@ -151,7 +152,7 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → `eval/report.md`.
 
 ## §8. Chi phí khi dùng thật
-- Persona + giá: `cost/personas.yaml` — 3 persona theo số lần sửa lịch (xếp một lần 45% · sửa vài lần 40% · lên kế hoạch kỹ 15%, **tự ước tính**, thay bằng khảo sát câu 12 khi xuất kết quả) · người dùng / tháng thấp 1.400 · cơ sở 2.800 · cao 8.500 (từ ~17,3 triệu lượt khách lưu trú Đà Nẵng 2025, cách tính và nguồn ghi trong file) · giá 3 mức: Claude Haiku 4.5 (đang chạy), Haiku 5.5, Sonnet 4.6 · lượt mô phỏng: `cost/simulate-__.csv` (khung đã chạy thử 10 phiên bằng model giả, chưa tính).
+- Persona + giá: `cost/personas.yaml` — 3 persona theo số lần sửa lịch (xếp một lần 18% · sửa 1–2 lần 55% · sửa ≥3 lần 27%, theo khảo sát câu 12, n = 22; số phiên và số lượt mỗi phiên **tự ước tính**) · người dùng / tháng thấp 1.400 · cơ sở 2.800 · cao 8.500 (từ ~17,3 triệu lượt khách lưu trú Đà Nẵng 2025, cách tính và nguồn ghi trong file) · giá 3 mức: Claude Haiku 4.5 (đang chạy), Haiku 5.5, Sonnet 4.6 · lượt mô phỏng: `cost/simulate-__.csv` (khung đã chạy thử 10 phiên bằng model giả, chưa tính).
 - Ước tính thô ban đầu: 3–6 lần gọi model mỗi lượt; vài trăm đồng mỗi lượt với model cỡ nhỏ (**tự ước tính**, thay bằng số `simulate` đo, xem `docs/design.md` mục 9).
 - Chi phí / task thành công: __ (model __). Chi phí / tháng: thấp __ · cơ sở __ · cao __.
 - So với impact (§2): **[điền sau khi có số]**.
