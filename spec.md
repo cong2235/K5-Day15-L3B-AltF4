@@ -186,4 +186,5 @@ Danh sách kịch bản: xem `docs/design.md` mục 8. Câu thử ở `eval/benc
 
 | Thời điểm | Đổi gì | Vì sao |
 |---|---|---|
-|  |  |  |
+| 28/11 chiều | Web: 2–3 phương án mỗi yêu cầu, sửa lịch bằng lời (gõ hoặc nói), bản đồ tuyến đường bộ (OSRM qua `/api/route`) | UX: người lên lịch cần so sánh, sửa nhanh và thấy tuyến đi. Khung eval vẫn gọi `answer()` |
+| 28/11 chiều | Cách tính giờ: thời gian đi lại theo ma trận đường bộ OSRM × 1,6 + 3' (`data/travel_road.csv`); giờ nên đến và ở tối đa (`data/visit_prefs.csv`, tự ước tính); ăn trưa từ 11:30, tối từ 18:15; ăn tối cùng khu; lấp khoảng trống; nghỉ trưa. Chi tiết `docs/lich-hop-ly.md` | Lịch qua `verify` nhưng có ca không đáng đi (ngoài trời giữa trưa, biển lúc tối, quay về khu khác chỉ để ăn) và 2 chặng đèo Sơn Trà bị ước ngắn khoảng 3 lần. **Làm sau Lượt 2: `run-1`, `run-3` và số trong `eval/report.md` giữ nguyên, là kết quả của bản trước thay đổi này.** Chuẩn "đạt", metric, bộ câu thử không đổi. Lần thử `eval --try 30` trên bản mới (không tính lượt): 29/30, 4 metric đạt; T05 không thể đạt với data hiện tại (`best_windows` 15' < `visit_min` 30') |
