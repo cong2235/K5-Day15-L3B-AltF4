@@ -108,6 +108,19 @@ def _unavailable(c: Constraints, places: dict[str, Place]) -> list[tuple[str, st
     return out
 
 
+def _snack_notes(c: Constraints, plan: Plan, data: core.Data) -> list[str]:
+    """Quán người dùng muốn ăn nhưng không mở vào bữa chính: nói rõ là xếp lúc khác và bữa chính ở quán khác."""
+    bands = core.required_meals(c)
+    out = []
+    for s in plan.stops:
+        p = data.places[s.place_id]
+        if p.id in c.must and p.kind == "an" and bands and not any(core.serves(p, b) for b in bands):
+            hours = ", ".join("%s–%s" % (fmt(a), fmt(b)) for a, b in p.open_windows)
+            out.append("%s chỉ mở %s theo dữ liệu, không kịp bữa chính, nên mình xếp ghé ăn lúc %s "
+                       "và chọn quán khác cho bữa chính." % (p.name, hours, fmt(s.arrive)))
+    return out
+
+
 def _ids(raw) -> tuple[str, ...] | None:
     """Model chỉ chọn điểm: {"ids": [...]} (hoặc {"stops": [{"id"}]}, giờ trong đó bị bỏ qua)."""
     if not isinstance(raw, dict):
@@ -250,15 +263,27 @@ def _relax_text(r: Relax, c: Constraints, data: core.Data) -> str:
     return "%s: %s" % (head, names)
 
 
+def _why_infeasible(c: Constraints, data: core.Data) -> list[str]:
+    """Lý do lấy từ phép thử trên dữ liệu, không đoán theo loại cách nới."""
+    must = [data.places[i] for i in c.must]
+    paid = [p for p in must if core.ticket(p, c)]
+    tickets = sum(core.ticket(p, c) for p in paid)
+    why = []
+    if tickets > c.budget_total:   # không ghi giá vé: điểm này không nằm trong lịch nào nên số đó không lần được về lịch
+        why.append("riêng vé %s cho %d người đã vượt ngân sách %s" % (
+            ", ".join(p.name for p in paid), c.people, vnd(c.budget_total)))
+    if core.fits_without_budget_limit(c, data):
+        if not why:
+            why.append("tổng tiền vé, ăn và đi lại vượt ngân sách %s" % vnd(c.budget_total))
+    else:
+        why.append("kể cả không giới hạn tiền, %s không vừa khung giờ khi tính giờ mở cửa, bữa ăn và thời gian "
+                   "di chuyển" % ("các điểm bạn chọn" if must else "không tổ hợp điểm nào"))
+    return why
+
+
 def _render_infeasible(c: Constraints, relax: list[Relax], notes: list[str], data: core.Data) -> str:
     must = ", ".join(data.places[i].name for i in c.must)
-    why = []
-    if any(r.kind == "budget" for r in relax):
-        why.append("tổng tiền vé, ăn và đi lại vượt ngân sách")
-    if any(r.kind == "window" for r in relax) or any(r.kind == "drop" for r in relax):
-        why.append("không đủ thời gian trong khung giờ, tính cả thời gian di chuyển")
-    if not why:
-        why.append("không có tổ hợp điểm nào thoả cùng lúc giờ mở cửa, thời gian di chuyển và ngân sách")
+    why = _why_infeasible(c, data)
     lines = [_understood(c), *notes, "",
              "Mình không xếp được lịch nào thoả hết yêu cầu%s: %s." % (" với " + must if must else "", "; ".join(why))]
     if relax:
@@ -302,6 +327,7 @@ def answer(text: str, prev: Turn | None = None) -> dict:
     cands = tools.shortlist(c)
     plan = _plan(c, cands, data, prev.plan if prev is not None else None)
     if plan is not None and not core.verify(plan, c, data):
+        notes += _snack_notes(c, plan, data)
         return {"output": _render_plan(c, plan, notes, data), "turn": Turn(full, c, plan)}
     note("không xếp được, tìm cách nới")
     return {"output": _render_infeasible(c, tools.relax_options(c), notes, data), "turn": Turn(full, c)}

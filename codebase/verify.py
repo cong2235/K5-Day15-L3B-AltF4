@@ -109,6 +109,12 @@ def required_meals(c: Constraints) -> tuple[tuple[int, int], ...]:
     return tuple(b for b in (LUNCH, DINNER) if overlap(b) >= MEAL_MIN_OVERLAP)
 
 
+def serves(p: Place, band) -> bool:
+    """Quán p có thể làm bữa trong khung band (đến trong khung bữa, ngồi đủ visit_min trong giờ mở)."""
+    return p.kind == "an" and any(max(ws, band[0]) < band[1] and max(ws, band[0]) + p.visit_min <= we
+                                  for ws, we in p.open_windows)
+
+
 def _meal_for(band, plan: Plan, data: Data) -> bool:
     return any(s.place_id in data.places and data.places[s.place_id].kind == "an"
                and band[0] <= s.arrive < band[1] for s in plan.stops)
@@ -165,13 +171,14 @@ def verify(plan: Plan, c: Constraints, data: Data) -> list[Violation]:
 # ---------------------------------------------------------------- xếp lịch bằng code
 
 def _timed(order: tuple[Place, ...], c: Constraints, data: Data) -> Plan | None:
-    """Xếp giờ cho một thứ tự cố định: đến sớm nhất có thể, bữa ăn thứ k rơi vào khung bữa thứ k."""
+    """Xếp giờ cho một thứ tự cố định: đến sớm nhất có thể, bữa ăn thứ k rơi vào khung bữa thứ k.
+    Quán không mở trong khung bữa đang chờ (vd quán chỉ bán sáng) là ghé ăn thêm, không tính là bữa đó."""
     bands = required_meals(c)
     t, prev, meal_k, stops = c.start, None, 0, []
     for p in order:
         earliest = t if prev is None else t + travel_min(prev.id, p.id, data)
         latest = c.end
-        if p.kind == "an" and meal_k < len(bands):
+        if p.kind == "an" and meal_k < len(bands) and serves(p, bands[meal_k]):
             earliest, latest = max(earliest, bands[meal_k][0]), bands[meal_k][1] - 1
             meal_k += 1
         arrive = next((max(earliest, ws) for ws, we in p.open_windows
@@ -243,7 +250,7 @@ def plan_greedy(c: Constraints, cands: list[Place], data: Data) -> Plan | None:
     """Phương án code: giữ điểm bắt buộc, chọn bữa ăn cần thiết, rồi thêm dần điểm hợp sở thích khi verify vẫn rỗng."""
     must = tuple(i for i in c.must if i in data.places)
     bands = required_meals(c)
-    need = max(0, len(bands) - sum(data.places[i].kind == "an" for i in must))
+    need = max(0, len(bands) - sum(any(serves(data.places[i], b) for b in bands) for i in must))
     rank = _rank(c)
     meals = sorted((p for p in cands if p.kind == "an" and p.id not in must), key=rank)
     others = sorted((p for p in cands if p.kind != "an" and p.id not in must), key=rank)
@@ -325,9 +332,15 @@ def diagnose(ids: tuple[str, ...], c: Constraints, data: Data) -> list[Violation
             v.append(Violation("CLOSED", None, "%s nghỉ ngày này" % p.id))
         if p.id in c.exclude or set(p.tags) & set(c.avoid) or (p.kind == "an" and not set(c.diet) <= set(p.tags)):
             v.append(Violation("AVOID_TAG", None, "%s không hợp yêu cầu tránh hoặc ăn kiêng" % p.id))
-    meals = sum(p.kind == "an" for p in places)
-    if meals < len(required_meals(c)):
-        v.append(Violation("NO_MEAL", None, "cần %d bữa, mới có %d quán ăn" % (len(required_meals(c)), meals)))
+    bands = required_meals(c)
+    for p in places:
+        if p.kind == "an" and bands and not any(serves(p, b) for b in bands):
+            v.append(Violation("NO_MEAL", None, "%s chỉ mở %s, không làm bữa %s được; cần thêm quán khác cho bữa đó" % (
+                p.id, ", ".join("%s-%s" % (fmt(a), fmt(b)) for a, b in p.open_windows),
+                ", ".join("%s-%s" % (fmt(a), fmt(b)) for a, b in bands))))
+    meals = sum(any(serves(p, b) for b in bands) for p in places)
+    if meals < len(bands):
+        v.append(Violation("NO_MEAL", None, "cần %d bữa, mới có %d quán ăn làm bữa được" % (len(bands), meals)))
     tickets = sum(ticket(p, c) for p in places)
     if tickets > c.budget_total:
         v.append(Violation("OVER_BUDGET", None, "riêng vé và ăn đã %d > %d" % (tickets, c.budget_total)))
@@ -346,6 +359,11 @@ WINDOW_STEPS = (60, 120, 180)
 
 def _attempt(c: Constraints, data: Data) -> Plan | None:
     return plan_greedy(c, shortlist(c, data), data)
+
+
+def fits_without_budget_limit(c: Constraints, data: Data) -> bool:
+    """Bỏ giới hạn ngân sách thì xếp được không: phân biệt "thiếu tiền" với "không vừa giờ / bữa / đường đi"."""
+    return _attempt(replace(c, budget_total=10 ** 12), data) is not None
 
 
 def _min_budget(c: Constraints, data: Data) -> tuple[int, Plan] | None:
@@ -375,13 +393,13 @@ def _min_budget(c: Constraints, data: Data) -> tuple[int, Plan] | None:
 def relax_options(c: Constraints, data: Data) -> list[Relax]:
     """1–3 cách nới, mỗi cách đã có lịch qua verify() với ràng buộc đã nới. Không bao giờ nới tag tránh hay món kiêng."""
     out: list[Relax] = []
-    if c.must:
-        for k in range(1, len(c.must) + 1):
-            c2 = replace(c, must=c.must[:-k])
-            plan = _attempt(c2, data)
-            if plan is not None:
-                out.append(Relax("drop", "drop=" + "+".join(c.must[-k:]), c2, plan, c.must[-k:]))
-                break
+    drops = (d for k in range(1, len(c.must) + 1) for d in combinations(c.must, k))   # bỏ ít điểm nhất trước
+    for dropped in drops:
+        c2 = replace(c, must=tuple(i for i in c.must if i not in dropped), exclude=c.exclude + dropped)
+        plan = _attempt(c2, data)
+        if plan is not None:
+            out.append(Relax("drop", "drop=" + "+".join(dropped), c2, plan, dropped))
+            break
     found = _min_budget(c, data)
     if found:
         b, plan = found

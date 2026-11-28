@@ -312,5 +312,33 @@ class AnswerWithPrompts(unittest.TestCase):
         self.assertEqual(codes(plan(*[(s["id"], s["arrive"], s["leave"]) for s in j["stops"]]), cons), [])
 
 
+class MustPlaceCannotBeMainMeal(unittest.TestCase):
+    """Lượt 2 (eval/report.md mục 3): điểm người dùng nêu mà không đi được như ý thì không được bỏ cả lịch."""
+
+    BREAKFAST = replace(DATA.places["FX-05"], id="FX-11", name="Quán Bún Sáng Thử", open_windows=((hhmm("06:00"), hhmm("10:00")),))
+    DATA2 = core.Data({**DATA.places, "FX-11": BREAKFAST}, DATA.overrides, DATA.rates)
+
+    def test_breakfast_only_must_gets_a_plan_with_a_separate_lunch(self):
+        cons = c(start=hhmm("09:00"), end=hhmm("17:00"), must=("FX-11", "FX-01"))
+        p = core.plan_greedy(cons, core.shortlist(cons, self.DATA2), self.DATA2)
+        self.assertIsNotNone(p)
+        self.assertEqual(core.verify(p, cons, self.DATA2), [])
+        self.assertIn("FX-11", p.ids)
+        self.assertIn("FX-01", p.ids)
+        self.assertTrue(any(core.serves(self.DATA2.places[s.place_id], core.LUNCH) and s.place_id != "FX-11"
+                            for s in p.stops))
+        self.assertIn("FX-11", core.diagnose(("FX-11", "FX-01"), cons, self.DATA2)[0].detail)
+
+    def test_relax_drops_only_the_place_that_blocks_and_reason_names_its_ticket(self):
+        cons = c(budget_total=1_000_000, must=("FX-01", "FX-08"))      # vé FX-08 2 × 900.000đ > 1.000.000đ
+        drop = next(r for r in core.relax_options(cons, DATA) if r.kind == "drop")
+        self.assertEqual(drop.dropped, ("FX-08",))
+        self.assertIn("FX-01", drop.plan.ids)
+        self.assertNotIn("FX-08", drop.plan.ids)
+        why = " ".join(agent._why_infeasible(cons, DATA))
+        self.assertIn("Khu Núi Xa Thử", why)
+        self.assertIn("vượt ngân sách", why)
+
+
 if __name__ == "__main__":
     unittest.main()
